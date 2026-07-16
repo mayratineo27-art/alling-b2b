@@ -47,7 +47,7 @@ Basándonos en la decisión arquitectónica **DEC-021 (Frontend en Vercel)** y e
   - `MP_ACCESS_TOKEN` (Mercado Pago).
 - **DoD:** Todas las variables de entorno están mapeadas correctamente, eliminando cualquier hardcoding de contraseñas.
 
-### T8-SEC2 — Configuración de CORS y Dominios Aprobados
+### T8-SEC2 — Configuración de CORS y Dominios Aprobados ✅ Completado
 - **Descripción:** Actualizar `backend/app/main.py` para asegurar que el middleware de CORS acepte peticiones desde el dominio público otorgado por Vercel (ej: `https://tiendred.vercel.app`).
 - **DoD:** No existen bloqueos por políticas CORS al intentar hacer *login* o llamadas a la API desde el cliente web productivo.
 

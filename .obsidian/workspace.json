@@ -242,6 +242,8 @@
   },
   "active": "0ec7dcb09df32022",
   "lastOpenFiles": [
+    "backend/api/index.py",
+    "backend/api",
     "backend/requirements-dev.txt",
     "backend/vercel.json",
     "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_8_BACKLOG.md",
@@ -253,8 +255,6 @@
     "backend/tests/integration/test_checkout_integration.py",
     "backend/tests/integration/conftest.py",
     "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_7_BACKLOG.md",
-    "backend/test_alling.db",
-    "backend/alembic/versions/__pycache__/8efc93f92400_convert_customer_id_to_uuid.cpython-313.pyc",
     "EJECUCIÓN_SCRUM/desarrollo-GRI.md",
     "Docs/00_project/constitución-00.md",
     "Docs/FASE 2/actualización administrador.md",

@@ -65,7 +65,10 @@ class PaymentService:
             # preference_response es un dict en la vida real ej: {"response": {"init_point": "url"}}
             # Por seguridad comprobaremos si es un mock
             if isinstance(preference_response, dict):
-                return preference_response.get("response", {}).get("init_point", f"https://mercadopago.com/checkout/mock?ref={fu_id}")
+                resp = preference_response.get("response", {})
+                if access_token and access_token.startswith("TEST-"):
+                    return resp.get("sandbox_init_point") or resp.get("init_point") or f"https://mercadopago.com/checkout/mock?ref={fu_id}"
+                return resp.get("init_point") or f"https://mercadopago.com/checkout/mock?ref={fu_id}"
             else:
                 # Caso del mock en testing que devuelve un MagicMock()
                 return f"https://mercadopago.com/checkout/mock?ref={fu_id}&amount={total_amount}"

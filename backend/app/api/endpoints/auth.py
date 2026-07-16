@@ -109,7 +109,7 @@ def login_google(
             idinfo = id_token.verify_oauth2_token(
                 payload.token,
                 google_requests.Request(),
-                settings.GOOGLE_CLIENT_ID,
+                settings.GOOGLE_CLIENT_ID.strip(),
                 clock_skew_in_seconds=300
             )
             google_id = idinfo["sub"]

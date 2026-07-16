@@ -19,7 +19,7 @@ class FavoriteService:
                 FavoriteModel.user_id == user_id,
                 FavoriteModel.product_id == product_id
             )
-            existing = db.exec(stmt).first()
+            existing = db.scalars(stmt).first()
             if not existing:
                 fav = FavoriteModel(user_id=user_id, product_id=product_id)
                 db.add(fav)
@@ -34,7 +34,7 @@ class FavoriteService:
                 FavoriteModel.user_id == user_id,
                 FavoriteModel.product_id == product_id
             )
-            fav = db.exec(stmt).first()
+            fav = db.scalars(stmt).first()
             if fav:
                 db.delete(fav)
                 db.commit()
@@ -44,5 +44,5 @@ class FavoriteService:
             return list(self._store.get(user_id, []))
         else:
             stmt = select(FavoriteModel.product_id).where(FavoriteModel.user_id == user_id)
-            results = db.exec(stmt).all()
+            results = db.scalars(stmt).all()
             return [str(pid) for pid in results]

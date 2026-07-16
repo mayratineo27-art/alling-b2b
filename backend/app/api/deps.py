@@ -1,13 +1,11 @@
-from app.db.database import SessionLocal
+from app.db.database import engine
+from sqlmodel import Session
 from typing import Generator
 
 def get_db() -> Generator:
     """
-    Dependencia de FastAPI para inyectar la sesión de base de datos.
+    Dependencia de FastAPI para inyección de dependencias en FastAPI.
     Garantiza que la sesión se cierre al finalizar la petición.
     """
-    db = SessionLocal()
-    try:
+    with Session(engine) as db:
         yield db
-    finally:
-        db.close()

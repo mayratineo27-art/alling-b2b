@@ -5,6 +5,8 @@ from app.services.dashboard_service import DashboardService
 from app.services.notification_service import NotificationService
 from app.api.deps import get_db
 from app.core.security import get_current_user
+from app.api.endpoints.formato_unico import _enrich_formato_response
+from app.core.deps import get_product_query_service
 
 router = APIRouter()
 
@@ -21,7 +23,8 @@ def get_dashboard_service(
 def get_dashboard(
     current_user_id: str = Depends(get_current_user),
     db: Session = Depends(get_db),
-    service: DashboardService = Depends(get_dashboard_service)
+    service: DashboardService = Depends(get_dashboard_service),
+    product_query_service = Depends(get_product_query_service)
 ):
     """
     RF-FU-012: Dashboard del Cliente.
@@ -32,7 +35,10 @@ def get_dashboard(
     @sdd-rf RF-FU-012
     """
     formato_activo, notificaciones = service.get_dashboard_data(user_id=current_user_id, db=db)
+    formato_enriquecido = None
+    if formato_activo:
+        formato_enriquecido = _enrich_formato_response(formato_activo, product_query_service.repo)
     return DashboardResponseSchema(
-        formato_activo=formato_activo,
+        formato_activo=formato_enriquecido,
         notificaciones=notificaciones
     )

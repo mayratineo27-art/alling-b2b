@@ -60,6 +60,7 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         # Producción Vercel (DEC-021)
         "https://alling-b2b.vercel.app",
+        "https://alling-b2b-frontend.vercel.app",
         "https://alling-b2b-git-main-ales-projects-5079a085.vercel.app",
         "https://alling-b2b-fnqesvtz1-ales-projects-5079a085.vercel.app",
     ],

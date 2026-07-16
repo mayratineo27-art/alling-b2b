@@ -4,7 +4,7 @@ from app.core.config import settings
 import os
 
 # Configuración de conexión segura
-DATABASE_URL = settings.DATABASE_URL or "sqlite:///./alling.db"
+DATABASE_URL = (settings.DATABASE_URL or "sqlite:///./alling.db").strip()
 Base = declarative_base()
 
 # Manejo de conectores según entorno

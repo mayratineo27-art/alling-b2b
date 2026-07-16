@@ -172,7 +172,7 @@ export default function AdminCotizacionDetailPage() {
                 <h2 className="text-base font-semibold text-[var(--alling-text)] mb-3">Documento PDF</h2>
                 {cotizacion.pdf_url ? (
                   <a
-                    href={`/api/cotizaciones/${fuId}/pdf`}
+                    href={`/backend/cotizaciones/${fuId}/pdf`}
                     target="_blank" rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-[var(--alling-text)] text-white px-4 py-2 rounded-md text-sm font-medium hover:opacity-80 transition-opacity"
                   >

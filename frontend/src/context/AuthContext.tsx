@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     console.log("[AuthContext] loginWithGoogle() invocado");
     console.log("[AuthContext] tokenId recibido, longitud:", tokenId?.length);
-    console.log("[AuthContext] payload que se enviará a POST /api/auth/google:", {
+    console.log("[AuthContext] payload que se enviará a POST /backend/auth/google:", {
       token: tokenId ? `${tokenId.slice(0, 20)}...` : tokenId,
     });
     console.log("[AuthContext] apiClient config -> baseURL:", apiClient.defaults.baseURL, "withCredentials:", apiClient.defaults.withCredentials);

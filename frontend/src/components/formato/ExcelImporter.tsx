@@ -52,9 +52,9 @@ export function ExcelImporter({ formatoId, onImportSuccess }: { formatoId: strin
     };
 
     const handleDownloadTemplate = () => {
-        // Usa siempre la ruta relativa /api para que el proxy de Next.js
+        // Usa siempre la ruta relativa /backend para que el proxy de Next.js
         // redirija al backend correcto tanto en local como en producción.
-        window.open(`/api/formatos/excel/template`, '_blank');
+        window.open(`/backend/formatos/excel/template`, '_blank');
     };
 
     const handleUpload = async () => {

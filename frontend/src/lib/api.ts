@@ -4,7 +4,12 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
  * Cliente HTTP centralizado para todas las peticiones a la API de Alling.
  *
  * CONFIGURACIÓN CLAVE:
- * - baseURL '/api': Next.js proxea same-origin /api/* → http://127.0.0.1:8000/*
+ * - baseURL '/backend': Route Handler en src/app/backend/[...path]/route.ts
+ *   proxea same-origin /backend/* → BACKEND_API_URL/*. No se usa "/api" como
+ *   prefijo porque Vercel tiene manejo especial reservado para ese path
+ *   (legado de "Serverless Functions" con archivos sueltos en /api) que
+ *   pisa el Route Handler de Next.js y lo convierte en un redirect 308
+ *   pelado del prefijo, rompiendo el proxy por completo.
  *   Esto evita CORS y permite que el browser envíe cookies httpOnly automáticamente.
  * - withCredentials: true: Obligatorio para enviar/recibir cookies httpOnly.
  *
@@ -18,7 +23,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
  * @sdd-rf RF-AUT-001 RF-AUT-002 RF-AUT-009
  */
 const apiClient = axios.create({
-    baseURL: '/api',
+    baseURL: '/backend',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',

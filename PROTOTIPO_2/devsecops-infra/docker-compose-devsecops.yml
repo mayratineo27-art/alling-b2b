@@ -1,0 +1,64 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: devsecops-jenkins
+    user: root
+    ports:
+      - "8081:8080"
+      - "50001:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Adaptación Windows: Eliminamos el montaje de /usr/bin/docker del host
+      # Montaje del repositorio local en modo solo lectura (ro)
+      - "c:/Users/MAYRATM/source/repos/tiendRed:/workspace/tu-repositorio:ro"
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+    networks:
+      - devsecops-net
+    restart: unless-stopped
+
+  sonarqube:
+    image: sonarqube:26.6.0.123539-community
+    container_name: devsecops-sonarqube
+    ports:
+      - "9090:9000"
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://sonarqube-db:5432/sonar
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=${SONAR_DB_PASSWORD}
+    volumes:
+      - sonarqube_data_v26:/opt/sonarqube/data
+      - sonarqube_extensions_v26:/opt/sonarqube/extensions
+      - sonarqube_logs_v26:/opt/sonarqube/logs
+    depends_on:
+      - sonarqube-db
+    networks:
+      - devsecops-net
+    restart: unless-stopped
+
+  sonarqube-db:
+    image: postgres:16
+    container_name: devsecops-sonarqube-db
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=${SONAR_DB_PASSWORD}
+      - POSTGRES_DB=sonar
+    volumes:
+      - sonarqube_db_data_v26:/var/lib/postgresql/data
+    networks:
+      - devsecops-net
+    restart: unless-stopped
+
+networks:
+  devsecops-net:
+    driver: bridge
+
+volumes:
+  jenkins_home:
+  sonarqube_data_v26:
+  sonarqube_extensions_v26:
+  sonarqube_logs_v26:
+  sonarqube_db_data_v26:

@@ -1,0 +1,4040 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Alling B2B API",
+    "version": "1.2.0"
+  },
+  "paths": {
+    "/formatos/session": {
+      "post": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Crear Sesion Guest",
+        "description": "RF-CHK-007: Crea un Formato Único GUEST y emite cookie httpOnly con order_token.\nNUNCA expone el fu_id en el body de respuesta pública.\nEl frontend no debe leer ni escribir este token en JavaScript.",
+        "operationId": "crear_sesion_guest_formatos_session_post",
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/me": {
+      "get": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Obtener Formato Activo",
+        "description": "RF-CHK-007 / RNF-SEC-002: Obtiene el Formato Único activo del solicitante.\n- Si hay JWT válido: retorna el FU del CUSTOMER (aislación por customer_id).\n- Si hay cookie order_token: retorna el FU del GUEST.\n- Si no hay ninguno: 404.",
+        "operationId": "obtener_formato_activo_formatos_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormatoResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/merge": {
+      "post": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Merge Guest To Customer",
+        "description": "RF-AUT-007: Fusiona el FU GUEST (cookie order_token) con el FU del CUSTOMER (JWT).\nRequiere: JWT válido en Authorization header + cookie order_token (opcional).\nTras el merge, borra la cookie order_token del browser.",
+        "operationId": "merge_guest_to_customer_formatos_merge_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormatoResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/": {
+      "post": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Crear Formato Unico",
+        "description": "Crea un Formato Único vacío en estado BORRADOR (uso interno / tests).",
+        "operationId": "crear_formato_unico_formatos__post",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormatoResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/{id}/kits": {
+      "post": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Agregar Kit Al Formato",
+        "description": "Agrega todos los componentes de un kit al Formato Único.",
+        "operationId": "agregar_kit_al_formato_formatos__id__kits_post",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgregarKitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormatoResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/{id}": {
+      "get": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Obtener Formato",
+        "description": "Obtiene un Formato Único por ID enriquecido con detalles de stock.",
+        "operationId": "obtener_formato_formatos__id__get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormatoResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/{id}/items/{product_id}": {
+      "patch": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Actualizar Item",
+        "description": "Actualiza la cantidad de un ítem existente.",
+        "operationId": "actualizar_item_formatos__id__items__product_id__patch",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateItemQuantityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormatoResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/historial/": {
+      "get": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Listar Formatos",
+        "description": "Lista el historial de formatos para el usuario actual.",
+        "operationId": "listar_formatos_formatos_historial__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FormatoResponseSchema"
+                  },
+                  "title": "Response Listar Formatos Formatos Historial  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/{formato_id}/aprobar": {
+      "post": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Aprobar Formato",
+        "description": "RF-FU-005: Aprueba/Genera cotización para un Formato Único.\nFunciona tanto para GUEST (vía cookie order_token) como para CUSTOMER (vía JWT).",
+        "operationId": "aprobar_formato_formatos__formato_id__aprobar_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "formato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Formato Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormatoResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/excel/template": {
+      "get": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Descargar Plantilla Csv",
+        "description": "Genera y descarga una plantilla CSV para la carga masiva de ítems.",
+        "operationId": "descargar_plantilla_csv_formatos_excel_template_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/excel/import": {
+      "post": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Importar Csv",
+        "description": "Importa un archivo CSV con ítems.",
+        "operationId": "importar_csv_formatos_excel_import_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_importar_csv_formatos_excel_import_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formatos/{id}/configuracion-ui/": {
+      "get": {
+        "tags": [
+          "Formato Único"
+        ],
+        "summary": "Obtener Configuracion Ui",
+        "operationId": "obtener_configuracion_ui_formatos__id__configuracion_ui__get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Dashboard",
+        "description": "RF-FU-012: Dashboard del Cliente.\nRetorna el FormatoUnico activo y las notificaciones recientes.\nProtegido mediante JWT.",
+        "operationId": "get_dashboard_dashboard__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/productos/landing": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Obtener Landing",
+        "description": "Retorna datos agrupados para Landing Page (RF-CAT-004).\nUsa métodos optimizados del repositorio SQLModel, no slicing artificial.",
+        "operationId": "obtener_landing_productos_landing_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LandingResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Listar Productos",
+        "description": "Lista productos con filtros (RF-CAT-001 + RNF-PERF-001)",
+        "operationId": "listar_productos_productos__get",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "categoria",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Categoria"
+            }
+          },
+          {
+            "name": "marca",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Marca"
+            }
+          },
+          {
+            "name": "precio_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Precio Min"
+            }
+          },
+          {
+            "name": "precio_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Precio Max"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponseSchema"
+                  },
+                  "title": "Response Listar Productos Productos  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/buscar/": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Buscar Productos",
+        "description": "Búsqueda full-text (RF-CAT-003)",
+        "operationId": "buscar_productos_productos_buscar__get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "description": "Término de búsqueda",
+              "title": "Q"
+            },
+            "description": "Término de búsqueda"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponseSchema"
+                  },
+                  "title": "Response Buscar Productos Productos Buscar  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/{slug}/": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Obtener Detalle Producto",
+        "description": "Detalle por slug (RF-CAT-002)",
+        "operationId": "obtener_detalle_producto_productos__slug___get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDetailSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/kits/": {
+      "get": {
+        "tags": [
+          "Kits"
+        ],
+        "summary": "Listar Kits",
+        "description": "Obtiene todos los Kits calculando dinámicamente sus precios y stocks efectivos.",
+        "operationId": "listar_kits_kits__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/KitResponseSchema"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Kits Kits  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/kits/{id}/": {
+      "get": {
+        "tags": [
+          "Kits"
+        ],
+        "summary": "Obtener Detalle Kit",
+        "description": "Obtiene el detalle de un Kit pre-armado calculando dinámicamente su precio y stock.",
+        "operationId": "obtener_detalle_kit_kits__id___get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KitResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categorias/": {
+      "get": {
+        "tags": [
+          "Categorías"
+        ],
+        "summary": "Obtener Categorias Con Conteo",
+        "description": "Retorna la lista de categorías con su respectivo conteo de productos activos.",
+        "operationId": "obtener_categorias_con_conteo_categorias__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponseSchema"
+                  },
+                  "type": "array",
+                  "title": "Response Obtener Categorias Con Conteo Categorias  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkout/": {
+      "post": {
+        "tags": [
+          "Checkout"
+        ],
+        "summary": "Procesar Checkout",
+        "description": "Procesa un Formato Único en estado COTIZACION, calculando envío\ny generando una preferencia de pago.",
+        "operationId": "procesar_checkout_checkout__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequestSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/checkout/{fu_id}/status": {
+      "get": {
+        "tags": [
+          "Checkout"
+        ],
+        "summary": "Get Checkout Status",
+        "description": "Retorna el estado de un FSM de manera ligera.",
+        "operationId": "get_checkout_status_checkout__fu_id__status_get",
+        "parameters": [
+          {
+            "name": "fu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Fu Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutStatusSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/mercadopago/": {
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Webhook Mercadopago",
+        "operationId": "webhook_mercadopago_webhooks_mercadopago__post",
+        "parameters": [
+          {
+            "name": "X-Signature",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Signature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuarios/me/facturacion": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Get User Billing Data",
+        "description": "Retorna los datos de facturación pre-llenados del usuario autenticado.\n(Mock: en la vida real requeriría token y extraería el user_id)",
+        "operationId": "get_user_billing_data_usuarios_me_facturacion_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserBillingDataSchema"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/auth/google": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login Google",
+        "description": "Login / Auto-register con Google OAuth2 (RF-AUT-001).\nRecibe el id_token de Google, lo verifica, busca o crea el usuario\nen la base de datos local y retorna un JWT firmado.",
+        "operationId": "login_google_auth_google_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleTokenSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favoritos/{producto_id}": {
+      "post": {
+        "tags": [
+          "Favoritos"
+        ],
+        "summary": "Add Favorite",
+        "operationId": "add_favorite_favoritos__producto_id__post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "producto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Producto Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favoritos/": {
+      "get": {
+        "tags": [
+          "Favoritos"
+        ],
+        "summary": "List Favorites",
+        "operationId": "list_favorites_favoritos__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavoriteResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/orders/": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Listar Pedidos",
+        "description": "RF-ORD-001: Lista todos los pedidos del usuario autenticado.\n\nCadena de consulta:\n  1. Obtiene todos los FormatosUnicos del usuario (customer_id = user_id)\n  2. Obtiene todos los Orders relacionados a esos FormatosUnicos\n  → Garantiza aislamiento RLS: el usuario solo ve sus propios pedidos.",
+        "operationId": "listar_pedidos_orders__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OrderSummarySchema"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Pedidos Orders  Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Detalle Pedido",
+        "description": "RF-ORD-001: Detalle completo de un pedido.\n\nVerifica ownership transitivo:\n  Order.formato_unico_id → FormatoUnico.customer_id == user_id del JWT\nSi la cadena no se cumple → HTTP 403 (no revela existencia del recurso).",
+        "operationId": "detalle_pedido_orders__order_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDetailSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seller/stock": {
+      "get": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Listar Stock",
+        "description": "RF-SEL-001: Lista todos los productos con stock real.\nRN-SEL-002: stock_real = stock_total - reserved_stock.\nSolo accesible por SELLER o ADMIN.",
+        "operationId": "listar_stock_seller_stock_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProductStockSchema"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Stock Seller Stock Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/seller/stock/{product_id}": {
+      "patch": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Actualizar Stock",
+        "description": "RF-SEL-002: Actualiza el stock de un producto.\nRN-SEL-001: stock >= 0 (enforced by Pydantic Field ge=0).\nSELLER puede editar stock únicamente — no precio, nombre ni descripción.",
+        "operationId": "actualizar_stock_seller_stock__product_id__patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStockSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Actualizar Stock Seller Stock  Product Id  Patch"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seller/stock/{product_id}/umbral": {
+      "patch": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Actualizar Umbral",
+        "description": "RF-SEL-003: Configura el umbral mínimo de alerta de stock para un producto.\nRN-CALC-03: alerta cuando stock_real <= stock_min_threshold.\n\nNote: Product is a frozen dataclass without a stock_min_threshold field.\nIn MVP the threshold is persisted in-memory on the repo; in production\nthis would be a separate column or a dedicated table.",
+        "operationId": "actualizar_umbral_seller_stock__product_id__umbral_patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUmbralSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Actualizar Umbral Seller Stock  Product Id  Umbral Patch"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seller/pedidos": {
+      "get": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Listar Pedidos",
+        "description": "RF-SEL-004 / RF-SEL-006: Lista pedidos según estado.\nDefault: READY_TO_SHIP (cola de despacho pendiente).\nCon estado=SHIPPED muestra historial de despachados.",
+        "operationId": "listar_pedidos_seller_pedidos_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtro por estado: READY_TO_SHIP | SHIPPED | PAID",
+              "title": "Estado"
+            },
+            "description": "Filtro por estado: READY_TO_SHIP | SHIPPED | PAID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderQueueSchema"
+                  },
+                  "title": "Response Listar Pedidos Seller Pedidos Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seller/pedidos/{order_id}/guia": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Generar Guia",
+        "description": "RF-SEL-005: Genera guía de envío mock (Shalom, sin API real en MVP §3.2).\nTransición: READY_TO_SHIP → SHIPPED (ORD-T-06).\nRN-SHP-01: Si el pedido ya fue despachado → HTTP 409.\nPrecondiciones (Pydantic): weight_kg > 0, packages_count >= 1.",
+        "operationId": "generar_guia_seller_pedidos__order_id__guia_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerarGuiaSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShippingGuideResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/usuarios": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Listar Usuarios",
+        "description": "RF-ADM-001: Lista todos los usuarios. Solo ADMIN.",
+        "operationId": "listar_usuarios_admin_usuarios_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserListSchema"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Usuarios Admin Usuarios Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Crear Usuario",
+        "description": "RF-ADM-002: Crea un usuario SELLER o ADMIN.\nRN-ADM-001: email único en el sistema.\nauth_provider = LOCAL (no Google OAuth).",
+        "operationId": "crear_usuario_admin_usuarios_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/usuarios/{user_id}/suspender": {
+      "patch": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Suspender Usuario",
+        "description": "RF-ADM-003: Suspende un usuario (is_suspended = True).\nRN-ADMIN-01: ADMIN no puede suspenderse a sí mismo.\nRN-ADMIN-02: MVP — mínimo 2 ADMINs activos (not enforced without role column).",
+        "operationId": "suspender_usuario_admin_usuarios__user_id__suspender_patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/usuarios/{user_id}": {
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Eliminar Usuario",
+        "description": "RF-ADM-004: Elimina (soft-delete) un usuario.\nRN-ADMIN-01: ADMIN no puede eliminarse a sí mismo.\nPreserva integridad referencial de AuditLog, Orders y FormatoUnico.",
+        "operationId": "eliminar_usuario_admin_usuarios__user_id__delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/productos": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Listar Productos Admin",
+        "description": "RF-ADM-005: Lista todos los productos (incluyendo inactivos) para ADMIN.",
+        "operationId": "listar_productos_admin_admin_productos_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Crear Producto",
+        "description": "RF-ADM-005: Crea un nuevo producto en el catálogo.\nBTN-ADM-004: sku debe ser único.",
+        "operationId": "crear_producto_admin_productos_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCreateSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/metricas/ventas": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Metricas Ventas",
+        "description": "RF-ADM-006: Devuelve indicadores de revenue y pedidos.\nOPS-ADM-006: agrega Order en estados PAID / READY_TO_SHIP / SHIPPED.",
+        "operationId": "metricas_ventas_admin_metricas_ventas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/configuracion": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Obtener Configuracion",
+        "description": "RF-ADM-007: Devuelve la configuración global del sistema.",
+        "operationId": "obtener_configuracion_admin_configuracion_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Actualizar Configuracion",
+        "description": "RF-ADM-007: Actualiza parámetros globales.\nBTN-ADM-007: quote_validity_days >= 1 (RN-FU-03).\nEVT-ADM-005: ConfiguracionActualizada.",
+        "operationId": "actualizar_configuracion_admin_configuracion_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemConfigSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/exportar": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Exportar Datos",
+        "description": "RF-ADM-008: Exporta datos sensibles.\nRN-ADM-002: requiere mfa_validated=True en el JWT (MFA step-up).\nOPS-ADM-008: no basta sesión MFA general — debe ser re-autenticación inmediata.",
+        "operationId": "exportar_datos_admin_exportar_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/kits": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Listar Kits Admin",
+        "description": "RF-ADM-009: Lista todos los kits (MVP: in-memory).",
+        "operationId": "listar_kits_admin_admin_kits_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Crear Kit",
+        "description": "RF-ADM-009: Crea un nuevo kit de productos.\nBTN-ADM-009: mínimo 2 componentes.",
+        "operationId": "crear_kit_admin_kits_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KitCreateSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/consultas": {
+      "get": {
+        "tags": [
+          "Consultas"
+        ],
+        "summary": "Listar Consultas",
+        "description": "RF-CON-001: Lista FormatosUnicos en estado CONSULTA.\nRF-CON-004: Filtra por asignación (OPS-CON-004).\nOPS-CON-001: SELLER ve todas las consultas (asignadas y sin asignar).",
+        "operationId": "listar_consultas_consultas_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "assigned_to_me",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "True: mis consultas. False: sin asignar. None: todas",
+              "title": "Assigned To Me"
+            },
+            "description": "True: mis consultas. False: sin asignar. None: todas"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConsultaListSchema"
+                  },
+                  "title": "Response Listar Consultas Consultas Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consultas/{fu_id}/tomar": {
+      "post": {
+        "tags": [
+          "Consultas"
+        ],
+        "summary": "Tomar Consulta",
+        "description": "RF-CON-002: Asigna la consulta al SELLER actual.\nRN-CON-001: solo un SELLER puede estar asignado a la vez.\nHTTP 409 si ya está asignada a otro SELLER (optimistic lock).\nEVT-CON-001: ConsultaAsignada.",
+        "operationId": "tomar_consulta_consultas__fu_id__tomar_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fu Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TomarConsultaResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consultas/{fu_id}/responder": {
+      "post": {
+        "tags": [
+          "Consultas"
+        ],
+        "summary": "Responder Consulta",
+        "description": "RF-CON-003: Responde la consulta y transiciona FU a RESUELTA (FU-T-05).\nRN-CON-002: Solo el SELLER asignado puede responder.\nconsultant_note no puede estar vacía (validado por Pydantic min_length=1).\nEVT-FU-012: ConsultaResuelta.",
+        "operationId": "responder_consulta_consultas__fu_id__responder_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fu Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResponderConsultaSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponderConsultaResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cotizaciones": {
+      "get": {
+        "tags": [
+          "Cotizaciones"
+        ],
+        "summary": "Listar Cotizaciones",
+        "description": "RF-COT-001: Lista FormatosUnicos en estados de cotización.\nOPS-COT-001: visibilidad compartida — todos los SELLERs ven todas las cotizaciones.",
+        "operationId": "listar_cotizaciones_cotizaciones_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtro por estado: COTIZACION | EXPIRADA | PEDIDO | CONFIRMADO",
+              "title": "Estado"
+            },
+            "description": "Filtro por estado: COTIZACION | EXPIRADA | PEDIDO | CONFIRMADO"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CotizacionListSchema"
+                  },
+                  "title": "Response Listar Cotizaciones Cotizaciones Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cotizaciones/{fu_id}": {
+      "get": {
+        "tags": [
+          "Cotizaciones"
+        ],
+        "summary": "Detalle Cotizacion",
+        "description": "RF-COT-002: Devuelve el detalle completo de una cotización.\nOPS-COT-002: sin restricción de asignación (a diferencia de consultas).",
+        "operationId": "detalle_cotizacion_cotizaciones__fu_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fu Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CotizacionDetailSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cotizaciones/{fu_id}/pdf": {
+      "get": {
+        "tags": [
+          "Cotizaciones"
+        ],
+        "summary": "Descargar Pdf",
+        "description": "RF-COT-003: Redirige al PDF de la cotización.\nBTN-COT-001: solo si pdf_url no es None.\nHTTP 404 si el PDF no existe.",
+        "operationId": "descargar_pdf_cotizaciones__fu_id__pdf_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fu Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/distribuidor/sync": {
+      "post": {
+        "tags": [
+          "Distribuidor"
+        ],
+        "summary": "Sincronizar Distribuidor",
+        "description": "AUTO-DIS-001 → OPS-DIS-001 → OPS-DIS-002/003 → OPS-DIS-004 (if partial reject).\n\nRF-DIS-001: Authenticate with HMAC + nonce.\nRF-DIS-002: Update price_public / price_wholesale for known SKUs.\nRF-DIS-003: Update stock for known SKUs.\nRF-DIS-004: Unknown SKUs → rejected_skus (partial processing, not all-or-nothing).",
+        "operationId": "sincronizar_distribuidor_distribuidor_sync_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/system/generate-hero": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Generate Hero",
+        "description": "Genera una imagen usando google-generativeai para el hero section.",
+        "operationId": "generate_hero_api_v1_system_generate_hero_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateHeroResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgregarKitRequest": {
+        "properties": {
+          "kit_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Kit Id"
+          },
+          "cantidad": {
+            "type": "integer",
+            "title": "Cantidad",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "kit_id"
+        ],
+        "title": "AgregarKitRequest"
+      },
+      "AuthResponseSchema": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "token_type",
+          "user_id",
+          "email"
+        ],
+        "title": "AuthResponseSchema"
+      },
+      "Body_importar_csv_formatos_excel_import_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_importar_csv_formatos_excel_import_post"
+      },
+      "CategoryResponseSchema": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "count"
+        ],
+        "title": "CategoryResponseSchema"
+      },
+      "CheckoutRequestSchema": {
+        "properties": {
+          "fu_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Fu Id"
+          },
+          "billing_id": {
+            "type": "string",
+            "title": "Billing Id"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fu_id",
+          "billing_id",
+          "address"
+        ],
+        "title": "CheckoutRequestSchema"
+      },
+      "CheckoutResponseSchema": {
+        "properties": {
+          "fu_id": {
+            "type": "string",
+            "title": "Fu Id"
+          },
+          "payment_url": {
+            "type": "string",
+            "title": "Payment Url"
+          },
+          "shipping_cost": {
+            "type": "string",
+            "title": "Shipping Cost"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "title": "Idempotency Key"
+          },
+          "order_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fu_id",
+          "payment_url",
+          "shipping_cost",
+          "idempotency_key"
+        ],
+        "title": "CheckoutResponseSchema"
+      },
+      "CheckoutStatusSchema": {
+        "properties": {
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "order_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Id"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "state"
+        ],
+        "title": "CheckoutStatusSchema"
+      },
+      "ConsultaListSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "assigned_seller_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned Seller Id"
+          },
+          "consultant_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consultant Note"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state"
+        ],
+        "title": "ConsultaListSchema"
+      },
+      "CotizacionDetailSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "subtotal": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtotal"
+          },
+          "pdf_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pdf Url"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state"
+        ],
+        "title": "CotizacionDetailSchema"
+      },
+      "CotizacionListSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "subtotal": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtotal"
+          },
+          "has_pdf": {
+            "type": "boolean",
+            "title": "Has Pdf"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state",
+          "has_pdf"
+        ],
+        "title": "CotizacionListSchema"
+      },
+      "CreateUserSchema": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Email"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "SELLER",
+              "ADMIN"
+            ],
+            "title": "Role",
+            "description": "Solo SELLER o ADMIN via panel admin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "role"
+        ],
+        "title": "CreateUserSchema"
+      },
+      "DashboardResponseSchema": {
+        "properties": {
+          "formato_activo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FormatoResponseSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "notificaciones": {
+            "items": {
+              "$ref": "#/components/schemas/NotificationSchema"
+            },
+            "type": "array",
+            "title": "Notificaciones",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "DashboardResponseSchema"
+      },
+      "FavoriteResponse": {
+        "properties": {
+          "product_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Product Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_ids"
+        ],
+        "title": "FavoriteResponse"
+      },
+      "FormatoResponseSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FormatoUnicoItemSchema"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "subtotal": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Subtotal"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state",
+          "items",
+          "subtotal"
+        ],
+        "title": "FormatoResponseSchema"
+      },
+      "FormatoUnicoItemSchema": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "unit_price": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Unit Price"
+          },
+          "subtotal": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Subtotal"
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name"
+          },
+          "sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku"
+          },
+          "stock_disponible": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stock Disponible"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "quantity",
+          "unit_price",
+          "subtotal"
+        ],
+        "title": "FormatoUnicoItemSchema"
+      },
+      "GenerarGuiaSchema": {
+        "properties": {
+          "weight_kg": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Weight Kg",
+            "description": "Peso en kg. Debe ser > 0"
+          },
+          "packages_count": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Packages Count",
+            "description": "Número de bultos. Mínimo 1"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "weight_kg",
+          "packages_count"
+        ],
+        "title": "GenerarGuiaSchema"
+      },
+      "GenerateHeroResponse": {
+        "properties": {
+          "image_url": {
+            "type": "string",
+            "title": "Image Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "image_url"
+        ],
+        "title": "GenerateHeroResponse"
+      },
+      "GoogleTokenSchema": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "title": "GoogleTokenSchema"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "KitComponentSchema": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "quantity"
+        ],
+        "title": "KitComponentSchema"
+      },
+      "KitCreateSchema": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "component_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 2,
+            "title": "Component Ids",
+            "description": "Minimum 2 components (BTN-ADM-009)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "component_ids"
+        ],
+        "title": "KitCreateSchema"
+      },
+      "KitResponseSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/KitComponentSchema"
+            },
+            "type": "array",
+            "title": "Components"
+          },
+          "precio_total": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Precio Total"
+          },
+          "stock_disponible": {
+            "type": "integer",
+            "title": "Stock Disponible"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "components",
+          "precio_total",
+          "stock_disponible"
+        ],
+        "title": "KitResponseSchema"
+      },
+      "LandingResponseSchema": {
+        "properties": {
+          "destacados": {
+            "items": {
+              "$ref": "#/components/schemas/ProductResponseSchema"
+            },
+            "type": "array",
+            "title": "Destacados"
+          },
+          "novedades": {
+            "items": {
+              "$ref": "#/components/schemas/ProductResponseSchema"
+            },
+            "type": "array",
+            "title": "Novedades"
+          },
+          "categorias_conteo": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryResponseSchema"
+            },
+            "type": "array",
+            "title": "Categorias Conteo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "destacados",
+          "novedades",
+          "categorias_conteo"
+        ],
+        "title": "LandingResponseSchema"
+      },
+      "MetricsResponseSchema": {
+        "properties": {
+          "revenue_total": {
+            "type": "number",
+            "title": "Revenue Total"
+          },
+          "orders_count": {
+            "type": "integer",
+            "title": "Orders Count"
+          },
+          "paid_orders_count": {
+            "type": "integer",
+            "title": "Paid Orders Count"
+          },
+          "top_products": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Top Products"
+          }
+        },
+        "type": "object",
+        "required": [
+          "revenue_total",
+          "orders_count",
+          "paid_orders_count",
+          "top_products"
+        ],
+        "title": "MetricsResponseSchema"
+      },
+      "NotificationSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "is_read": {
+            "type": "boolean",
+            "title": "Is Read"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "message",
+          "created_at",
+          "is_read"
+        ],
+        "title": "NotificationSchema"
+      },
+      "OrderDetailSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "formato_unico_id": {
+            "type": "string",
+            "title": "Formato Unico Id"
+          },
+          "shipping_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shipping Address"
+          },
+          "dni_or_ruc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dni Or Ruc"
+          },
+          "document_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Type"
+          },
+          "shipping_cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shipping Cost"
+          },
+          "total_amount": {
+            "type": "number",
+            "title": "Total Amount"
+          },
+          "payment_preference_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Preference Id"
+          },
+          "payment_method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Method"
+          },
+          "cancellation_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancellation Reason"
+          },
+          "cancelled_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled By"
+          },
+          "order_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Token"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "formato_unico_id",
+          "total_amount"
+        ],
+        "title": "OrderDetailSchema"
+      },
+      "OrderQueueSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "formato_unico_id": {
+            "type": "string",
+            "title": "Formato Unico Id"
+          },
+          "total_amount": {
+            "type": "number",
+            "title": "Total Amount"
+          },
+          "shipping_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shipping Address"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "formato_unico_id",
+          "total_amount"
+        ],
+        "title": "OrderQueueSchema"
+      },
+      "OrderStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING_PAYMENT",
+          "PAID",
+          "READY_TO_SHIP",
+          "SHIPPED",
+          "CANCELLED"
+        ],
+        "title": "OrderStatus",
+        "description": "Estados del FSM de Order (FSM-02).\nTransiciones válidas (MOD-CHK-01):\n  PENDING_PAYMENT → PAID        (ORD-T-02: webhook pago confirmado)\n  PENDING_PAYMENT → CANCELLED   (ORD-T-03: pago fallido / cancelación manual)\n  PAID            → READY_TO_SHIP (ORD-T-04: SELLER confirma despacho)\n  READY_TO_SHIP   → SHIPPED     (ORD-T-05: guía de envío generada)"
+      },
+      "OrderSummarySchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "total_amount": {
+            "type": "number",
+            "title": "Total Amount"
+          },
+          "shipping_cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shipping Cost"
+          },
+          "payment_method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Method"
+          },
+          "order_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Token"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "formato_unico_id": {
+            "type": "string",
+            "title": "Formato Unico Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "total_amount",
+          "formato_unico_id"
+        ],
+        "title": "OrderSummarySchema"
+      },
+      "ProductCreateSchema": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Name"
+          },
+          "sku": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Sku"
+          },
+          "price_public": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Price Public"
+          },
+          "stock": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Stock",
+            "default": 0
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "sku",
+          "price_public"
+        ],
+        "title": "ProductCreateSchema"
+      },
+      "ProductDetailSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "stock": {
+            "type": "integer",
+            "title": "Stock"
+          },
+          "price_public": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Price Public"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "specs": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specs"
+          },
+          "image_gallery": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Gallery"
+          },
+          "telegram_query_url": {
+            "type": "string",
+            "title": "Telegram Query Url",
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "stock",
+          "price_public",
+          "telegram_query_url"
+        ],
+        "title": "ProductDetailSchema"
+      },
+      "ProductResponseSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "stock": {
+            "type": "integer",
+            "title": "Stock"
+          },
+          "price_public": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Price Public"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "stock",
+          "price_public"
+        ],
+        "title": "ProductResponseSchema"
+      },
+      "ProductStockSchema": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku"
+          },
+          "stock_total": {
+            "type": "integer",
+            "title": "Stock Total"
+          },
+          "reserved_stock": {
+            "type": "integer",
+            "title": "Reserved Stock"
+          },
+          "stock_real": {
+            "type": "integer",
+            "title": "Stock Real"
+          },
+          "stock_min_threshold": {
+            "type": "integer",
+            "title": "Stock Min Threshold"
+          },
+          "stock_alert": {
+            "type": "boolean",
+            "title": "Stock Alert"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "stock_total",
+          "reserved_stock",
+          "stock_real",
+          "stock_min_threshold",
+          "stock_alert"
+        ],
+        "title": "ProductStockSchema"
+      },
+      "ResponderConsultaResponseSchema": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "fu_id": {
+            "type": "string",
+            "title": "Fu Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "consultant_note": {
+            "type": "string",
+            "title": "Consultant Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "fu_id",
+          "state",
+          "consultant_note"
+        ],
+        "title": "ResponderConsultaResponseSchema"
+      },
+      "ResponderConsultaSchema": {
+        "properties": {
+          "consultant_note": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Consultant Note",
+            "description": "Nota de asesoría. No puede estar vacía (RN-CON-002)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "consultant_note"
+        ],
+        "title": "ResponderConsultaSchema"
+      },
+      "ShippingGuideResponseSchema": {
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "title": "Order Id"
+          },
+          "tracking_code": {
+            "type": "string",
+            "title": "Tracking Code"
+          },
+          "weight_kg": {
+            "type": "number",
+            "title": "Weight Kg"
+          },
+          "packages_count": {
+            "type": "integer",
+            "title": "Packages Count"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "tracking_code",
+          "weight_kg",
+          "packages_count",
+          "generated_at",
+          "message"
+        ],
+        "title": "ShippingGuideResponseSchema"
+      },
+      "SyncResponseSchema": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "processed_count": {
+            "type": "integer",
+            "title": "Processed Count"
+          },
+          "rejected_skus": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Rejected Skus"
+          },
+          "details": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "processed_count",
+          "rejected_skus",
+          "details"
+        ],
+        "title": "SyncResponseSchema"
+      },
+      "SystemConfigSchema": {
+        "properties": {
+          "quote_validity_days": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Quote Validity Days"
+          },
+          "default_stock_min_threshold": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Stock Min Threshold"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quote_validity_days"
+        ],
+        "title": "SystemConfigSchema"
+      },
+      "TomarConsultaResponseSchema": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "fu_id": {
+            "type": "string",
+            "title": "Fu Id"
+          },
+          "assigned_seller_id": {
+            "type": "string",
+            "title": "Assigned Seller Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "fu_id",
+          "assigned_seller_id"
+        ],
+        "title": "TomarConsultaResponseSchema"
+      },
+      "UpdateItemQuantityRequest": {
+        "properties": {
+          "cantidad": {
+            "type": "integer",
+            "title": "Cantidad"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cantidad"
+        ],
+        "title": "UpdateItemQuantityRequest"
+      },
+      "UpdateStockSchema": {
+        "properties": {
+          "stock": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Stock",
+            "description": "Stock total. No puede ser negativo (RN-SEL-001)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stock"
+        ],
+        "title": "UpdateStockSchema"
+      },
+      "UpdateUmbralSchema": {
+        "properties": {
+          "stock_min_threshold": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Stock Min Threshold",
+            "description": "Umbral mínimo de alerta de stock"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stock_min_threshold"
+        ],
+        "title": "UpdateUmbralSchema"
+      },
+      "UserBillingDataSchema": {
+        "properties": {
+          "document_type": {
+            "type": "string",
+            "title": "Document Type"
+          },
+          "document_number": {
+            "type": "string",
+            "title": "Document Number"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address"
+          }
+        },
+        "type": "object",
+        "required": [
+          "document_type",
+          "document_number",
+          "address"
+        ],
+        "title": "UserBillingDataSchema"
+      },
+      "UserListSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email"
+        ],
+        "title": "UserListSchema"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "token"
+          }
+        }
+      }
+    }
+  }
+}

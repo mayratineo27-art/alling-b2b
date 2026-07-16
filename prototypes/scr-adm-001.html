@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Panel ADMIN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB', 'primary-hover': '#1D4ED8', secondary: '#64748B', accent: '#F59E0B', success: '#10B981', warning: '#F59E0B', danger: '#EF4444', background: '#FFFFFF', foreground: '#0F172A', muted: '#F1F5F9', border: '#E2E8F0',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-muted min-h-screen flex font-sans">
+    
+    <!-- Sidebar ADMIN -->
+    <aside class="w-64 bg-slate-900 text-white min-h-screen hidden md:flex flex-col flex-shrink-0">
+        <div class="p-6 border-b border-slate-800">
+            <h1 class="text-2xl font-bold tracking-tight text-white">Alling <span class="text-xs font-normal text-slate-100 bg-danger px-2 py-1 rounded ml-1">ADMIN</span></h1>
+        </div>
+        <nav class="flex-1 py-4">
+            <ul class="space-y-1 px-3">
+                <li><a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> Resumen Global</a></li>
+                <li><a href="scr-adm-001.html" class="flex items-center gap-3 px-3 py-2 bg-danger text-white rounded-lg shadow-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Usuarios y Roles</a></li>
+                <li><a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Auditoría (Logs)</a></li>
+                <li><a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Configuración</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 bg-muted">
+        
+        <header class="bg-white border-b border-border h-16 flex items-center justify-between px-6 shadow-sm sticky top-0 z-10">
+            <h2 class="text-xl font-bold text-foreground">Gobernanza de Cuentas</h2>
+            <div class="flex items-center gap-4 text-sm font-medium text-foreground">
+                <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded border border-border">MFA Activo</span>
+                Super Admin
+            </div>
+        </header>
+
+        <div class="p-6 md:p-8 flex-1">
+            
+            <div class="mb-6 flex justify-between items-center">
+                <div class="flex gap-4 flex-1">
+                    <div class="relative w-64">
+                        <input type="text" placeholder="Buscar correo o ID..." class="w-full pl-9 pr-4 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-danger outline-none">
+                        <svg class="w-4 h-4 text-secondary absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <!-- CMP-ADM-002 Filtro Rol -->
+                    <select class="border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-danger bg-white">
+                        <option>Todos los roles</option>
+                        <option>CUSTOMER</option>
+                        <option selected>SELLER</option>
+                        <option>ADMIN</option>
+                    </select>
+                </div>
+                <!-- BTN-ADM-001 Crear -->
+                <button class="bg-danger hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm shadow-sm transition flex items-center gap-2" onclick="document.getElementById('createModal').classList.remove('hidden')">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Crear Cuenta Interna
+                </button>
+            </div>
+
+            <!-- CMP-ADM-001 Tabla de Usuarios -->
+            <div class="bg-white border border-border rounded-xl shadow-sm overflow-hidden">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-muted border-b border-border text-xs uppercase text-secondary font-semibold">
+                        <tr>
+                            <th class="px-6 py-4">Usuario / Email</th>
+                            <th class="px-6 py-4 text-center">Rol</th>
+                            <th class="px-6 py-4 text-center">Seguridad (MFA)</th>
+                            <th class="px-6 py-4 text-center">Estado</th>
+                            <th class="px-6 py-4 text-right">Acciones Peligrosas</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        
+                        <!-- SELLER Normal -->
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-foreground">Juan Vendedor</div>
+                                <div class="text-xs text-secondary mt-1">juan.v@alling.com.pe</div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="bg-slate-800 text-white text-xs px-2 py-1 rounded">SELLER</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="text-xs font-medium text-secondary">Deshabilitado (Opt-in)</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Activo</span>
+                            </td>
+                            <td class="px-6 py-4 text-right space-x-2">
+                                <!-- BTN-ADM-002 Suspender -->
+                                <button class="text-warning font-medium hover:underline text-sm border border-warning/30 px-2 py-1 rounded hover:bg-warning/10 transition" onclick="alert('Usuario suspendido (Soft-delete/Disable)')">Suspender</button>
+                                <!-- BTN-ADM-003 Eliminar -->
+                                <button class="text-danger font-medium hover:underline text-sm border border-danger/30 px-2 py-1 rounded hover:bg-danger/10 transition" onclick="alert('Confirmación de borrado permanente requerida')">Eliminar</button>
+                            </td>
+                        </tr>
+
+                        <!-- SELLER Suspendido -->
+                        <tr class="bg-gray-50 opacity-75">
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-foreground">Ana Ventas (Ex-emp)</div>
+                                <div class="text-xs text-secondary mt-1">ana.v@alling.com.pe</div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="bg-slate-800 text-white text-xs px-2 py-1 rounded">SELLER</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="text-xs font-medium text-success">Activo</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <!-- CMP-ADM-004 Badge Suspensión -->
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-800 border border-gray-300">Suspendido</span>
+                            </td>
+                            <td class="px-6 py-4 text-right space-x-2">
+                                <button class="text-success font-medium hover:underline text-sm px-2 py-1">Restaurar</button>
+                                <button class="text-danger font-medium hover:underline text-sm px-2 py-1">Eliminar Definitivo</button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CMP-ADM-003 Modal Crear (Oculto por defecto, se simula su existencia visual) -->
+        <div id="createModal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center z-50 flex">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+                <h3 class="text-lg font-bold mb-4 border-b border-border pb-2">Crear Cuenta Interna</h3>
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Correo Electrónico (Dominio Interno)</label>
+                        <input type="email" class="w-full border border-border rounded p-2 focus:ring-1 focus:ring-danger outline-none" placeholder="nombre@alling.com.pe">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Rol</label>
+                        <select class="w-full border border-border rounded p-2 focus:ring-1 focus:ring-danger outline-none">
+                            <option>SELLER</option>
+                            <option>ADMIN</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button class="px-4 py-2 border border-border rounded text-sm font-medium hover:bg-gray-50" onclick="document.getElementById('createModal').classList.add('hidden')">Cancelar</button>
+                    <button class="px-4 py-2 bg-danger text-white rounded text-sm font-bold shadow-sm" onclick="document.getElementById('createModal').classList.add('hidden'); alert('Enviando invitación con token de registro...')">Crear e Invitar</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</body>
+</html>

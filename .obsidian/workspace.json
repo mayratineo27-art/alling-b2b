@@ -1,0 +1,292 @@
+{
+  "main": {
+    "id": "778f575b6a9f7181",
+    "type": "split",
+    "children": [
+      {
+        "id": "fc3de58a13510b83",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5430310049af7089",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "env.local.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "env.local"
+            }
+          },
+          {
+            "id": "8a5d2276b8e69046",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Docs/00_project/business_rules.yaml.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "business_rules.yaml"
+            }
+          },
+          {
+            "id": "0ec7dcb09df32022",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Docs/00_project/constitución-00.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "constitución-00"
+            }
+          },
+          {
+            "id": "13c088641bbe07c8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Docs/FASE 2/CASOS_DE_PRUEBA_TEST.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CASOS_DE_PRUEBA_TEST"
+            }
+          },
+          {
+            "id": "b2133a0322496f4a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Docs/FASE 2/CRITERIOS_DE_ACEPTACION.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CRITERIOS_DE_ACEPTACION"
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "afec5ec2891b951f",
+    "type": "split",
+    "children": [
+      {
+        "id": "c48c2304cf3bbfd7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "885fe44a53a788e1",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de archivos"
+            }
+          },
+          {
+            "id": "38e9f7690e3aea2d",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": true,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Buscar"
+            }
+          },
+          {
+            "id": "be84ac2a4f9a852d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "aecbfedc3976775e",
+    "type": "split",
+    "children": [
+      {
+        "id": "489f5bcb57378c7f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "03f3d54373abbfdc",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Docs/Módulos/MOD-AUT-01.md.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Enlaces entrantes de MOD-AUT-01.md"
+            }
+          },
+          {
+            "id": "992739eee9ea8073",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Docs/Módulos/MOD-AUT-01.md.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Enlaces salientes de MOD-AUT-01.md"
+            }
+          },
+          {
+            "id": "bc7e6eb62e5e3257",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "09ee5eb6e50330fa",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Todas las propiedades"
+            }
+          },
+          {
+            "id": "e103f1b0f2a7b17d",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Docs/Módulos/MOD-AUT-01.md.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Esquema de MOD-AUT-01.md"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir selector rápido": false,
+      "graph:Abrir vista gráfica": false,
+      "canvas:Crear nuevo lienzo": false,
+      "daily-notes:Abrir la nota de hoy": false,
+      "templates:Insertar plantilla": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Crear nueva base": false
+    }
+  },
+  "active": "0ec7dcb09df32022",
+  "lastOpenFiles": [
+    "backend/requirements-dev.txt",
+    "backend/vercel.json",
+    "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_8_BACKLOG.md",
+    "backend/test_alling.db-journal",
+    "backend/tests/integration/__pycache__/test_security_rls.cpython-313-pytest-8.4.2.pyc",
+    "backend/tests/integration/__pycache__/test_checkout_integration.cpython-313-pytest-8.4.2.pyc",
+    "backend/tests/integration/__pycache__/conftest.cpython-313-pytest-8.4.2.pyc",
+    "backend/tests/integration/test_security_rls.py",
+    "backend/tests/integration/test_checkout_integration.py",
+    "backend/tests/integration/conftest.py",
+    "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_7_BACKLOG.md",
+    "backend/test_alling.db",
+    "backend/alembic/versions/__pycache__/8efc93f92400_convert_customer_id_to_uuid.cpython-313.pyc",
+    "EJECUCIÓN_SCRUM/desarrollo-GRI.md",
+    "Docs/00_project/constitución-00.md",
+    "Docs/FASE 2/actualización administrador.md",
+    "Docs/FASE 2/NOTAS DE ACTUALIZACIÓN.md",
+    "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_6_BACKLOG.md",
+    "Docs/00_project/business_rules.yaml.md",
+    "Docs/FASE 2/REQUISITOS_FUNCIONALES.md",
+    "Docs/FASE 2/CASOS_DE_USO.md",
+    "Docs/FASE 2/CRITERIOS_DE_ACEPTACION.md",
+    "frontend/public/alling-logo.png",
+    "Docs/FASE 2/CASOS_DE_PRUEBA_TEST.md",
+    "Docs/FASE 2/HISTORIAS_USUARIO.md",
+    "Docs/Módulos/MOD-FU-01.md",
+    "Docs/FASE 4_EJECUCION_SCRUM/MATRIZ_TRAZABILIDAD_GLOBAL.md",
+    "Docs/FASE 3/MATRIZ_DE_TRAZABILIDAD.md",
+    "Docs/OPS_COVERAGE_MAP.md",
+    "Docs/FASE 3/MODELO_DE_DOMINIO.md",
+    "Docs/ETDR_FORMATO_UNICO_CHECKOUT.md",
+    "Docs/FASE 4_EJECUCION_SCRUM/BUGFIX_FRONTEND_REPORT.md",
+    "desarrollo-GRI.md",
+    "Docs/FASE 4_EJECUCION_SCRUM/MATRIZ_COMPLEMENTARIA.md",
+    "DOCUMENTATION.md",
+    "Docs/FASE 4_EJECUCION_SCRUM/rutas.md",
+    "frontend/node_modules/@react-oauth/google/README.md",
+    "frontend/public/window.svg",
+    "frontend/public/vercel.svg",
+    "frontend/public/next.svg",
+    "frontend/public/globe.svg",
+    "frontend/public/file.svg",
+    "PROTOTIPO_2/dist/icons.svg",
+    "PROTOTIPO_2/dist/favicon.svg",
+    "PROTOTIPO_2/src/assets/vite.svg",
+    "PROTOTIPO_2/src/assets/react.svg"
+  ]
+}

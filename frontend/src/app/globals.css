@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ── Alling Design System ── */
+:root {
+  --alling-primary:    #10B981;
+  --alling-primary-hover: #059669;
+  --alling-text:       #111827;
+  --alling-metadata:   #9CA3AF;
+  --alling-border:     #E5E7EB;
+  --alling-success:    #10B981;
+  --alling-warning:    #F59E0B;
+  --alling-danger:     #EF4444;
+  --alling-dark-bg:    #111111;
+  --alling-white:      #FFFFFF;
+}

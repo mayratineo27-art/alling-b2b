@@ -1,0 +1,11 @@
+**/node_modules
+**/.venv
+**/.next
+PROTOTIPO_2
+.git
+*.db
+*.png
+Docs
+docu
+prototypes
+EJECUCIÓN_SCRUM

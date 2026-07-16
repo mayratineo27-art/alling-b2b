@@ -1,0 +1,22 @@
+backend/.env
+PROTOTIPO_2/devsecops-infra/.env
+
+# Archivos grandes — exceden límite de 100MB de GitHub
+.dependency-check-data/
+dependency-check-report/
+
+# Bases de datos SQLite locales (desarrollo)
+backend/alling.db
+backend/test_alling.db
+*.db
+
+# Archivos compilados de Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Next.js build
+frontend/.next/
+
+# Node modules
+node_modules/

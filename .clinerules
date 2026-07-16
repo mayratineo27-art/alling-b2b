@@ -1,0 +1,101 @@
+# 🤖 MASTER RULES FOR ALLING PROJECT (Sprint 1 Execution)
+
+## 1. 🏗️ IDENTITY AND STRICT STACK
+You are the autonomous coding agent for **Alling**, a B2B/B2C e-commerce system for optical fiber and networking. You must strictly adhere to the following stack and design system. **Do not invent new tools or frameworks.**
+
+### Backend Stack
+- **Framework:** FastAPI (Python 3.11+)
+- **ORM & Validation:** SQLModel + Pydantic V2
+- **Database:** PostgreSQL 15+ (Neon/Supabase)
+- **Auth:** JWT RS256 (python-jose), Argon2id (argon2-cffi), TOTP (pyotp)
+
+### Frontend Stack
+- **Framework:** Next.js 15 (App Router, Server/Client Components)
+- **Language:** TypeScript (Strict mode)
+- **Styling:** Tailwind CSS + shadcn/ui
+- **State & Fetching:** React Server Components, native `fetch`, Zod for client validation
+
+### UI/UX Design System (B2B Functional)
+- **Primary Color:** Turquoise/Emerald Green (`#10B981`) for CTAs.
+- **Text:** Dark Gray (`#111827`). Metadata: Light Gray (`#9CA3AF`).
+- **Borders:** Ultra-light Gray (`#E5E7EB`).
+- **Semantic States:** Success (`#10B981`), Warning (`#F59E0B`), Danger (`#EF4444`).
+- **Typography:** Inter (Google Fonts). Clean, professional, high-contrast.
+- **Layout:** Mobile-first, responsive (sm/md/lg breakpoints).
+
+---
+
+## 2. 📊 SDD WORKFLOW CYCLE (Spec-Driven Development)
+**Rule #1: NEVER invent features, endpoints, or UI elements not explicitly documented.**
+
+### Pre-Coding Checklist
+1. Read `Docs/FASE 4_EJECUCION_SCRUM/MATRIZ_TRAZABILIDAD_GLOBAL.md` to identify the target RF/RNF.
+2. Read the specific source module in `Docs/Módulos/MOD-*.md` (e.g., `MOD-FU-01.md`).
+3. Read the associated Criterios de Aceptación (CA) in `Docs/FASE 2/CRITERIOS_DE_ACEPTACION.md`.
+
+### Post-Coding Checklist
+1. Ensure the implementation matches the CA exactly.
+2. Update the status in `Docs/FASE 4_EJECUCION_SCRUM/MATRIZ_TRAZABILIDAD_GLOBAL.md` from `⏳ Pendiente` to `✅ Listo` for the completed RF.
+3. If blocked, update to `🔄 En Progreso` and document the reason.
+
+---
+
+## 3. 🔄 TDD AND BACKEND-FIRST FLOW
+**Rule #2: Backend first, then Frontend. ALWAYS follow the RED-GREEN-REFACTOR cycle.**
+
+Reference document: `Docs/FASE 4_EJECUCION_SCRUM/PLAN_DE_PRUEBAS_TDD_FASTAPI.md.`.
+
+### Execution Steps
+1. **RED (Fail):** Write the unit or integration test in `backend/tests/` based on the CA. Run `pytest`. It **MUST FAIL**.
+2. **GREEN (Pass):** Write the *minimum* code required in `backend/app/domain/`, `backend/app/services/`, or `backend/app/api/` to make the test pass. Run `pytest`. It **MUST PASS**.
+3. **REFACTOR:** Clean up the code. Ensure strict typing (`mypy`), formatting (`ruff`), and no code smells. Tests must remain green.
+4. **FRONTEND (Optional/Next):** Only after the backend endpoint is fully tested and working, implement the Next.js UI component consuming the API.
+
+### Testing Rules
+- Use `testcontainers` for PostgreSQL 15 in integration tests (do not use SQLite).
+- Use `TestClient` from FastAPI for HTTP integration tests.
+- Mock external services (MercadoPago, Telegram) using `pytest-mock`.
+
+---
+
+## 4. 🔒 ZERO TRUST SECURITY RULES
+**Rule #3: Trust no one. Every request must be authenticated, authorized, and isolated.**
+
+### Authentication & Authorization
+- **JWT:** Always use RS256. Never use HS256.
+- **Middleware:** Protect all private routes in Next.js via `middleware.ts`. Protect all FastAPI endpoints via `Depends(get_current_active_user)`.
+- **RBAC:** Enforce role checks (GUEST, CUSTOMER, SELLER, ADMIN) at the API dependency level.
+
+### Database & RLS (Row Level Security)
+- **RLS is MANDATORY.** Every sensitive table in PostgreSQL must have RLS enabled.
+- **Context:** Always set `app.current_user_id` and `app.current_role` in the DB session before executing queries.
+- **Never bypass RLS** using raw SQL or superuser connections in application code.
+
+### Data Isolation
+- A CUSTOMER must NEVER see another CUSTOMER's data, even if they guess the UUID. RLS + application-level ownership checks must prevent this.
+
+---
+
+## 5. 🛡️ DEVSECOPS AWARENESS (GRI COMPLIANCE)
+**Rule #4: Write code that passes automated security gates. Your code will be scanned.**
+
+The pipeline uses **SonarQube, Semgrep, Trivy, and OWASP Dependency-Check**.
+
+### Hard Rules for the Agent
+1. **NO Hardcoded Secrets:** Never put API keys, passwords, or tokens in the code. Use `os.getenv()` or Pydantic `Settings` reading from `.env`. Trivy will block the pipeline if it finds secrets.
+2. **NO Outdated/Vulnerable Dependencies:** When adding a new package in `requirements.txt` or `package.json`, ensure it is the latest stable version and has no known CVEs.
+3. **NO OWASP Top 10 Vulnerabilities:** 
+   - Prevent SQL Injection (use SQLModel/ORM parameters, never f-strings in queries).
+   - Prevent XSS (sanitize inputs, use Next.js default escaping).
+   - Prevent Broken Access Control (enforce RBAC/RLS).
+4. **Code Quality:** 
+   - Python: 100% type hints. No `Any` unless strictly justified.
+   - TypeScript: Strict mode. No `any`.
+   - Handle all errors explicitly. Return proper HTTP status codes (400, 401, 403, 404, 409, 500).
+
+---
+
+## 🚀 FINAL DIRECTIVE
+Before generating any code, ask yourself: 
+*"Is this in the SDD documentation? Does it follow TDD? Is it Zero Trust compliant? Will it pass Trivy/Semgrep?"* 
+If the answer to any is NO, stop and correct the approach.

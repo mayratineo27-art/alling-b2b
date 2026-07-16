@@ -1,0 +1,20 @@
+# Ignore pattern for Semgrep
+node_modules/
+.venv/
+.next/
+dist/
+build/
+*.db
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.zip
+*.tar.gz
+*.log
+*.sqlite
+**/node_modules/**
+**/.venv/**
+**/.next/**
+**/dist/**
+**/build/**

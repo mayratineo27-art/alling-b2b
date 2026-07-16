@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formato Único - Alling</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB', 'primary-hover': '#1D4ED8', secondary: '#64748B', accent: '#F59E0B', success: '#10B981', warning: '#F59E0B', danger: '#EF4444', background: '#FFFFFF', foreground: '#0F172A', muted: '#F1F5F9', border: '#E2E8F0',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-muted min-h-screen flex flex-col font-sans">
+    
+    <header class="bg-primary text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold tracking-tight">Alling</a>
+            <a href="scr-cat-001.html" class="text-white hover:text-gray-200 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Volver a Productos
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-1 max-w-5xl">
+        
+        <div class="flex justify-between items-end mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-foreground">Formato Único</h1>
+                <p class="text-secondary mt-1">Gestión de compra e intención</p>
+            </div>
+            <!-- CMP-FU-004 Badge de Estado -->
+            <div class="bg-blue-100 text-primary px-4 py-2 rounded-lg font-bold border border-blue-200 shadow-sm flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                ESTADO: BORRADOR
+            </div>
+        </div>
+
+        <div class="bg-background rounded-xl border border-border shadow-sm overflow-hidden mb-6">
+            
+            <!-- CMP-FU-001 Tabla de Ítems -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-muted border-b border-border text-xs uppercase text-secondary font-semibold">
+                            <th class="p-4 w-16">Item</th>
+                            <th class="p-4">Producto</th>
+                            <th class="p-4 text-right w-32">Precio Unit.</th>
+                            <th class="p-4 text-center w-40">Cantidad</th>
+                            <th class="p-4 text-right w-32">Subtotal</th>
+                            <th class="p-4 text-center w-16">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        <!-- Item 1 -->
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="p-4"><img src="https://via.placeholder.com/40" class="rounded border border-border"></td>
+                            <td class="p-4">
+                                <p class="font-bold text-foreground">Cable UTP Cat6 305m</p>
+                                <p class="text-xs text-success">En stock (25)</p>
+                            </td>
+                            <td class="p-4 text-right font-medium">S/ 450.00</td>
+                            <td class="p-4 text-center">
+                                <!-- CMP-FU-002 Control Cantidad -->
+                                <div class="inline-flex items-center border border-border rounded-lg bg-white overflow-hidden">
+                                    <button class="px-3 py-1 bg-muted hover:bg-gray-200 text-secondary font-bold">-</button>
+                                    <input type="text" value="2" class="w-10 text-center font-semibold text-sm outline-none">
+                                    <button class="px-3 py-1 bg-muted hover:bg-gray-200 text-secondary font-bold">+</button>
+                                </div>
+                            </td>
+                            <td class="p-4 text-right font-bold text-foreground">S/ 900.00</td>
+                            <td class="p-4 text-center">
+                                <!-- BTN-FU-001 Eliminar -->
+                                <button class="text-danger hover:text-red-700 p-2 rounded hover:bg-red-50 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                            </td>
+                        </tr>
+                        <!-- Item 2 -->
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="p-4"><img src="https://via.placeholder.com/40" class="rounded border border-border"></td>
+                            <td class="p-4">
+                                <p class="font-bold text-foreground">Patch Cord Cat6 1m</p>
+                                <p class="text-xs text-success">En stock (150)</p>
+                            </td>
+                            <td class="p-4 text-right font-medium">S/ 12.90</td>
+                            <td class="p-4 text-center">
+                                <div class="inline-flex items-center border border-border rounded-lg bg-white overflow-hidden">
+                                    <button class="px-3 py-1 bg-muted hover:bg-gray-200 text-secondary font-bold">-</button>
+                                    <input type="text" value="10" class="w-10 text-center font-semibold text-sm outline-none">
+                                    <button class="px-3 py-1 bg-muted hover:bg-gray-200 text-secondary font-bold">+</button>
+                                </div>
+                            </td>
+                            <td class="p-4 text-right font-bold text-foreground">S/ 129.00</td>
+                            <td class="p-4 text-center">
+                                <button class="text-danger hover:text-red-700 p-2 rounded hover:bg-red-50 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Acciones Inferiores -->
+            <div class="p-4 border-t border-border bg-muted flex justify-between items-center">
+                <!-- BTN-FU-002 Vaciar -->
+                <button class="text-sm font-semibold text-danger hover:underline">Vaciar Formato</button>
+                <div class="text-sm text-secondary">Última modificación: hace 2 mins</div>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6">
+            
+            <!-- CTAs Secundarios (Asesoría / B2B) -->
+            <div class="w-full md:w-1/2 flex flex-col gap-4">
+                <div class="bg-background p-6 rounded-xl border border-border shadow-sm flex items-start gap-4 h-full">
+                    <div class="p-3 bg-blue-50 text-primary rounded-full shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-foreground mb-1">¿Dudas Técnicas?</h3>
+                        <p class="text-sm text-secondary mb-3">Un asesor revisará tus requerimientos y te contactará para guiarte.</p>
+                        <!-- BTN-FU-003 Consultar -->
+                        <button class="px-4 py-2 bg-background border border-primary text-primary hover:bg-blue-50 font-bold rounded-lg text-sm transition">Solicitar Asesoría</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CMP-FU-003 Totales -->
+            <div class="w-full md:w-1/2 bg-background p-6 rounded-xl border border-border shadow-sm">
+                <h3 class="font-bold text-lg text-foreground mb-4 border-b border-border pb-2">Resumen</h3>
+                <div class="space-y-3 mb-6 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-secondary">Subtotal (12 items)</span>
+                        <span class="font-medium">S/ 872.03</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-secondary">IGV (18%)</span>
+                        <span class="font-medium">S/ 156.97</span>
+                    </div>
+                    <div class="flex justify-between pt-3 border-t border-border mt-3 text-lg font-bold text-foreground">
+                        <span>Total General</span>
+                        <span class="text-primary">S/ 1,029.00</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- BTN-FU-004 Cotizar -->
+                    <button class="w-full bg-secondary hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg transition text-sm text-center">
+                        Generar Cotización
+                    </button>
+                    <!-- BTN-FU-005 Checkout -->
+                    <button class="w-full bg-accent hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg transition text-sm flex items-center justify-center gap-2" onclick="window.location.href='scr-chk-001.html'">
+                        Comprar Ahora
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+                <p class="text-xs text-secondary text-center mt-3">Al cotizar, el precio se fijará por 15 días.</p>
+            </div>
+
+        </div>
+
+    </main>
+</body>
+</html>

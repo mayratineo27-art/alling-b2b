@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alling - Índice de Prototipos</title>
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        'primary-hover': '#1D4ED8',
+                        secondary: '#64748B',
+                        accent: '#F59E0B',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        background: '#FFFFFF',
+                        foreground: '#0F172A',
+                        muted: '#F1F5F9',
+                        border: '#E2E8F0',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-muted min-h-screen p-8">
+    <div class="max-w-4xl mx-auto bg-background rounded-xl shadow-sm p-8 border border-border">
+        <header class="mb-10 text-center border-b border-border pb-6">
+            <h1 class="text-3xl font-bold text-foreground mb-2">Alling - Hub de Prototipos</h1>
+            <p class="text-secondary">Validación Visual - Sprint 0 (SpecDD)</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Vistas GUEST / CUSTOMER -->
+            <section>
+                <h2 class="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    Vista Cliente (B2C / B2B)
+                </h2>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="scr-cat-001.html" class="block p-4 rounded-lg border border-border hover:border-primary hover:bg-blue-50 transition group">
+                            <div class="font-semibold text-foreground group-hover:text-primary">SCR-CAT-001: Catálogo</div>
+                            <div class="text-sm text-secondary">Listado de productos con filtros y buscador</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scr-cat-002.html" class="block p-4 rounded-lg border border-border hover:border-primary hover:bg-blue-50 transition group">
+                            <div class="font-semibold text-foreground group-hover:text-primary">SCR-CAT-002: Detalle Producto</div>
+                            <div class="text-sm text-secondary">Vista completa de un SKU con cantidad</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scr-fu-001.html" class="block p-4 rounded-lg border border-border hover:border-primary hover:bg-blue-50 transition group">
+                            <div class="font-semibold text-foreground group-hover:text-primary">SCR-FU-001: Formato Único</div>
+                            <div class="text-sm text-secondary">El FSM interactivo (Borrador/Cotización/Pedido)</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="scr-chk-001.html" class="block p-4 rounded-lg border border-border hover:border-primary hover:bg-blue-50 transition group">
+                            <div class="font-semibold text-foreground group-hover:text-primary">SCR-CHK-001: Checkout</div>
+                            <div class="text-sm text-secondary">Cierre de venta y pago</div>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Vistas SELLER / ADMIN -->
+            <section>
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-accent mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                        Panel Vendedor (SELLER)
+                    </h2>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="scr-sel-001.html" class="block p-4 rounded-lg border border-border hover:border-accent hover:bg-amber-50 transition group">
+                                <div class="font-semibold text-foreground group-hover:text-accent">SCR-SEL-001: Gestión de Stock</div>
+                                <div class="text-sm text-secondary">Tabla de edición y umbrales</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="scr-sel-002.html" class="block p-4 rounded-lg border border-border hover:border-accent hover:bg-amber-50 transition group">
+                                <div class="font-semibold text-foreground group-hover:text-accent">SCR-SEL-002: Pedidos y Guías</div>
+                                <div class="text-sm text-secondary">Cola de trabajo y seguimiento</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h2 class="text-xl font-bold text-danger mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        Administración (ADMIN)
+                    </h2>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="scr-adm-001.html" class="block p-4 rounded-lg border border-border hover:border-danger hover:bg-red-50 transition group">
+                                <div class="font-semibold text-foreground group-hover:text-danger">SCR-ADM-001: Usuarios</div>
+                                <div class="text-sm text-secondary">Gobernanza y gestión de cuentas</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <div class="mt-10 pt-6 border-t border-border text-center text-sm text-secondary">
+            <a href="PROTOTIPOS_JUSTIFICACION.md" class="text-primary hover:underline">Ver documento de trazabilidad de módulos</a>
+        </div>
+    </div>
+</body>
+</html>

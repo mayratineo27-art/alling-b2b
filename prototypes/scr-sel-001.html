@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Stock - Panel SELLER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB', 'primary-hover': '#1D4ED8', secondary: '#64748B', accent: '#F59E0B', success: '#10B981', warning: '#F59E0B', danger: '#EF4444', background: '#FFFFFF', foreground: '#0F172A', muted: '#F1F5F9', border: '#E2E8F0',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-muted min-h-screen flex font-sans">
+    
+    <!-- Sidebar / Menú Lateral -->
+    <aside class="w-64 bg-slate-900 text-white min-h-screen hidden md:flex flex-col flex-shrink-0">
+        <div class="p-6 border-b border-slate-800">
+            <h1 class="text-2xl font-bold tracking-tight text-white">Alling <span class="text-xs font-normal text-slate-400 bg-slate-800 px-2 py-1 rounded ml-1">SELLER</span></h1>
+        </div>
+        <nav class="flex-1 py-4">
+            <ul class="space-y-1 px-3">
+                <li><a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> Dashboard</a></li>
+                <li><a href="scr-sel-002.html" class="flex items-center gap-3 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg> Pedidos & Cotiz.</a></li>
+                <li><a href="#" class="flex items-center gap-3 px-3 py-2 bg-primary text-white rounded-lg shadow-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg> Inventario</a></li>
+                <li><a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg> Consultas</a></li>
+            </ul>
+        </nav>
+        <div class="p-4 border-t border-slate-800 text-sm">
+            <a href="index.html" class="flex items-center gap-2 text-slate-400 hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg> Cerrar Sesión</a>
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 flex flex-col min-w-0 bg-muted">
+        
+        <!-- Header Superior Mobile/Desktop -->
+        <header class="bg-white border-b border-border h-16 flex items-center justify-between px-6 shadow-sm sticky top-0 z-10">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-secondary"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+                <h2 class="text-xl font-bold text-foreground">Gestión de Inventario</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-sm font-medium text-foreground">Juan Vendedor</div>
+                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">J</div>
+            </div>
+        </header>
+
+        <div class="p-6 md:p-8 flex-1">
+            
+            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <p class="text-secondary text-sm">Actualiza el stock manual y define umbrales de alerta temprana.</p>
+                
+                <!-- Buscador / Filtro -->
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <div class="relative flex-1 sm:w-64">
+                        <input type="text" placeholder="Buscar SKU o nombre..." class="w-full pl-9 pr-4 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary outline-none">
+                        <svg class="w-4 h-4 text-secondary absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <button class="bg-white border border-border px-3 py-2 rounded-lg hover:bg-gray-50 text-secondary"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg></button>
+                </div>
+            </div>
+
+            <!-- CMP-SEL-001 Tabla Editable -->
+            <div class="bg-background border border-border rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-muted border-b border-border text-xs uppercase text-secondary font-semibold">
+                            <tr>
+                                <th class="px-6 py-4">SKU / Producto</th>
+                                <th class="px-6 py-4 text-center">Estado Stock</th>
+                                <th class="px-6 py-4 text-center">Stock Actual (Físico)</th>
+                                <th class="px-6 py-4 text-center">Umbral Mínimo</th>
+                                <th class="px-6 py-4 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                            
+                            <!-- Producto Normal -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-foreground">Cable UTP Cat6 305m</div>
+                                    <div class="text-xs text-secondary mt-0.5">SIG-UTP6-305M</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span> Normal
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center">
+                                        <input type="number" value="25" class="w-20 text-center border border-border rounded px-2 py-1 focus:ring-1 focus:ring-primary focus:border-primary outline-none font-bold">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center">
+                                        <input type="number" value="10" class="w-20 text-center border border-transparent hover:border-border rounded bg-gray-50 px-2 py-1 focus:ring-1 focus:ring-primary focus:border-primary outline-none focus:bg-white transition">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <!-- BTN-SEL-001 -->
+                                    <button class="text-primary font-medium hover:underline text-sm" onclick="alert('Stock actualizado')">Guardar</button>
+                                </td>
+                            </tr>
+
+                            <!-- Producto Alerta -->
+                            <tr class="bg-amber-50/50 hover:bg-amber-50">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-foreground">Switch 24 puertos Gigabit</div>
+                                    <div class="text-xs text-secondary mt-0.5">CIS-SW24-GB</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <!-- CMP-SEL-004 Badge Alerta -->
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        Bajo Stock
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center">
+                                        <input type="number" value="3" class="w-20 text-center border-2 border-amber-400 rounded px-2 py-1 focus:ring-1 focus:ring-primary focus:border-primary outline-none font-bold text-amber-700 bg-amber-50">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center">
+                                        <input type="number" value="5" class="w-20 text-center border border-transparent hover:border-border rounded bg-white px-2 py-1 outline-none">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <button class="text-primary font-medium hover:underline text-sm" onclick="alert('Stock actualizado')">Guardar</button>
+                                </td>
+                            </tr>
+
+                            <!-- Producto Agotado -->
+                            <tr class="bg-red-50/30 hover:bg-red-50/60">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-foreground opacity-70">Conector RJ45 Cat6 (caja 100u)</div>
+                                    <div class="text-xs text-secondary mt-0.5 opacity-70">3M-RJ45-C6</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                                        Agotado
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center">
+                                        <input type="number" value="0" class="w-20 text-center border border-red-200 rounded px-2 py-1 outline-none font-bold text-red-600 bg-red-50">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center">
+                                        <input type="number" value="2" class="w-20 text-center border border-transparent hover:border-border rounded bg-white px-2 py-1 outline-none">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <button class="text-primary font-medium hover:underline text-sm">Guardar</button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="px-6 py-4 border-t border-border bg-white flex justify-between items-center text-sm text-secondary">
+                    <span>Mostrando 3 de 156 productos</span>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 border border-border rounded hover:bg-gray-50 disabled:opacity-50" disabled>Ant</button>
+                        <button class="px-3 py-1 border border-border rounded bg-primary text-white">1</button>
+                        <button class="px-3 py-1 border border-border rounded hover:bg-gray-50 text-foreground">2</button>
+                        <button class="px-3 py-1 border border-border rounded hover:bg-gray-50 text-foreground">Sig</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>

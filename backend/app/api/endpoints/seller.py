@@ -22,12 +22,10 @@ from app.api.deps import get_db
 from app.core.security import oauth2_scheme
 from app.services.auth_service import AuthService
 from app.models.order import Order, OrderStatus
-from app.infra.repositories.in_memory_product_repository import InMemoryProductRepository
+from app.models.product import ProductModel
+from app.models.system_config import SystemConfigModel
 
 router = APIRouter()
-
-# ─── Product repository (singleton — same instance as catalogo) ─────────────
-_product_repo = InMemoryProductRepository()
 
 
 # ─── Role guard ─────────────────────────────────────────────────────────────
@@ -135,27 +133,29 @@ class ShippingGuideResponseSchema(BaseModel):
 @router.get("/stock", response_model=List[ProductStockSchema])
 def listar_stock(
     seller_id: str = Depends(require_seller),
+    db: Session = Depends(get_db),
 ):
     """
-    RF-SEL-001: Lista todos los productos con stock real.
+    RF-SEL-001: Lista todos los productos con stock real desde la base de datos.
     RN-SEL-002: stock_real = stock_total - reserved_stock.
     Solo accesible por SELLER o ADMIN.
     
     @sdd-endpoint GET /seller/stock
     @sdd-rf RF-SEL-001
     """
-    products = _product_repo.list_all()
+    threshold_cfg = db.query(SystemConfigModel).filter(SystemConfigModel.key == "default_stock_min_threshold").first()
+    default_threshold = int(threshold_cfg.value) if threshold_cfg else 5
+
+    products = db.query(ProductModel).all()
     result = []
     for p in products:
         stock_real = p.stock - p.reserved_stock
-        # stock_min_threshold is not on the Product dataclass (field not defined);
-        # fall back to the conventional default of 5 for MVP.
-        min_threshold = getattr(p, "stock_min_threshold", 5)
+        min_threshold = (p.specs or {}).get("stock_min_threshold", default_threshold) if p.specs else default_threshold
         result.append(
             ProductStockSchema(
                 product_id=str(p.id),
                 name=p.name,
-                sku=p.sku,
+                sku=p.sku or "",
                 stock_total=p.stock,
                 reserved_stock=p.reserved_stock,
                 stock_real=stock_real,
@@ -173,9 +173,10 @@ def actualizar_stock(
     product_id: str,
     body: UpdateStockSchema,
     seller_id: str = Depends(require_seller),
+    db: Session = Depends(get_db),
 ):
     """
-    RF-SEL-002: Actualiza el stock de un producto.
+    RF-SEL-002: Actualiza el stock de un producto en la base de datos.
     RN-SEL-001: stock >= 0 (enforced by Pydantic Field ge=0).
     SELLER puede editar stock únicamente — no precio, nombre ni descripción.
     
@@ -187,18 +188,20 @@ def actualizar_stock(
     except ValueError:
         raise HTTPException(status_code=404, detail=f"Producto '{product_id}' no encontrado")
 
-    product = _product_repo.get_by_id(pid)
+    product = db.query(ProductModel).filter(ProductModel.id == pid).first()
     if not product:
         raise HTTPException(status_code=404, detail=f"Producto '{product_id}' no encontrado")
 
-    updated = dataclasses.replace(product, stock=body.stock)
-    _product_repo.save(updated)
+    product.stock = body.stock
+    db.add(product)
+    db.commit()
+    db.refresh(product)
 
     return {
         "message": "Stock actualizado correctamente",
         "product_id": product_id,
-        "new_stock": body.stock,
-        "stock_real": body.stock - updated.reserved_stock,
+        "new_stock": product.stock,
+        "stock_real": product.stock - product.reserved_stock,
     }
 
 
@@ -209,14 +212,11 @@ def actualizar_umbral(
     product_id: str,
     body: UpdateUmbralSchema,
     seller_id: str = Depends(require_seller),
+    db: Session = Depends(get_db),
 ):
     """
-    RF-SEL-003: Configura el umbral mínimo de alerta de stock para un producto.
+    RF-SEL-003: Configura el umbral mínimo de alerta de stock para un producto en la base de datos (guardado en specs).
     RN-CALC-03: alerta cuando stock_real <= stock_min_threshold.
-
-    Note: Product is a frozen dataclass without a stock_min_threshold field.
-    In MVP the threshold is persisted in-memory on the repo; in production
-    this would be a separate column or a dedicated table.
     
     @sdd-endpoint PATCH /seller/stock/{product_id}/umbral
     @sdd-rf RF-SEL-003
@@ -226,17 +226,14 @@ def actualizar_umbral(
     except ValueError:
         raise HTTPException(status_code=404, detail=f"Producto '{product_id}' no encontrado")
 
-    product = _product_repo.get_by_id(pid)
+    product = db.query(ProductModel).filter(ProductModel.id == pid).first()
     if not product:
         raise HTTPException(status_code=404, detail=f"Producto '{product_id}' no encontrado")
 
-    # Product dataclass may not have stock_min_threshold as a declared field.
-    # We attempt to replace it only if the dataclass supports it; otherwise we
-    # acknowledge the update at the API level (MVP limitation documented in
-    # MOD-SEL-01 design notes).
-    if "stock_min_threshold" in {f.name for f in dataclasses.fields(product)}:
-        updated = dataclasses.replace(product, stock_min_threshold=body.stock_min_threshold)
-        _product_repo.save(updated)
+    # Guardar en specs JSON para no alterar el esquema SQL
+    product.specs = {**(product.specs or {}), "stock_min_threshold": body.stock_min_threshold}
+    db.add(product)
+    db.commit()
 
     return {
         "message": "Umbral mínimo actualizado",

@@ -58,6 +58,8 @@ Aunque el backend FastAPI es una **unidad lógica única**, la arquitectura **no
 
 #### Diagrama de Contexto C4 (Level 1)
 
+
+
 ┌─────────────────────────────────────────────────────────────────┐
 │ USUARIOS │
 │ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
@@ -69,7 +71,7 @@ Aunque el backend FastAPI es una **unidad lógica única**, la arquitectura **no
 │ HTTPS
 ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ ALLENG (Sistema) │
+│ ALLING (Sistema) │
 │ ┌───────────────────────────────────────────────────────────┐ │
 │ │ Frontend: Next.js 15 (SSG/SSR/ISR) + Tailwind + shadcn │ │
 │ └───────────────────────────┬───────────────────────────────┘ │

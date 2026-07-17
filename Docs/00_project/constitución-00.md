@@ -1,11 +1,8 @@
-¡Excelente idea! Una **Constitución del Sistema** es fundamental para establecer los principios, valores y reglas de juego que guiarán el desarrollo de Alling B2B. Te ayudo a crearla:
-
----
 
 # 📜 CONSTITUCIÓN DEL SISTEMA ALLING B2B
 
 **Versión:** 1.0  
-**Fecha de creación:** Julio 2026  
+**Fecha de creación:** Junio 2026  
 **Metodología:** Scrum + Spec-Driven Development (SDD)  
 **Stack:** Next.js 14 + FastAPI + PostgreSQL
 

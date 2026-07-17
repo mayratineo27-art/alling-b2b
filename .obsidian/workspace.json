@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Docs/00_project/constitución-00.md",
+                "file": "Docs/FASE 3/ARQUITECTURA.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "constitución-00"
+              "title": "ARQUITECTURA"
             }
           },
           {
@@ -240,23 +240,27 @@
       "bases:Crear nueva base": false
     }
   },
-  "active": "0ec7dcb09df32022",
+  "active": "885fe44a53a788e1",
   "lastOpenFiles": [
-    "backend/api/index.py",
-    "backend/api",
-    "backend/requirements-dev.txt",
-    "backend/vercel.json",
+    "htmlcov/z_e381c41b130aa9eb___init___py.html",
+    "htmlcov/z_e381c41b130aa9eb_ui_config_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_telegram_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_token_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_scheduler_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_shipping_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_inventory_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_product_query_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_notification_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_payment_service_py.html",
+    "htmlcov/z_e381c41b130aa9eb_mfa_service_py.html",
+    "htmlcov/keybd_closed_cb_900cfef5.png",
+    "htmlcov/favicon_32_cb_c827f16f.png",
+    "modelo_dominio_alling.png",
+    "Docs/FASE 3/ARQUITECTURA.md",
+    "Docs/00_project/constitución-00.md",
     "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_8_BACKLOG.md",
-    "backend/test_alling.db-journal",
-    "backend/tests/integration/__pycache__/test_security_rls.cpython-313-pytest-8.4.2.pyc",
-    "backend/tests/integration/__pycache__/test_checkout_integration.cpython-313-pytest-8.4.2.pyc",
-    "backend/tests/integration/__pycache__/conftest.cpython-313-pytest-8.4.2.pyc",
-    "backend/tests/integration/test_security_rls.py",
-    "backend/tests/integration/test_checkout_integration.py",
-    "backend/tests/integration/conftest.py",
     "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_7_BACKLOG.md",
     "EJECUCIÓN_SCRUM/desarrollo-GRI.md",
-    "Docs/00_project/constitución-00.md",
     "Docs/FASE 2/actualización administrador.md",
     "Docs/FASE 2/NOTAS DE ACTUALIZACIÓN.md",
     "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_6_BACKLOG.md",
@@ -278,15 +282,11 @@
     "Docs/FASE 4_EJECUCION_SCRUM/MATRIZ_COMPLEMENTARIA.md",
     "DOCUMENTATION.md",
     "Docs/FASE 4_EJECUCION_SCRUM/rutas.md",
-    "frontend/node_modules/@react-oauth/google/README.md",
     "frontend/public/window.svg",
     "frontend/public/vercel.svg",
     "frontend/public/next.svg",
     "frontend/public/globe.svg",
     "frontend/public/file.svg",
-    "PROTOTIPO_2/dist/icons.svg",
-    "PROTOTIPO_2/dist/favicon.svg",
-    "PROTOTIPO_2/src/assets/vite.svg",
-    "PROTOTIPO_2/src/assets/react.svg"
+    "PROTOTIPO_2/dist/icons.svg"
   ]
 }

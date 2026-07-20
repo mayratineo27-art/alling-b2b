@@ -1,6 +1,8 @@
-import pytest
-from sqlmodel import SQLModel, create_engine, Session
-from testcontainers.postgres import PostgresContainer
+try:
+    from testcontainers.postgres import PostgresContainer
+except ImportError:
+    PostgresContainer = None
+
 from app.db.database import Base
 from app.main import app as fastapi_app
 from app.db.database import get_session
@@ -8,6 +10,8 @@ from app.api.deps import get_db
 
 @pytest.fixture(scope="session")
 def postgres_container():
+    if PostgresContainer is None:
+        pytest.skip("testcontainers no instalado")
     with PostgresContainer("postgres:15-alpine") as postgres:
         yield postgres
 

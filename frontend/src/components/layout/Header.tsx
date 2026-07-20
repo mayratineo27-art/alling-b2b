@@ -110,7 +110,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Block 2: Nav menu */}
+      {/* Block 2: Nav menu (v1.8.0 - Formato Único navigation active) */}
       <nav className="border-t border-[var(--alling-border)] bg-white" aria-label="Menú principal">
         <div className="max-w-7xl mx-auto px-4">
           <ul className="flex items-center gap-0 text-sm font-medium" role="list">

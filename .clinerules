@@ -95,7 +95,7 @@ The pipeline uses **SonarQube, Semgrep, Trivy, and OWASP Dependency-Check**.
 
 ---
 
-## 🚀 FINAL DIRECTIVE
-Before generating any code, ask yourself: 
-*"Is this in the SDD documentation? Does it follow TDD? Is it Zero Trust compliant? Will it pass Trivy/Semgrep?"* 
-If the answer to any is NO, stop and correct the approach.
+## 🛡️ SDD COMPLIANCE GUARD (GUARDIÁN DE CUMPLIMIENTO SDD)
+
+Validación Previa: "Antes de realizar cualquier modificación de código en el backend o frontend, debes validar si el cambio solicitado entra en conflicto con las especificaciones del negocio escritas en la carpeta Docs/ (Requisitos Funcionales, Reglas de Negocio, Criterios Gherkin) o con este archivo .clinerules."
+Bloqueo y Advertencia: "Si detectas que la solicitud del usuario contradice o viola una regla de negocio o requisito especificado, tienes prohibido escribir código directamente. Debes detenerte inmediatamente, advertir al usuario citando el ID del requisito que se está rompiendo y requerirle que primero se modifique el archivo de especificación correspondiente en la carpeta Docs/ antes de poder tocar el código."

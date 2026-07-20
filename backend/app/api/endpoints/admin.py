@@ -35,8 +35,7 @@ from app.models.category import CategoryModel
 from app.models.system_config import SystemConfigModel
 from app.models.formato_unico import FormatoUnico as FormatoUnicoModel
 from app.infra.repositories.in_memory_product_repository import InMemoryProductRepository
-from app.core.deps import get_product_repository, get_kit_service
-from app.services.kit_service import KitService
+from app.core.deps import get_product_repository
 from app.domain.product import Product
 
 router = APIRouter()
@@ -50,7 +49,8 @@ _system_config = {
     "default_stock_min_threshold": 5,
 }
 
-# Kits persistidos directamente en base de datos.
+# ─── In-memory Kit store (MVP — production: DB table) ───────────────────────
+_kits_store: dict = {}
 
 
 # ─── Role guard ─────────────────────────────────────────────────────────────
@@ -542,87 +542,38 @@ def exportar_datos(
 # ─── RF-ADM-009: CRUD Kits ──────────────────────────────────────────────────
 
 @router.get("/kits")
-def listar_kits_admin(
-    admin_info: tuple = Depends(require_admin),
-    kit_service: KitService = Depends(get_kit_service),
-):
+def listar_kits_admin(admin_info: tuple = Depends(require_admin)):
     """
-    RF-ADM-009: Lista todos los kits persitidos en base de datos.
+    RF-ADM-009: Lista todos los kits (MVP: in-memory).
     
     @sdd-endpoint GET /admin/kits
     @sdd-rf RF-ADM-009
     """
-    kits = kit_service.kit_repo.list_all()
-    result = []
-    for k in kits:
-        component_ids = []
-        for comp in k.components:
-            for _ in range(comp.quantity):
-                component_ids.append(str(comp.product_id))
-        result.append({
-            "id": str(k.id),
-            "name": k.name,
-            "description": k.description,
-            "component_ids": component_ids,
-            "created_at": datetime.utcnow().isoformat(),
-        })
-    return result
+    return list(_kits_store.values())
 
 
 @router.post("/kits", status_code=201)
 def crear_kit(
     body: KitCreateSchema,
     admin_info: tuple = Depends(require_admin),
-    kit_service: KitService = Depends(get_kit_service),
 ):
     """
-    RF-ADM-009: Crea un nuevo kit de productos persistido en base de datos.
+    RF-ADM-009: Crea un nuevo kit de productos.
     BTN-ADM-009: mínimo 2 componentes.
     
     @sdd-endpoint POST /admin/kits
     @sdd-rf RF-ADM-009
     """
-    from app.domain.kit import Kit as DomainKit, KitComponent as DomainKitComponent
-    from uuid import UUID
-    import uuid
-
-    # Contar frecuencia de componentes
-    freq = {}
-    for pid_str in body.component_ids:
-        freq[pid_str] = freq.get(pid_str, 0) + 1
-
-    components = []
-    for pid_str, qty in freq.items():
-        try:
-            pid = UUID(pid_str)
-        except ValueError:
-            raise HTTPException(status_code=400, detail=f"ID de producto inválido: {pid_str}")
-        
-        # Validar existencia del producto
-        product = kit_service.product_repo.get_by_id(pid)
-        if not product:
-            raise HTTPException(status_code=404, detail=f"Producto {pid_str} no encontrado en el catálogo")
-        
-        components.append(DomainKitComponent(product_id=pid, quantity=qty))
-
-    kit_id = uuid.uuid4()
-    domain_kit = DomainKit(
-        id=kit_id,
-        name=body.name,
-        description=body.description,
-        components=components,
-        image_url=None
-    )
-    
-    kit_service.kit_repo.add(domain_kit)
-    
-    return {
-        "id": str(kit_id),
+    kit_id = str(uuid.uuid4())
+    kit = {
+        "id": kit_id,
         "name": body.name,
         "description": body.description,
         "component_ids": body.component_ids,
         "created_at": datetime.utcnow().isoformat(),
     }
+    _kits_store[kit_id] = kit
+    return kit
 
 
 # ─── Módulo de Categorías ───────────────────────────────────────────────────

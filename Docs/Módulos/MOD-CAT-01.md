@@ -480,7 +480,7 @@ class KitComponent(SQLModel, table=True):
 
 ---
 
-### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+### 🔘 Mapeo de Botones y Requerimiento de Color
 
 | ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
 | :--- | :--- | :--- | :--- |

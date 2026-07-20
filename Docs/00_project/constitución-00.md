@@ -231,12 +231,3 @@ Como investigador único del proyecto Alling B2B, me comprometo a:
 *"Esta constitución no es un documento estático; evolucionará con el proyecto mediante retrospectivas y actualizaciones controladas."*
 
 ---
-
-## 📎 ANEXOS
-
-- Anexo A: Checklist de DoD SDD
-- Anexo B: Plantilla de Spec Técnica (ETDR)
-- Anexo C: Guía de Commits Convencionales
-- Anexo D: Matriz de Roles Scrum Detallada
-
----

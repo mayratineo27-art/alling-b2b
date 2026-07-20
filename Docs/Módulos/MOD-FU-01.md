@@ -728,7 +728,7 @@ Ninguno propio identificado más allá de los ya cubiertos transversalmente en `
 
 ---
 
-### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+### 🔘 Mapeo de Botones y Requerimiento de Color
 
 | ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
 | :--- | :--- | :--- | :--- |

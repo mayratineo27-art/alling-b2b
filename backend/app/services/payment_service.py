@@ -33,9 +33,7 @@ class PaymentService:
         success_url = f"{frontend_url}/checkout/confirmacion/{order_token}" if order_token else f"{frontend_url}/checkout/confirmacion/{fu_id}"
         failure_url = f"{frontend_url}/checkout/error?order_token={order_token or fu_id}"
 
-        # Si es un token mock/demo de prueba o no se ha configurado token real de Mercado Pago,
-        # retornamos la URL de confirmación sandbox directa para que el checkout no falle.
-        if not access_token or access_token in ["TEST-mock-token", "mock-token"] or access_token.startswith("TEST-mock"):
+        if not access_token:
             return success_url
 
         sdk = mercadopago.SDK(access_token)
@@ -69,13 +67,16 @@ class PaymentService:
                     or "127.0.0.1" in frontend_url
                 )
                 if is_sandbox:
-                    return resp.get("sandbox_init_point") or resp.get("init_point") or f"{frontend_url}/checkout/confirmacion/{order_token or fu_id}"
-                return resp.get("init_point") or f"{frontend_url}/checkout/confirmacion/{order_token or fu_id}"
+                    return resp.get("sandbox_init_point") or resp.get("init_point") or success_url
+                return resp.get("init_point") or success_url
             else:
-                return f"{frontend_url}/checkout/confirmacion/{order_token or fu_id}"
+                return success_url
+        except (TimeoutError, PaymentGatewayError):
+            raise PaymentGatewayError("Payment gateway timeout", retry_allowed=True)
         except Exception:
-            # Fallback seguro en demo/sandbox si la API de Mercado Pago rechaza el token ficticio
-            return f"{frontend_url}/checkout/confirmacion/{order_token or fu_id}"
+            if access_token in ["TEST-mock-token", "mock-token"] or access_token.startswith("TEST-mock"):
+                return success_url
+            raise
         except TimeoutError:
             raise PaymentGatewayError("Payment gateway timeout", retry_allowed=True)
         except Exception as e:

@@ -37,15 +37,23 @@ Este sprint (conocido como *Hardening Sprint*) tiene como propósito blindar la 
 
 ## 2. QA — Pruebas End-to-End (Frontend)
 
-*Se utilizará `Playwright` para simular la navegación de un usuario real en el navegador.*
+*Se utiliza `Playwright` para simular la navegación de un usuario e interacción real en el navegador.*
 
-### T7-E2E1 — Flujo Básico de Compra GUEST (MOD-FU)
-- **Descripción:** Implementar `TC_ALLING_E2E_001`. El script de Playwright debe: Entrar a la landing → Buscar "Cable Fibra" → Agregar 2 al carrito → Abrir Drawer → Ir al Checkout → Llenar formulario de envío → Verificar redirección a Mercado Pago (Mock).
-- **DoD:** Video o artefacto de Playwright demostrando el flujo exitoso sin errores en consola 400/500.
+### T7-E2E1 — Navegación del Catálogo y Adición a Formato Único (MOD-FU) ✅ Completado
+- **Descripción:** Implementar `TC_ALLING_E2E_001` (`flujo-guest.spec.ts`). Navegar por el catálogo público como usuario visitante, seleccionar productos y agregarlos exitosamente al Formato Único.
+- **DoD:** Ejecución automatizada en Playwright validando la presencia del producto en el borrador y actualización del contador de la cabecera.
 
-### T7-E2E2 — Bloqueo de UI en Estado de PEDIDO (MOD-FU)
-- **Descripción:** Implementar `TC_ALLING_E2E_002`. Validar que si el carrito está en `PEDIDO`, el usuario visualice el *Banner de Advertencia* en el Drawer y no pueda sumar/restar cantidades (los botones `+` y `-` deben estar ocultos o deshabilitados).
-- **DoD:** Aserción visual en Playwright garantizando la ausencia de controles de edición si el carrito está bloqueado.
+### T7-E2E2 — Completar Formulario de Checkout y Proceder a Pago (MOD-CHK) ✅ Completado
+- **Descripción:** Implementar `TC_ALLING_E2E_002` (`flujo-checkout.spec.ts`). Validar la carga del Formato Único en la pantalla de checkout, el llenado del formulario de envío y la transición al flujo de pago.
+- **DoD:** Script de Playwright completando el formulario de checkout y verificando la preparación de la orden de pago.
+
+### T7-E2E3 — Creación de Producto desde Panel Admin (MOD-ADM) ✅ Completado
+- **Descripción:** Implementar `TC_ALLING_E2E_003` (`flujo-admin-crear-producto.spec.ts`). Iniciar sesión como Administrador, registrar un nuevo producto desde el panel de gestión y verificar su inmediata disponibilidad en el catálogo público.
+- **DoD:** Prueba E2E pasando exitosamente y confirmando la persistencia y visibilidad del nuevo producto.
+
+### T7-E2E4 — Creación de Kit Personalizado B2B desde Panel Admin (MOD-ADM) ✅ Completado
+- **Descripción:** Implementar `TC_ALLING_E2E_004` (`flujo-admin-crear-kit.spec.ts`). Iniciar sesión como Administrador, armar un kit de productos B2B desde el módulo administrativo y comprobar su visibilidad en el catálogo de Kits.
+- **DoD:** Aserción en Playwright garantizando que el kit creado aparece correctamente publicado para los clientes.
 
 ---
 

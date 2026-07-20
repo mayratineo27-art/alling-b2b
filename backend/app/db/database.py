@@ -12,13 +12,19 @@ connect_args = {}
 if DATABASE_URL.startswith("sqlite"):
     connect_args["check_same_thread"] = False
 elif DATABASE_URL.startswith("postgresql://"):
-    # En Vercel serverless usamos pg8000 (pure Python, sin extensiones C)
-    # psycopg2-binary no está disponible en el entorno Lambda de Vercel
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
+    try:
+        import pg8000
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
+    except ImportError:
+        try:
+            import psycopg2
+            DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+        except ImportError:
+            pass
 
 engine = create_engine(
     DATABASE_URL,
-    echo=False,  # Cambiar a True solo para debug de SQL en desarrollo
+    echo=False,
     connect_args=connect_args,
     pool_pre_ping=True,
     pool_recycle=1800

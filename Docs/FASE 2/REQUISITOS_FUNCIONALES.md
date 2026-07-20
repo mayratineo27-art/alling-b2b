@@ -6,7 +6,7 @@
 | **Estado** | Derivado del Inventario Funcional Maestro (10 módulos congelados) |
 | **Fuente de verdad** | `MOD-CAT-01`, `MOD-FU-01`, `MOD-CHK-01`, `MOD-CON-01`, `MOD-COT-01`, `MOD-SEL-01`, `MOD-ADM-01`, `MOD-AUT-01`, `MOD-DIS-01`, `MOD-SYS-01` |
 | **Metodología** | SpecDD — derivación directa de Operaciones Funcionales (OPS), sin invención |
-| **Total de RFs** | 55 |
+| **Total de RFs** | 56 |
 
 ---
 
@@ -49,7 +49,7 @@ Cuando un campo aparece como _(reservado)_ significa que la OPS ya introdujo el 
 |---|---:|---|
 | MOD-CAT-01 (Catálogo) | 3 | RF-CAT-001 a RF-CAT-003 |
 | MOD-FU-01 (Formato Único) | 11 | RF-FU-001 a RF-FU-011 |
-| MOD-CHK-01 (Checkout) | 8 | RF-CHK-001 a RF-CHK-008 |
+| MOD-CHK-01 (Checkout) | 9 | RF-CHK-001 a RF-CHK-008, RF-ORD-001 |
 | MOD-CON-01 (Consulta — vista SELLER) | 4 | RF-CON-001 a RF-CON-004 |
 | MOD-COT-01 (Cotización — vista SELLER) | 3 | RF-COT-001 a RF-COT-003 |
 | MOD-SEL-01 (Panel SELLER — stock/pedidos/guías) | 6 | RF-SEL-001 a RF-SEL-006 |
@@ -57,7 +57,7 @@ Cuando un campo aparece como _(reservado)_ significa que la OPS ya introdujo el 
 | MOD-AUT-01 (Autenticación) | 6 | RF-AUT-001 a RF-AUT-006 |
 | MOD-DIS-01 (Integración DISTRIBUTOR) | 4 | RF-DIS-001 a RF-DIS-004 |
 | MOD-SYS-01 (Sistema transversal) | 2 | RF-SYS-001 a RF-SYS-002 |
-| **Total** | **55** | — |
+| **Total** | **56** | — |
 
 ---
 
@@ -528,6 +528,25 @@ Cuando un campo aparece como _(reservado)_ significa que la OPS ya introdujo el 
 | **UC** | UC-CHK-004 |
 | **CA** | CA-CHK-008 |
 | **TEST** | TEST-CHK-008 |
+
+---
+
+#### RF-ORD-001 — Listar y consultar detalle de pedidos (Orders)
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Permitir al cliente consultar su historial de pedidos y verificar el estado y los detalles de una compra específica. |
+| **Descripción** | El sistema debe exponer endpoints para listar todos los pedidos del usuario autenticado (`GET /orders`) y ver el detalle completo de un pedido específico (`GET /orders/{order_id}`). Debe aplicar validación estricta de propiedad (Zero Trust/RLS) para que un cliente solo acceda a sus propios pedidos. |
+| **Actores** | CUSTOMER, GUEST (vía orderToken) |
+| **Prioridad** | CRÍTICA |
+| **Módulo de origen** | MOD-CHK-01 |
+| **OPS de origen** | OPS-CHK-006 |
+| **RN** | RN-CHK-006 |
+| **RNF** | RNF-SEC-001 |
+| **HU** | HU-CHK-003 |
+| **UC** | UC-CHK-003 |
+| **CA** | CA-CHK-006 |
+| **TEST** | TEST-CHK-006 |
 
 ---
 

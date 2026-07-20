@@ -259,3 +259,13 @@ Este módulo no define funcionalidades automáticas propias. La expiración y el
 
 ---
 
+
+
+---
+
+### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+
+| ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
+| :--- | :--- | :--- | :--- |
+| **`BTN-CON-001`** | Tomar Consulta Preventa | `src/app/vendedor/consultas/page.tsx` | **Azul Operativo (`#2563EB`)** con texto blanco. |
+| **`BTN-CON-002`** | Enviar Respuesta a Cliente | `src/app/vendedor/consultas/[id]/page.tsx` | **Verde Esmeralda (`#10B981`)** con texto blanco. |

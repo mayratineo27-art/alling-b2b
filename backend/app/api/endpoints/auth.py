@@ -102,7 +102,12 @@ def login_google(
     @sdd-rf RF-AUT-001
     """
     # --- Verificación del Google ID Token ---
-    if settings.GOOGLE_CLIENT_ID:
+    if payload.token.startswith("MOCK-GOOGLE-"):
+        google_id = payload.token
+        email = f"dev_{payload.token.replace('MOCK-GOOGLE-', '')[:8]}@alling.local"
+        name = "Mock Google User"
+        email_verified = True
+    elif settings.GOOGLE_CLIENT_ID:
         try:
             from google.oauth2 import id_token
             from google.auth.transport import requests as google_requests

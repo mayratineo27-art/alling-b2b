@@ -19,7 +19,9 @@ elif DATABASE_URL.startswith("postgresql://"):
 engine = create_engine(
     DATABASE_URL,
     echo=False,  # Cambiar a True solo para debug de SQL en desarrollo
-    connect_args=connect_args
+    connect_args=connect_args,
+    pool_pre_ping=True,
+    pool_recycle=1800
 )
 
 def get_session() -> Session:

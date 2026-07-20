@@ -525,3 +525,11 @@
 **NAV-CHK-007:** SCR-CHK-001 → Mercado Pago (redirección externa)
 **NAV-CHK-008:** Mercado Pago → SCR-CHK-002 (confirmación)
 **NAV-CHK-009:** SCR-CHK-002 → SCR-CHK-003 (mis pedidos, si CUSTOMER)
+
+---
+
+### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+
+| ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
+| :--- | :--- | :--- | :--- |
+| **`BTN-CHK-001`** | Confirmar y Pagar (Mercado Pago) | `src/app/checkout/page.tsx` | **Verde Esmeralda CTA (`#10B981`)** con texto blanco. |

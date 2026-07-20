@@ -556,6 +556,7 @@ def listar_kits_admin(admin_info: tuple = Depends(require_admin)):
 def crear_kit(
     body: KitCreateSchema,
     admin_info: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
 ):
     """
     RF-ADM-009: Crea un nuevo kit de productos.
@@ -564,7 +565,13 @@ def crear_kit(
     @sdd-endpoint POST /admin/kits
     @sdd-rf RF-ADM-009
     """
-    kit_id = str(uuid.uuid4())
+    from app.models.kit import KitModel, KitComponentLink
+    from collections import Counter
+
+    kit_uuid = uuid.uuid4()
+    kit_id = str(kit_uuid)
+    
+    # Guardar en memoria (retrocompatibilidad/logs)
     kit = {
         "id": kit_id,
         "name": body.name,
@@ -573,6 +580,29 @@ def crear_kit(
         "created_at": datetime.utcnow().isoformat(),
     }
     _kits_store[kit_id] = kit
+
+    # Guardar en Base de Datos Real
+    kit_model = KitModel(
+        id=kit_uuid,
+        name=body.name,
+        description=body.description,
+        is_active=True
+    )
+    db.add(kit_model)
+    db.flush()
+
+    # Agrupar cantidades de componentes
+    counts = Counter(body.component_ids)
+    for p_id_str, qty in counts.items():
+        comp_uuid = uuid.UUID(p_id_str)
+        link = KitComponentLink(
+            kit_id=kit_uuid,
+            product_id=comp_uuid,
+            quantity=qty
+        )
+        db.add(link)
+
+    db.commit()
     return kit
 
 

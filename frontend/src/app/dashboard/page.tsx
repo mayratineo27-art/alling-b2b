@@ -68,13 +68,24 @@ export default function DashboardPage() {
         {!loading && !error && dashboardData && (
           <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header del Dashboard */}
-            <div className="border-b border-gray-200 pb-5">
-              <h1 className="text-2xl font-bold leading-6 text-gray-900">
-                Panel de Control
-              </h1>
-              <p className="mt-2 max-w-4xl text-sm text-gray-500">
-                Gestiona tus cotizaciones activas y revisa el historial de tus compras corporativas.
-              </p>
+            <div className="border-b border-gray-200 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold leading-6 text-gray-900">
+                  Panel de Control
+                </h1>
+                <p className="mt-2 max-w-4xl text-sm text-gray-500">
+                  Gestiona tus cotizaciones activas y revisa el historial de tus compras corporativas.
+                </p>
+              </div>
+              <a
+                href="/formatos"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#10B981] hover:bg-[#059669] text-white font-semibold text-sm rounded-xl shadow-sm transition-colors flex-shrink-0"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Ir a Formato Único
+              </a>
             </div>
 
             <div className="space-y-6">
@@ -87,8 +98,14 @@ export default function DashboardPage() {
                   />
                 </section>
               ) : (
-                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-8 text-center">
+                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-8 text-center space-y-4">
                   <p className="text-gray-500">No tienes ninguna cotización o borrador activo.</p>
+                  <a
+                    href="/formatos"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] hover:bg-[#059669] text-white font-medium text-sm rounded-lg transition-colors shadow-sm"
+                  >
+                    Ver / Crear Formato Único
+                  </a>
                 </div>
               )}
 

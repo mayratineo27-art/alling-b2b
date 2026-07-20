@@ -476,3 +476,14 @@ class KitComponent(SQLModel, table=True):
 ### 🔗 Nuevas Navegaciones (NAV-*)
 
 **NAV-CAT-003:** Header → SCR-CAT-003 (Landing) **NAV-CAT-004:** SCR-CAT-003 → SCR-CAT-004 (clic en categoría) **NAV-CAT-005:** SCR-CAT-004 → SCR-CAT-001 (clic en categoría) **NAV-CAT-006:** SCR-CAT-001 → Modal Telegram (BTN-CAT-007)
+
+
+---
+
+### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+
+| ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
+| :--- | :--- | :--- | :--- |
+| **`BTN-CAT-001`** | Agregar al Formato Único | `src/components/catalogo/ProductCard.tsx` | **Verde Esmeralda CTA (`#10B981`)** con texto blanco. |
+| **`BTN-CAT-002`** | Agregar Kit Completo | `src/components/catalogo/KitCard.tsx` | **Verde Esmeralda CTA (`#10B981`)** con texto blanco. |
+| **`BTN-CAT-003`** | Consultar por Telegram | `src/components/TelegramButton.tsx` | **Azul Oficial Telegram (`#229ED9`)** con texto e ícono blanco. |

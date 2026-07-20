@@ -20,3 +20,16 @@ frontend/.next/
 
 # Node modules
 node_modules/
+
+# Cobertura y reportes pesados de auditoría
+.coverage
+*.coverage
+semgrep-report.json
+trivy-report.json
+*.log
+playwright-report/
+test-results/
+frontend/playwright-report/
+frontend/test-results/
+
+

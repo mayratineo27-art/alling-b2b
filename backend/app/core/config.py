@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # MP_ACCESS_TOKEN y WEBHOOK_SECRET quedaban silenciosamente vacíos sin
     # importar cuántas veces se reiniciara el backend.
     MP_ACCESS_TOKEN: str = "TEST-mock-token"
+    MP_SANDBOX: bool = True
     WEBHOOK_SECRET: str = ""
     FRONTEND_URL: str = "http://localhost:3000"
     DISTRIBUTOR_API_KEY: str = "dist-api-key-test"

@@ -453,3 +453,12 @@
 
 **NAV-AUT-007:** SCR-CHK-001 → Modal Migración (si GUEST hace clic en "Iniciar sesión")
 **NAV-AUT-008:** Modal Migración → SCR-CHK-001 (post-fusión)
+
+---
+
+### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+
+| ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
+| :--- | :--- | :--- | :--- |
+| **`BTN-AUT-001`** | Iniciar Sesión con Google | `src/app/auth/login/page.tsx` | **Fondo Blanco (`#FFFFFF`)** con borde gris (`#D1D5DB`) y texto oscuro (`#111827`). |
+| **`BTN-AUT-002`** | Iniciar Sesión (Credenciales) | `src/app/admin/login/page.tsx` | **Verde Esmeralda Primario (`#10B981`)** con hover verde oscuro (`#059669`). |

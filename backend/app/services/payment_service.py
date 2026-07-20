@@ -66,7 +66,14 @@ class PaymentService:
             # Por seguridad comprobaremos si es un mock
             if isinstance(preference_response, dict):
                 resp = preference_response.get("response", {})
-                if access_token and access_token.startswith("TEST-"):
+                # Auto-detect sandbox mode for local development, settings.MP_SANDBOX or TEST- prefix tokens
+                is_sandbox = (
+                    settings.MP_SANDBOX
+                    or (access_token and access_token.startswith("TEST-"))
+                    or "localhost" in frontend_url
+                    or "127.0.0.1" in frontend_url
+                )
+                if is_sandbox:
                     return resp.get("sandbox_init_point") or resp.get("init_point") or f"https://mercadopago.com/checkout/mock?ref={fu_id}"
                 return resp.get("init_point") or f"https://mercadopago.com/checkout/mock?ref={fu_id}"
             else:

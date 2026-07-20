@@ -116,6 +116,7 @@ export default function Header() {
           <ul className="flex items-center gap-0 text-sm font-medium" role="list">
             {[
               { label: "HOME", href: "/" },
+              { label: "FORMATO ÚNICO", href: "/formatos" },
               { label: "CATÁLOGO", href: "/categorias" },
               { label: "KITS", href: "/kits" },
               { label: "NOSOTROS", href: "/nosotros" },

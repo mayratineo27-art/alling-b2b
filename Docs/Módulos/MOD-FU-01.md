@@ -724,3 +724,19 @@ Ninguno propio identificado más allá de los ya cubiertos transversalmente en `
 
 #### `BRG-CROSS-005` — Tarea de Liberación de Stock Reservado
 - **Especificación:** Se añade la lógica programada en el backend (`AUTO-CHK-003`) que corre cada 5 minutos. Esta tarea escanea las órdenes en estado `PENDING_PAYMENT` y si la diferencia entre la hora actual y su creación excede 30 minutos, libera las reservas (`reserved_stock` vuelve a disponible) y marca la orden y el FU como `CANCELADO`.
+
+
+---
+
+### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+
+| ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
+| :--- | :--- | :--- | :--- |
+| **`BTN-FU-001`** | Vaciar Formato Único | `src/components/formato/FormatoTable.tsx` | **Rojo Peligro (`#EF4444`)** con texto rojo / hover fondo rojo claro (`#FEF2F2`). |
+| **`BTN-FU-002`** | Eliminar Ítem del Carrito (Ícono Tacho) | `src/components/formato/FormatoTable.tsx` | **Rojo Peligro (`#EF4444`)** en el icono de eliminación. |
+| **`BTN-FU-003`** | Solicitar Asesoría Preventa | `src/components/formato/BannerFSM.tsx` | **Azul Informativo (`#2563EB`)** con texto blanco. |
+| **`BTN-FU-004`** | Generar Cotización | `src/components/formato/BannerFSM.tsx` | **Verde Esmeralda CTA (`#10B981`)** con texto blanco. |
+| **`BTN-FU-005`** | Iniciar Checkout / Pagar Pedido | `src/components/formato/BannerFSM.tsx` | **Verde Esmeralda CTA (`#10B981`)** con texto blanco. |
+| **`BTN-FU-006`** | Cargar Excel Masivo | `src/components/formato/ExcelImporter.tsx` | **Verde Esmeralda (`#10B981`)** con texto blanco. |
+| **`BTN-FU-007`** | Descargar Plantilla Excel | `src/components/formato/ExcelImporter.tsx` | **Gris Neutro Secundario (`#4B5563`)** con texto blanco. |
+| **`BTN-FU-008`** | Recomprar Todo (Historial) | `src/components/formato/RepurchaseWidget.tsx` | **Verde Esmeralda (`#10B981`)** con texto blanco. |

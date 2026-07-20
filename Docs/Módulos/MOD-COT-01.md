@@ -227,3 +227,12 @@ Ninguna regla nueva propia de este módulo. Hereda y respeta `RN-CHECKOUT-02` (p
 ---
 
 ¿Continúo con `MOD-SEL-01` (Panel SELLER — stock, pedidos, guías) en el siguiente módulo?
+
+---
+
+### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+
+| ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
+| :--- | :--- | :--- | :--- |
+| **`BTN-COT-001`** | Aplicar Descuento Comercial B2B | `src/app/admin/cotizaciones/[id]/page.tsx` | **Naranja Ámbar (`#F59E0B`)** con texto blanco. |
+| **`BTN-COT-002`** | Descargar PDF de Cotización | `src/app/vendedor/cotizaciones/[id]/page.tsx` | **Gris Oscuro (`#374151`)** con texto blanco. |

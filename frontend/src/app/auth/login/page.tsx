@@ -12,6 +12,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const isTestMode = typeof window !== "undefined" && window.location.search.includes("test=true");
+
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setError("");
     setLoading(true);
@@ -84,15 +86,17 @@ export default function LoginPage() {
               <span>Autenticando...</span>
             </div>
           ) : (
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              text="signin_with"
-              shape="rectangular"
-              theme="outline"
-              size="large"
-              width="320"
-            />
+            <div className="flex flex-col items-center gap-3 w-full">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                text="signin_with"
+                shape="rectangular"
+                theme="outline"
+                size="large"
+                width="320"
+              />
+            </div>
           )}
         </div>
 

@@ -220,7 +220,10 @@ Alineado con la restricción de tiempo del proyecto, las pruebas se ejecutarán 
 - **Desarrollo:** Conexión Frontend-Backend, Deploy Vercel.
 - **Pruebas:**
     - `TC_ALLING_E2E_001`: Flujo completo GUEST (Catálogo → Checkout → Pago Mock).
-    - `TC_ALLING_E2E_002`: Flujo completo CUSTOMER (Cotización → Pago).
+    - `TC_ALLING_E2E_002`: Flujo completo de Checkout (Carrito GUEST → Formulario Checkout → Confirmación).
+    - `TC_ALLING_E2E_003`: Flujo de Administrador — Creación de Producto y Visibilidad en el Catálogo Público (RF-ADM-005).
+    - `TC_ALLING_E2E_004`: Flujo de Administrador — Creación de Kit Personalizado B2B y Visibilidad en Catálogo de Kits (RF-ADM-009).
+    - `TC_ALLING_E2E_005`: Flujo de Autenticación con Google, Checkout y Redirección a Mercado Pago (RF-AUT-001, RF-CHK-001).
     - **Pipeline GRI:** Ejecutar Jenkinsfile, capturar evidencias de SonarQube, Semgrep, Trivy.
 
 ---

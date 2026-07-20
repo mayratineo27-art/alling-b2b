@@ -566,3 +566,14 @@ SystemConfig solo almacena:
 
 #### `BRG-CROSS-003` — Propagación de Estado Kit Componente (Cascada)
 - **Especificación:** Si un producto individual componente de un Kit cambia su propiedad a inactivo (`is_active = false`), el Kit contenedor ejecuta un callback a nivel de base de datos (`RN-KIT-SYNC-01`) que cambia automáticamente su propiedad `is_active` a `false`, ocultándolo del catálogo público y evitando compras de Kits incompletos.
+
+---
+
+### 🔘 Mapeo de Botones Existentes y Requerimiento de Color
+
+| ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
+| :--- | :--- | :--- | :--- |
+| **`BTN-ADM-001`** | Guardar / Crear Producto | `src/app/admin/productos/page.tsx` | **Verde Esmeralda (`#10B981`)** con texto blanco. |
+| **`BTN-ADM-002`** | Activar / Desactivar Producto | `src/app/admin/productos/page.tsx` | **Verde (`#10B981`)** si está activo / **Rojo (`#EF4444`)** si está inactivo. |
+| **`BTN-ADM-003`** | Suspender Usuario | `src/app/admin/usuarios/page.tsx` | **Naranja Advertencia (`#F59E0B`)** con texto blanco. |
+| **`BTN-ADM-004`** | Exportar Datos (MFA Step-up) | `src/app/admin/configuracion/page.tsx` | **Índigo / Púrpura (`#6366F1`)** con texto blanco. |

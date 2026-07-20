@@ -11,7 +11,7 @@ except ImportError:
 from sqlmodel import create_engine, Session
 from app.db.database import Base
 
-def test_rls_security(postgres_container=None):
+def test_rls_security(postgres_container):
     if PostgresContainer is None or postgres_container is None:
         pytest.skip("testcontainers no instalado")
     """

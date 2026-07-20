@@ -60,40 +60,133 @@ Aunque el backend FastAPI es una **unidad lógica única**, la arquitectura **no
 
 
 
-┌─────────────────────────────────────────────────────────────────┐
-│ USUARIOS │
-│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
-│ │ GUEST │ │ CUSTOMER │ │ SELLER │ │ ADMIN │ │
-│ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ │
-└───────┼──────────────┼──────────────┼──────────────┼────────────┘
-│ │ │ │
-└──────────────┴──────┬───────┴──────────────┘
-│ HTTPS
-▼
-┌─────────────────────────────────────────────────────────────────┐
-│ ALLING (Sistema) │
-│ ┌───────────────────────────────────────────────────────────┐ │
-│ │ Frontend: Next.js 15 (SSG/SSR/ISR) + Tailwind + shadcn │ │
-│ └───────────────────────────┬───────────────────────────────┘ │
-│ │ REST (JSON) │
-│ ┌───────────────────────────▼───────────────────────────────┐ │
-│ │ Backend: FastAPI (Clean Architecture + EDA) │ │
-│ │ - 24 Servicios de Dominio │ │
-│ │ - FSM-01 (Formato Único) + FSM-02 (Order) │ │
-│ │ - Zero Trust (JWT RS256 + RLS + HMAC) │ │
-│ └───────┬───────────────┬───────────────┬───────────────────┘ │
-│ │ │ │ │
-│ ┌───────▼──────┐ ┌──────▼──────┐ ┌──────▼──────┐ │
-│ │ PostgreSQL │ │ Supabase │ │ Vercel Cron │ │
-│ │ (Neon) + RLS │ │ Storage │ │ (Scheduler) │ │
-│ └──────────────┘ └─────────────┘ └─────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-│ │ │
-▼ ▼ ▼
-┌──────────────┐ ┌──────────┐ ┌──────────────┐
-│ MercadoPago │ │ Google │ │ DISTRIBUTOR │
-│ (Pagos) │ │ OAuth │ │ (Stock/Precio)│
-└──────────────┘ └──────────┘ └──────────────┘
+```mermaid
+graph TB
+    %% Styling
+    classDef user fill:#2563EB,stroke:#1D4ED8,stroke-width:2px,color:#FFF;
+    classDef system fill:#059669,stroke:#047857,stroke-width:2px,color:#FFF;
+    classDef external fill:#4B5563,stroke:#374151,stroke-width:2px,color:#FFF;
+    classDef database fill:#D97706,stroke:#B45309,stroke-width:2px,color:#FFF;
+
+    %% Actors/Users
+    subgraph Users ["Usuarios (Actores)"]
+        G[Guest / Invitado]:::user
+        C[Customer / Cliente]:::user
+        S[Seller / Vendedor]:::user
+        A[Admin / Administrador]:::user
+    end
+
+    %% Main System Boundary
+    subgraph AllingSystem ["Sistema Alling"]
+        FE["Frontend Next.js 15<br>(SSG / SSR / ISR)<br>Tailwind CSS + shadcn/ui"]:::system
+        BE["Backend FastAPI<br>(Clean Architecture + EDA)<br>- 24 Servicios de Dominio<br>- Zero Trust (JWT/HMAC)<br>- FSM Engine"]:::system
+        
+        subgraph DB ["Almacenamiento e Infraestructura"]
+            DB_PG[("PostgreSQL (Neon)<br>Row Level Security (RLS)")]:::database
+            DB_ST[("Supabase Storage / S3<br>(PDFs, Imágenes)")]:::database
+            Cron["Vercel Cron<br>(Scheduler / Jobs)"]:::system
+        end
+    end
+
+    %% External Systems
+    subgraph External ["Sistemas Externos"]
+        MP["Mercado Pago<br>(Checkout Pro / Webhooks)"]:::external
+        GO["Google OAuth 2.0<br>(Autenticación)"]:::external
+        TG["Telegram App<br>(Consultas Pre-venta)"]:::external
+        DIST["DISTRIBUTOR API<br>(Sincronización de Stock/Precios)"]:::external
+        Shalom["Shalom Mock API<br>(Cálculo de Envío)"]:::external
+    end
+
+    %% Connections
+    G -->|Navega catálogo y agrega al FU| FE
+    C -->|Gestiona FU, checkout y paga| FE
+    S -->|Administra cotizaciones y asignaciones| FE
+    A -->|Configura sistema y gestiona usuarios| FE
+
+    FE -->|API REST (HTTPS + JWT)| BE
+    BE -->|SQLModel / Alembic| DB_PG
+    BE -->|API Client| DB_ST
+    Cron -->|Lanza Jobs Programados| BE
+
+    BE -->|REST / Webhooks (HMAC)| MP
+    FE -->|Redirección OAuth| GO
+    FE -->|Deep Links (Mensajes pre-armados)| TG
+    BE -->|HTTPS (HMAC / Nonce)| DIST
+    BE -->|HTTPS Mock / API| Shalom
+
+    %% Links styling
+    linkStyle default stroke:#6B7280,stroke-width:2px;
+```
+
+#### Diagrama de Contenedores C4 (Level 2 — Arquitectura Interna y Capas)
+
+```mermaid
+graph TB
+    %% Layer Styles
+    classDef presentation fill:#10B981,stroke:#059669,stroke-width:2px,color:#FFF;
+    classDef application fill:#3B82F6,stroke:#2563EB,stroke-width:2px,color:#FFF;
+    classDef domain fill:#8B5CF6,stroke:#7C3AED,stroke-width:2px,color:#FFF;
+    classDef infra fill:#F59E0B,stroke:#D97706,stroke-width:2px,color:#FFF;
+    classDef persist fill:#EC4899,stroke:#D01C76,stroke-width:2px,color:#FFF;
+
+    subgraph Client ["Capa de Presentación (Frontend Next.js 15)"]
+        UI["Componentes UI (React / shadcn / Tailwind)"]:::presentation
+        MidFE["Middleware (NextAuth / JWT RS256)"]:::presentation
+    end
+
+    subgraph Backend FastAPI ["Capa del Backend (FastAPI Core)"]
+        subgraph PresentationLayer ["Capa de Presentación Backend (Endpoints)"]
+            EP["API Routes / Controllers<br>(FastAPI Endpoints)"]:::presentation
+            DTO["Schemas Pydantic (DTOs)"]:::presentation
+        end
+
+        subgraph ApplicationLayer ["Capa de Aplicación (Casos de Uso)"]
+            UC["Orquestación de Casos de Uso<br>(Llamador a Servicios)"]:::application
+        end
+
+        subgraph DomainLayer ["Capa de Dominio (Lógica Pura)"]
+            Model["Modelos y Entidades<br>(Catalog, Order, User, FU)"]:::domain
+            FSM["Máquinas de Estado (FSM-01, FSM-02)"]:::domain
+            DS["Servicios de Dominio (24 Servicios Puros)<br>(StateMachineService, PricingService, etc.)"]:::domain
+            Rules["Invariantes y Políticas RBAC"]:::domain
+        end
+
+        subgraph InfraLayer ["Capa de Infraestructura y Adaptadores"]
+            Auth["Autenticación & Hash<br>(python-jose, argon2)"]:::infra
+            EvBus["Dominio Event Bus<br>(In-process Pub/Sub)"]:::infra
+            ExtClients["Clientes API Externos<br>(SDK MercadoPago, Shalom, Sync)"]:::infra
+        end
+
+        subgraph PersistLayer ["Capa de Persistencia"]
+            ORM["SQLModel ORM"]:::persist
+            Alembic["Migraciones Alembic"]:::persist
+        end
+    end
+
+    subgraph ExternalServices ["Capa Externa / DB / Cloud"]
+        DB_PG[("PostgreSQL (Neon)<br>+ Row Level Security (RLS)")]:::persist
+        ExtAPIs["APIs Externas<br>(MercadoPago, Google OAuth, etc.)"]:::infra
+    end
+
+    %% Flows
+    UI -->|HTTP Requests| EP
+    MidFE -->|Valida Token| EP
+    
+    EP -->|Usa| DTO
+    EP -->|Invoca| UC
+    UC -->|Usa / Ejecuta| DS
+    DS -->|Actualiza| Model
+    DS -->|Verifica| Rules
+    DS -->|Activa transiciones| FSM
+    
+    DS -->|Publica Eventos| EvBus
+    EvBus -->|Desencadena| UC
+    
+    ExtClients -->|Llamadas HTTPS| ExtAPIs
+    
+    ORM -->|Mapea| DB_PG
+    DS -->|Persiste vía ORM| ORM
+```
 ### 2.1 Clean Architecture Adaptada a FastAPI
 
 El sistema sigue los principios de Clean Architecture (Robert C. Martin) adaptados al stack Python/FastAPI:
@@ -1632,22 +1725,47 @@ Los siguientes vacíos no pueden completarse objetivamente porque el material ex
 
 ### 🔗 Diagrama de Integraciones Externas
 
-┌─────────────────────────────────────────────────────────────┐
-│ ALLENG │
-│ │
-│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
-│ │ Frontend │ │ Backend │ │ Base de │ │
-│ │ (Next.js) │ │ (FastAPI) │ │ Datos │ │
-│ └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ │
-│ │ │ │ │
-└─────────┼─────────────────┼─────────────────┼───────────────┘
-│ │ │
-│ │ │
-┌─────▼─────┐ ┌─────▼─────┐ ┌─────▼─────┐
-│ Mercado │ │ Telegram │ │ Excel │
-│ Pago │ │ (Deep │ │ Parsing │
-│ │ │ Links) │ │ │
-└───────────┘ └───────────┘ └───────────┘
+```mermaid
+graph TD
+    %% Custom Styling
+    classDef backend fill:#10B981,stroke:#059669,stroke-width:2px,color:#FFF;
+    classDef frontend fill:#3B82F6,stroke:#2563EB,stroke-width:2px,color:#FFF;
+    classDef db fill:#D97706,stroke:#B45309,stroke-width:2px,color:#FFF;
+    classDef ext fill:#4B5563,stroke:#374151,stroke-width:2px,color:#FFF;
+
+    %% Nodes
+    subgraph AllingSystem ["Sistema Alling"]
+        FE["Frontend Next.js 15"]:::frontend
+        BE["Backend FastAPI"]:::backend
+        DB[("Base de Datos<br>(PostgreSQL / Neon)")]:::db
+    end
+
+    %% External Systems
+    subgraph External ["Sistemas e Integraciones Externas"]
+        MP["Mercado Pago (Checkout Pro)"]:::ext
+        TG["Telegram (Deep Links)"]:::ext
+        EXCEL["Procesamiento Excel (Pandas / openpyxl)"]:::ext
+    end
+
+    %% Relationships
+    FE -->|1. Clic Comprar Ahora| BE
+    BE -->|2. Crear Preferencia de Pago| MP
+    MP -->|3. Retornar URL Preferencia| BE
+    BE -->|4. Redirigir| FE
+    FE -->|5. Pago en Checkout Pro| MP
+    MP -->|6. Webhook Confirmación (POST)| BE
+    BE -->|7. Validar Firma HMAC & Idempotencia| DB
+    BE -->|8. Confirmar Estado Pedido| DB
+    
+    FE -->|9. Clic Consultar por Telegram| TG
+    TG -->|10. Deep Link con mensaje pre-armado| FE
+    
+    FE -->|11. Subir Plantilla Excel (<5MB)| BE
+    BE -->|12. Validar SKU/Stock en Lote| DB
+    BE -->|13. Retornar Resumen Errores/Éxito| FE
+
+    linkStyle default stroke:#6B7280,stroke-width:2.5px;
+```
 
 
 ### 🔐 Integración con Mercado Pago

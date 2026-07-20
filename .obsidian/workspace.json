@@ -151,7 +151,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Docs/Módulos/MOD-AUT-01.md.md",
+                "file": "Docs/FASE 3/ARQUITECTURA.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -161,7 +161,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Enlaces entrantes de MOD-AUT-01.md"
+              "title": "Enlaces entrantes de ARQUITECTURA"
             }
           },
           {
@@ -226,8 +226,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 216.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -240,8 +239,15 @@
       "bases:Crear nueva base": false
     }
   },
-  "active": "885fe44a53a788e1",
+  "active": "0ec7dcb09df32022",
   "lastOpenFiles": [
+    "Ficha_Analisis_Documental_SDD.docx",
+    "test_alling.db-journal",
+    "Sin título.base",
+    "Revision_DDF+_tiendRed.docx",
+    "2026-07-20.md",
+    "Sin título.canvas",
+    "Docs/FASE 3/ARQUITECTURA.md",
     "backend/test_alling.db-journal",
     "Docs/SPRINTS 1,2,3,4,5.md",
     "htmlcov/z_e381c41b130aa9eb___init___py.html",
@@ -250,14 +256,9 @@
     "htmlcov/z_e381c41b130aa9eb_token_service_py.html",
     "htmlcov/z_e381c41b130aa9eb_scheduler_service_py.html",
     "htmlcov/z_e381c41b130aa9eb_shipping_service_py.html",
-    "htmlcov/z_e381c41b130aa9eb_inventory_service_py.html",
-    "htmlcov/z_e381c41b130aa9eb_product_query_service_py.html",
-    "htmlcov/z_e381c41b130aa9eb_notification_service_py.html",
-    "htmlcov/z_e381c41b130aa9eb_payment_service_py.html",
     "htmlcov/keybd_closed_cb_900cfef5.png",
     "htmlcov/favicon_32_cb_c827f16f.png",
     "modelo_dominio_alling.png",
-    "Docs/FASE 3/ARQUITECTURA.md",
     "Docs/00_project/constitución-00.md",
     "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_8_BACKLOG.md",
     "Docs/FASE 4_EJECUCION_SCRUM/SPRINT_7_BACKLOG.md",
@@ -281,7 +282,6 @@
     "Docs/FASE 4_EJECUCION_SCRUM/BUGFIX_FRONTEND_REPORT.md",
     "desarrollo-GRI.md",
     "Docs/FASE 4_EJECUCION_SCRUM/MATRIZ_COMPLEMENTARIA.md",
-    "DOCUMENTATION.md",
     "frontend/public/window.svg",
     "frontend/public/vercel.svg",
     "frontend/public/next.svg",

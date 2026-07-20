@@ -2,6 +2,7 @@
 import os
 import pytest
 from sqlmodel import SQLModel, create_engine, Session
+from sqlalchemy.pool import NullPool
 from app.main import app as fastapi_app
 from app.db.database import get_session
 
@@ -10,7 +11,43 @@ active_test_session = None
 
 # Create a test SQLite database engine
 TEST_DATABASE_URL = "sqlite:///./test_alling.db"
-test_engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+test_engine = create_engine(
+    TEST_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=NullPool
+)
+
+
+def _ensure_clean_db():
+    """Limpia agresivamente el estado de la BD de pruebas.
+    Se llama tanto en el setup como en el teardown para garantizar
+    que un teardown fallido (p.ej. por testcontainers en background)
+    no contamine el siguiente test."""
+    from app.db.database import Base
+    import app.models.user        # noqa: F401
+    import app.models.formato_unico  # noqa: F401
+    import app.models.order       # noqa: F401
+    import app.models.product     # noqa: F401
+    import app.models.kit         # noqa: F401
+    import app.models.refresh_token  # noqa: F401
+    import app.models.category    # noqa: F401
+    import app.models.system_config  # noqa: F401
+    import app.models.favorite    # noqa: F401
+
+    # 1. Intentar drop de tablas antes de borrar el archivo
+    for metadata in (SQLModel.metadata, Base.metadata):
+        try:
+            metadata.drop_all(test_engine)
+        except Exception:
+            pass
+
+    # 2. Borrar el archivo físico
+    if os.path.exists("./test_alling.db"):
+        try:
+            os.remove("./test_alling.db")
+        except Exception:
+            pass
+
 
 @pytest.fixture(autouse=True, scope="function")
 def setup_test_db():
@@ -35,24 +72,11 @@ def setup_test_db():
     valor_original_use_mock_db = settings.USE_MOCK_DB
     settings.USE_MOCK_DB = True
 
-    # 1. Asegurar limpieza previa de base de datos de pruebas
-    if os.path.exists("./test_alling.db"):
-        try:
-            os.remove("./test_alling.db")
-        except Exception:
-            pass
+    # 1. Limpiar estado previo (cubre el caso de un teardown fallido)
+    _ensure_clean_db()
 
-    # 2. Crear todas las tablas en la BD SQLite de prueba
+    # 2. Crear todas las tablas en la BD SQLite de prueba (estado limpio)
     from app.db.database import Base
-    import app.models.user
-    import app.models.formato_unico
-    import app.models.order
-    import app.models.product
-    import app.models.kit
-    import app.models.refresh_token
-    import app.models.category
-    import app.models.system_config
-    import app.models.favorite
     Base.metadata.create_all(bind=test_engine)
     SQLModel.metadata.create_all(test_engine)
 
@@ -79,11 +103,7 @@ def setup_test_db():
         active_test_session = None
 
     # 6. Eliminar base de datos de pruebas tras finalizar
-    SQLModel.metadata.drop_all(test_engine)
-    if os.path.exists("./test_alling.db"):
-        try:
-            os.remove("./test_alling.db")
-        except Exception:
-            pass
+    _ensure_clean_db()
 
     settings.USE_MOCK_DB = valor_original_use_mock_db
+

@@ -1,3 +1,6 @@
+import pytest
+from sqlmodel import SQLModel, create_engine, Session
+
 try:
     from testcontainers.postgres import PostgresContainer
 except ImportError:

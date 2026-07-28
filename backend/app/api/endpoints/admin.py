@@ -981,14 +981,14 @@ class CategoryImageResponse(BaseModel):
     summary="Subir/reemplazar imagen de referencia de una categoría",
     description=(
         "**RF-CAT-009 / OPS-CAT-004** — Solo ADMIN. "
-        "Sube una imagen PNG, JPEG o WebP (máx. 2 MB) como imagen de referencia "
-        "de la categoría. Si ya existía una imagen, la reemplaza y elimina la anterior "
-        "del almacenamiento. (RN-CAT-IMG-01..03)"
+        "Permite subir o reemplazar la imagen de referencia de una categoría (máx 2 MB, PNG/JPEG/WebP). "
+        "Optimiza la imagen automáticamente a WebP/JPEG liviano (< 30 KB) para tarjetas. "
+        "Si la categoría ya tenía imagen, reemplaza el objeto anterior en Storage."
     ),
     status_code=status.HTTP_200_OK,
     tags=["Admin — Categorías"],
 )
-async def upload_category_image(
+def upload_category_image(
     category_id: str,
     file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
     current_user: tuple = Depends(require_admin),
@@ -1003,11 +1003,10 @@ async def upload_category_image(
     - **404 Not Found** → categoría no existe.
     - **422 Unprocessable Entity** → tipo de archivo o tamaño inválido.
     """
-    # Adaptar UploadFile de FastAPI al protocolo IUploadFile del servicio.
-    # UploadFile.size puede ser None en versiones antiguas de FastAPI;
-    # lo calculamos leyendo el contenido si es necesario.
-    content: bytes = await file.read()
-    file_size: int = len(content)
+    try:
+        content: bytes = file.file.read()
+    except Exception:
+        content = b""
 
     class _SyncUploadFile:
         """Wrapper síncrono sobre UploadFile para compatibilidad con CategoryImageService."""
@@ -1107,14 +1106,18 @@ class ProductImageResponse(BaseModel):
     status_code=status.HTTP_200_OK,
     tags=["Admin — Productos"],
 )
-async def upload_product_image(
+def upload_product_image(
     product_id: str,
     file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
     current_user: tuple = Depends(require_admin),
     db: Session = Depends(get_db),
     svc: ProductImageService = Depends(get_product_image_service),
 ) -> ProductImageResponse:
-    content: bytes = await file.read()
+    try:
+        content: bytes = file.file.read()
+    except Exception:
+        content = b""
+
 
     class _SyncUploadFile:
         def __init__(self, fn: str, ct: str, data: bytes) -> None:

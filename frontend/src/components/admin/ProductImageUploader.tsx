@@ -81,20 +81,28 @@ export default function ProductImageUploader({
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile && !previewUrl) return;
     setUploading(true);
     setError(null);
     setSuccess(null);
 
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-
     try {
-      const response = await apiClient.patch(
-        `/admin/productos/${product.id}/imagen`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      let response;
+      if (previewUrl) {
+        response = await apiClient.patch(
+          `/admin/productos/${product.id}/imagen`,
+          { image_url: previewUrl },
+          { headers: { "Content-Type": "application/json" } }
+        );
+      } else {
+        const formData = new FormData();
+        formData.append("file", selectedFile!);
+        response = await apiClient.patch(
+          `/admin/productos/${product.id}/imagen`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+      }
       const newUrl = response.data.image_url;
       setCurrentUrl(newUrl);
       setPreviewUrl(null);
@@ -110,6 +118,7 @@ export default function ProductImageUploader({
       setUploading(false);
     }
   };
+
 
   const handleDelete = async () => {
     if (!confirm(`¿Eliminar la imagen de "${product.name}"?`)) return;

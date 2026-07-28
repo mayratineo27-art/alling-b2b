@@ -104,31 +104,41 @@ export function CategoryImageUploader({
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile && !previewUrl) return;
 
     setStatus("uploading");
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-
     try {
-      const headers: Record<string, string> = {
-        "Content-Type": "multipart/form-data",
-      };
+      const headers: Record<string, string> = {};
       if (adminToken) {
         headers["Authorization"] = `Bearer ${adminToken}`;
       }
 
-      const res = await apiClient.patch(`/admin/categorias/${category.id}/imagen`, formData, { headers });
+      let res;
+      if (previewUrl) {
+        res = await apiClient.patch(
+          `/admin/categorias/${category.id}/imagen`,
+          { image_url: previewUrl },
+          { headers: { ...headers, "Content-Type": "application/json" } }
+        );
+      } else {
+        const formData = new FormData();
+        formData.append("file", selectedFile!);
+        res = await apiClient.patch(
+          `/admin/categorias/${category.id}/imagen`,
+          formData,
+          { headers: { ...headers, "Content-Type": "multipart/form-data" } }
+        );
+      }
+
       const newUrl: string = res.data.image_url;
 
       setCurrentImageUrl(newUrl);
       setSuccessMsg("Imagen guardada correctamente.");
       setStatus("success");
 
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
       setSelectedFile(null);
 
@@ -139,6 +149,7 @@ export function CategoryImageUploader({
       setStatus("error");
     }
   };
+
 
   const handleDelete = async () => {
     if (!currentImageUrl) return;

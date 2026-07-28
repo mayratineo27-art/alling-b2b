@@ -975,34 +975,37 @@ class CategoryImageResponse(BaseModel):
     message: str = "Imagen actualizada correctamente"
 
 
+class ImageUrlJSONRequest(BaseModel):
+    image_url: Optional[str] = Field(None, description="Data URI o URL remota de la imagen")
+
+
 @router.patch(
     "/categorias/{category_id}/imagen",
     response_model=CategoryImageResponse,
     summary="Subir/reemplazar imagen de referencia de una categoría",
-    description=(
-        "**RF-CAT-009 / OPS-CAT-004** — Solo ADMIN. "
-        "Permite subir o reemplazar la imagen de referencia de una categoría (máx 2 MB, PNG/JPEG/WebP). "
-        "Optimiza la imagen automáticamente a WebP/JPEG liviano (< 30 KB) para tarjetas. "
-        "Si la categoría ya tenía imagen, reemplaza el objeto anterior en Storage."
-    ),
     status_code=status.HTTP_200_OK,
     tags=["Admin — Categorías"],
 )
 def upload_category_image(
     category_id: str,
-    file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    file: Optional[UploadFile] = FastAPIFile(None, description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    body: Optional[ImageUrlJSONRequest] = None,
     current_user: tuple = Depends(require_admin),
     db: Session = Depends(get_db),
     svc: CategoryImageService = Depends(get_category_image_service),
 ) -> CategoryImageResponse:
-    """
-    PATCH /admin/categorias/{category_id}/imagen
+    if body and body.image_url:
+        result = svc.save_image_from_url_or_data_uri(
+            db=db,
+            category_id=category_id,
+            image_data=body.image_url,
+            actor_role="ADMIN",
+        )
+        return CategoryImageResponse(category_id=result.category_id, image_url=result.image_url)
 
-    - **200 OK** → imagen subida y URL persistida en BD.
-    - **403 Forbidden** → actor no es ADMIN.
-    - **404 Not Found** → categoría no existe.
-    - **422 Unprocessable Entity** → tipo de archivo o tamaño inválido.
-    """
+    if not file:
+        raise HTTPException(status_code=422, detail="Se requiere un archivo de imagen o un JSON con 'image_url'")
+
     try:
         content: bytes = file.file.read()
     except Exception:
@@ -1041,6 +1044,7 @@ def upload_category_image(
         category_id=result.category_id,
         image_url=result.image_url,
     )
+
 
 
 
@@ -1108,15 +1112,29 @@ class ProductImageResponse(BaseModel):
 )
 def upload_product_image(
     product_id: str,
-    file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    file: Optional[UploadFile] = FastAPIFile(None, description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    body: Optional[ImageUrlJSONRequest] = None,
     current_user: tuple = Depends(require_admin),
     db: Session = Depends(get_db),
     svc: ProductImageService = Depends(get_product_image_service),
 ) -> ProductImageResponse:
+    if body and body.image_url:
+        result = svc.save_image_from_url_or_data_uri(
+            db=db,
+            product_id=product_id,
+            image_data=body.image_url,
+            actor_role="ADMIN",
+        )
+        return ProductImageResponse(product_id=result.product_id, image_url=result.image_url)
+
+    if not file:
+        raise HTTPException(status_code=422, detail="Se requiere un archivo de imagen o un JSON con 'image_url'")
+
     try:
         content: bytes = file.file.read()
     except Exception:
         content = b""
+
 
 
     class _SyncUploadFile:

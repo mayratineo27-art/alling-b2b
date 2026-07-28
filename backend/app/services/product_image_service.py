@@ -99,10 +99,53 @@ class ProductImageService:
         db.commit()
 
         return ProductImageResult(
-
             product_id=product_id,
             image_url=public_url,
         )
+
+    def save_image_from_url_or_data_uri(
+        self,
+        db: Session,
+        product_id: str,
+        image_data: str,
+        actor_role: str = "ADMIN",
+    ) -> ProductImageResult:
+        """Permite guardar directamente una imagen de producto proveniente de Data URI o URL de IA."""
+        self._assert_admin(actor_role)
+        product = self._get_product_or_404(db, product_id)
+
+        if image_data.startswith("data:"):
+            import base64
+            header, b64 = image_data.split(",", 1)
+            raw_bytes = base64.b64decode(b64)
+            file_bytes, opt_filename, opt_content_type = _optimize_image_bytes(
+                raw_bytes, f"product_{product_id}.webp", "image/webp"
+            )
+            public_url = self._storage.upload(file_bytes, opt_filename, opt_content_type)
+        elif image_data.startswith("http://") or image_data.startswith("https://"):
+            import urllib.request
+            try:
+                req = urllib.request.Request(image_data, headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    raw_bytes = resp.read()
+                file_bytes, opt_filename, opt_content_type = _optimize_image_bytes(
+                    raw_bytes, f"product_{product_id}.webp", "image/webp"
+                )
+                public_url = self._storage.upload(file_bytes, opt_filename, opt_content_type)
+            except Exception:
+                public_url = image_data
+        else:
+            public_url = image_data
+
+        if product.image_url and product.image_url != public_url:
+            self._storage.delete(product.image_url)
+
+        product.image_url = public_url
+        db.add(product)
+        db.commit()
+
+        return ProductImageResult(product_id=product_id, image_url=public_url)
+
 
     def delete_image(
         self,

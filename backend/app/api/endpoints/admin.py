@@ -1082,3 +1082,94 @@ def delete_category_image(
         "message": "Imagen eliminada. Los componentes mostrarán el placeholder SVG.",
     }
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RF-PROD-004 — Imágenes de referencia por producto (OPS-CAT-005)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from app.core.deps import get_product_image_service   # noqa: E402
+from app.services.product_image_service import ProductImageService  # noqa: E402
+
+
+class ProductImageResponse(BaseModel):
+    product_id: str
+    image_url: str
+    message: str = "Imagen de producto actualizada correctamente"
+
+
+@router.patch(
+    "/productos/{product_id}/imagen",
+    response_model=ProductImageResponse,
+    summary="Subir/reemplazar imagen de referencia de un producto",
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Productos"],
+)
+async def upload_product_image(
+    product_id: str,
+    file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+    svc: ProductImageService = Depends(get_product_image_service),
+) -> ProductImageResponse:
+    content: bytes = await file.read()
+
+    class _SyncUploadFile:
+        def __init__(self, fn: str, ct: str, data: bytes) -> None:
+            self.filename: str = fn
+            self.content_type: str = ct
+            self.size: int = len(data)
+            self._data: bytes = data
+
+        def read(self) -> bytes:
+            return self._data
+
+    sync_file = _SyncUploadFile(
+        fn=file.filename or "upload",
+        ct=file.content_type or "application/octet-stream",
+        data=content,
+    )
+
+    try:
+        result = svc.upload_image(
+            db=db,
+            product_id=product_id,
+            file=sync_file,
+            actor_role="ADMIN",
+        )
+    except _DomainException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    return ProductImageResponse(
+        product_id=result.product_id,
+        image_url=result.image_url,
+    )
+
+
+@router.delete(
+    "/productos/{product_id}/imagen",
+    summary="Eliminar imagen de referencia de un producto",
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Productos"],
+)
+def delete_product_image(
+    product_id: str,
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+    svc: ProductImageService = Depends(get_product_image_service),
+) -> dict:
+    try:
+        svc.delete_image(
+            db=db,
+            product_id=product_id,
+            actor_role="ADMIN",
+        )
+    except _DomainException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    return {
+        "product_id": product_id,
+        "image_url": None,
+        "message": "Imagen de producto eliminada correctamente.",
+    }
+
+

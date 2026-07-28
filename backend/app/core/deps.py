@@ -60,5 +60,15 @@ def get_category_image_service() -> "CategoryImageService":
     """
     from app.services.category_image_service import CategoryImageService  # type: ignore[attr-defined]
     from app.services.storage_service import get_storage_service
-    return CategoryImageService(storage=get_storage_service())
+    return CategoryImageService(storage_service=get_storage_service())
 
+
+def get_product_image_service() -> "ProductImageService":
+    """
+    Factory de ProductImageService para FastAPI Depends().
+
+    RF-PROD-004 / OPS-CAT-005
+    """
+    from app.services.product_image_service import ProductImageService
+    from app.services.storage_service import get_storage_service
+    return ProductImageService(storage_service=get_storage_service())

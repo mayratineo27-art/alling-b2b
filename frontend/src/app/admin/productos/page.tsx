@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
 import CategoryImageUploader from "@/components/admin/CategoryImageUploader";
+import ProductImageUploader from "@/components/admin/ProductImageUploader";
 import apiClient from "@/lib/api";
 
 
@@ -29,7 +30,7 @@ interface Product {
   category_id?: string;
   brand?: string;
   description?: string;
-  image_url?: string;
+  image_url?: string | null;
 }
 
 export default function AdminProductosPage() {
@@ -42,6 +43,8 @@ export default function AdminProductosPage() {
   const [productSearch, setProductSearch] = useState("");
   const [brandFilter, setBrandFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [selectedProductForImage, setSelectedProductForImage] = useState<Product | null>(null);
+
 
   // State for categories
   const [categories, setCategories] = useState<Category[]>([]);
@@ -373,6 +376,7 @@ export default function AdminProductosPage() {
                     <thead className="bg-gray-50 border-b border-[var(--alling-border)]">
                       <tr>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Producto</th>
+                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Imagen Ref.</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">SKU</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Marca</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Categoría</th>
@@ -385,7 +389,7 @@ export default function AdminProductosPage() {
                     <tbody className="divide-y divide-[var(--alling-border)]">
                       {filteredProducts.length === 0 ? (
                         <tr>
-                          <td colSpan={8} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
+                          <td colSpan={9} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
                             No se encontraron productos coincidentes en el catálogo.
                           </td>
                         </tr>
@@ -400,6 +404,27 @@ export default function AdminProductosPage() {
                                 </div>
                               )}
                             </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <div className="w-10 h-10 rounded border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0">
+                                  <img
+                                    src={p.image_url ?? "/assets/category-placeholder.svg"}
+                                    alt={p.name}
+                                    className="w-full h-full object-contain p-0.5"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = "/assets/category-placeholder.svg";
+                                    }}
+                                  />
+                                </div>
+                                <button
+                                  onClick={() => setSelectedProductForImage(p)}
+                                  className="text-xs font-bold text-[var(--alling-primary)] hover:underline px-2 py-1 rounded bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                                >
+                                  {p.image_url ? "Cambiar" : "+ Subir"}
+                                </button>
+                              </div>
+                            </td>
+
                             <td className="px-6 py-4 text-xs font-mono text-[var(--alling-metadata)]">
                               {p.sku}
                             </td>
@@ -784,9 +809,34 @@ export default function AdminProductosPage() {
               </div>
             </div>
           )}
+
+          {/* PRODUCT IMAGE MANAGEMENT MODAL */}
+
+          {selectedProductForImage && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative">
+                <button
+                  onClick={() => setSelectedProductForImage(null)}
+                  className="absolute top-4 right-4 z-10 text-gray-400 hover:text-[var(--alling-text)] text-xl font-bold bg-white/80 rounded-full w-8 h-8 flex items-center justify-center"
+                >
+                  ×
+                </button>
+                <ProductImageUploader
+                  product={selectedProductForImage}
+                  onImageUpdated={(prodId, newUrl) => {
+                    setProducts((prev) =>
+                      prev.map((p) => (p.id === prodId ? { ...p, image_url: newUrl } : p))
+                    );
+                    fetchProducts();
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </AdminLayout>
     </ProtectedRoute>
   );
+
 }
 

@@ -211,9 +211,9 @@ class CategoryImageService:
         category.image_url = public_url
         db.add(category)
         db.commit()
-        db.refresh(category)
 
         return CategoryImageResult(
+
             category_id=category_id,
             image_url=public_url,
         )

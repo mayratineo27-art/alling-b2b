@@ -97,9 +97,9 @@ class ProductImageService:
         product.image_url = public_url
         db.add(product)
         db.commit()
-        db.refresh(product)
 
         return ProductImageResult(
+
             product_id=product_id,
             image_url=public_url,
         )

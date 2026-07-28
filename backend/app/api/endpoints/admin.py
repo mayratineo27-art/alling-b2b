@@ -1035,11 +1035,14 @@ async def upload_category_image(
         )
     except _DomainException as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.message)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Error al procesar la imagen: {str(exc)}")
 
     return CategoryImageResponse(
         category_id=result.category_id,
         image_url=result.image_url,
     )
+
 
 
 @router.delete(
@@ -1138,11 +1141,14 @@ async def upload_product_image(
         )
     except _DomainException as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.message)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Error al procesar la imagen: {str(exc)}")
 
     return ProductImageResponse(
         product_id=result.product_id,
         image_url=result.image_url,
     )
+
 
 
 @router.delete(

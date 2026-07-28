@@ -527,6 +527,24 @@ class KitComponent(SQLModel, table=True):
 
 ---
 
+### 🆕 OPS-CAT-006 — Generar imagen referencial con IA _(ADMIN)_
+
+- **Objetivo de negocio:** Permitir que ADMIN genere automáticamente imágenes referenciales fotorrealistas e íconos para productos o categorías utilizando un motor de IA libre (Pollinations/FLUX), eliminando el tiempo de diseño manual.
+- **Actor:** ADMIN
+- **Proceso de negocio de origen:** 6.1 (conversión en catálogo)
+- **Estados de FSM involucrados:** ninguno (operación administrativa independiente)
+- **Entidades afectadas:** `Category`, `Product` (campo `image_url: Optional[str]`)
+- **Eventos de dominio:** `EVT-CAT-005` (`ImagenGeneradaConIA`)
+- **Pantallas:** `SCR-ADM-001` (modales de gestión de imagen en `/admin/productos`)
+- **Botones/acciones que la disparan:** `BTN-AI-001` (botón "✨ Generar con IA")
+- **Resultado esperado:** Retorna la imagen generada en tiempo real optimizada a WebP/JPEG liviano (< 30 KB) en la vista previa del modal; lista para ser confirmada y persistida en BD
+- **Servicios de dominio involucrados:** `AIImageGeneratorService`, `StorageService`
+- **Prioridad funcional:** Post-MVP / Innovación
+- **RN relacionadas:** `RN-AI-IMG-01`, `RN-AI-IMG-02`, `RN-AI-IMG-03`
+- **RF relacionados:** `RF-AI-001`
+- **RNF relacionados:** `RNF-CAT-001` (performance)
+- **CA relacionados:** `CA-AI-001`
+- **TEST relacionados:** `TEST-AI-001`
 
 ---
 

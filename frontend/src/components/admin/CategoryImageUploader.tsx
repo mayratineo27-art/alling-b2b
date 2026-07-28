@@ -167,7 +167,32 @@ export function CategoryImageUploader({
   };
 
 
+  const handleGenerateAI = async () => {
+    setStatus("uploading");
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    try {
+      const res = await apiClient.post("/admin/generar-imagen-ia", {
+        prompt: category.name,
+        entity_type: "category"
+      });
+      const generatedDataUri = res.data.image_url;
+      setPreviewUrl(generatedDataUri);
+      const fetchRes = await fetch(generatedDataUri);
+      const blob = await fetchRes.blob();
+      const file = new File([blob], `${category.name || "cat"}-ai.webp`, { type: "image/webp" });
+      setSelectedFile(file);
+      setStatus("idle");
+      setSuccessMsg("✨ Imagen generada con IA. Haz clic en 'Guardar Imagen' para confirmar.");
+    } catch (err: any) {
+      const msg = err.response?.data?.detail ?? "Error al generar imagen con IA.";
+      setErrorMsg(msg);
+      setStatus("error");
+    }
+  };
+
   const displayUrl = previewUrl ?? currentImageUrl ?? PLACEHOLDER_URL;
+
   const isUploading = status === "uploading";
   const isDeleting = status === "deleting";
   const isBusy = isUploading || isDeleting;
@@ -257,6 +282,18 @@ export function CategoryImageUploader({
             />
           </div>
         )}
+
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={handleGenerateAI}
+            disabled={isBusy}
+            className="w-full py-2 px-3 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
+          >
+            <span>✨ Generar Imagen con IA (Gratis)</span>
+          </button>
+        </div>
+
 
         {selectedFile && !isBusy && (
           <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">

@@ -134,6 +134,30 @@ export default function ProductImageUploader({
     }
   };
 
+  const handleGenerateAI = async () => {
+    setUploading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const response = await apiClient.post("/admin/generar-imagen-ia", {
+        prompt: product.name,
+        entity_type: "product"
+      });
+      const generatedDataUri = response.data.image_url;
+      setPreviewUrl(generatedDataUri);
+      const fetchRes = await fetch(generatedDataUri);
+      const blob = await fetchRes.blob();
+      const file = new File([blob], `${product.name || "prod"}-ai.webp`, { type: "image/webp" });
+      setSelectedFile(file);
+      setSuccess("✨ Imagen generada con IA. Haz clic en 'Guardar Imagen' para confirmar.");
+    } catch (err: any) {
+      const msg = err.response?.data?.detail || "Error al generar imagen con IA.";
+      setError(msg);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const displaySrc = previewUrl || currentUrl || PLACEHOLDER;
 
   return (
@@ -167,7 +191,7 @@ export default function ProductImageUploader({
         onDragLeave={onDragLeave}
         onDrop={onDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors mb-4 ${
+        className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors mb-3 ${
           isDragging
             ? "border-[#10B981] bg-emerald-50"
             : "border-gray-300 hover:border-[#10B981] hover:bg-gray-50"
@@ -185,6 +209,18 @@ export default function ProductImageUploader({
         </p>
         <p className="text-[11px] text-gray-400 mt-1">PNG, JPEG o WebP (máx. 2 MB)</p>
       </div>
+
+      <div className="mb-4">
+        <button
+          type="button"
+          onClick={handleGenerateAI}
+          disabled={uploading || deleting}
+          className="w-full py-2 px-3 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
+        >
+          <span>✨ Generar Imagen con IA (Gratis)</span>
+        </button>
+      </div>
+
 
       {error && (
         <div className="mb-3 p-2.5 rounded bg-red-50 border border-red-200 text-xs text-red-600 font-medium">

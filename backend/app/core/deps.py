@@ -58,7 +58,7 @@ def get_category_image_service() -> "CategoryImageService":
 
     RF-CAT-009 / OPS-CAT-004
     """
-    from app.services.category_image_service import CategoryImageService  # type: ignore[attr-defined]
+    from app.services.category_image_service import CategoryImageService
     from app.services.storage_service import get_storage_service
     return CategoryImageService(storage_service=get_storage_service())
 
@@ -72,3 +72,13 @@ def get_product_image_service() -> "ProductImageService":
     from app.services.product_image_service import ProductImageService
     from app.services.storage_service import get_storage_service
     return ProductImageService(storage_service=get_storage_service())
+
+
+def get_ai_image_service() -> "AIImageGeneratorService":
+    """
+    Factory de AIImageGeneratorService para FastAPI Depends().
+
+    RF-AI-001 / OPS-CAT-006
+    """
+    from app.services.ai_image_service import AIImageGeneratorService
+    return AIImageGeneratorService()

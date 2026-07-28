@@ -727,3 +727,28 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 - **And** `product.image_url` queda en `null`
 - **And** el producto vuelve a mostrar la imagen por defecto o placeholder SVG
 
+---
+
+#### **CA-AI-001 (Generar imagen referencial con IA libre)**
+- **Objetivo:** Verificar la generación automática de imágenes referenciales fotorrealistas e íconos mediante motor de IA (Pollinations/FLUX), enriquecimiento de prompt y compresión automática.
+- **RF relacionado:** RF-AI-001
+- **HU relacionada:** HU-AI-001
+- **UC relacionado:** UC-CAT-006
+
+**Escenarios:**
+
+**Escenario 1: Generación exitosa de imagen con IA para producto**
+- **Given** un ADMIN autenticado con JWT de rol `ADMIN`
+- **When** el ADMIN solicita `POST /admin/generar-imagen-ia` enviando `{ "prompt": "Router Gigabit 4 Puertos", "entity_type": "product" }`
+- **Then** el sistema enriquece el prompt con términos profesionales B2B
+- **And** genera la imagen vía motor de IA libre
+- **And** comprime la imagen a WebP/JPEG liviano (< 40 KB)
+- **And** retorna HTTP `200 OK` con `{ "image_url": "data:image/webp;base64,...", "prompt_used": "..." }`
+
+**Escenario 2: Generación exitosa de imagen con IA para categoría**
+- **Given** un ADMIN autenticado
+- **When** el ADMIN ejecuta `POST /admin/generar-imagen-ia` enviando `{ "prompt": "Fibra Óptica", "entity_type": "category" }`
+- **Then** el sistema genera una representación visual fotorrealista de la categoría
+- **And** retorna HTTP `200 OK` con el payload de imagen optimizado
+
+

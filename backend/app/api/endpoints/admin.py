@@ -1173,3 +1173,51 @@ def delete_product_image(
     }
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# RF-AI-001 — Generación de imágenes referenciales con IA libre (OPS-CAT-006)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from app.core.deps import get_ai_image_service   # noqa: E402
+from app.services.ai_image_service import AIImageGeneratorService  # noqa: E402
+
+
+class AIImageRequest(BaseModel):
+    prompt: str = Field(..., min_length=1, description="Nombre o descripción corta para la IA")
+    entity_type: str = Field("product", description="'product' o 'category'")
+
+
+class AIImageResponse(BaseModel):
+    image_url: str
+    prompt_used: str
+    message: str
+
+
+@router.post(
+    "/generar-imagen-ia",
+    response_model=AIImageResponse,
+    summary="Generar imagen referencial con IA libre",
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — IA"],
+)
+def generate_ai_image(
+    body: AIImageRequest,
+    current_user: tuple = Depends(require_admin),
+    svc: AIImageGeneratorService = Depends(get_ai_image_service),
+) -> AIImageResponse:
+    try:
+        result = svc.generate_image(
+            prompt=body.prompt,
+            entity_type=body.entity_type,
+            actor_role="ADMIN",
+        )
+    except _DomainException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    return AIImageResponse(
+        image_url=result["image_url"],
+        prompt_used=result["prompt_used"],
+        message=result["message"],
+    )
+
+
+

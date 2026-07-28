@@ -32,6 +32,28 @@ _MAX_BYTES: int = 2 * 1024 * 1024          # 2 MB  (RN-CAT-IMG-02)
 _PLACEHOLDER_URL: str = "/assets/category-placeholder.svg"  # static asset
 
 
+def _optimize_image_bytes(file_bytes: bytes, original_filename: str, content_type: str) -> tuple[bytes, str, str]:
+    """Redimensiona y comprime imágenes a WebP/JPEG súper liviano (~15-30 KB) para tarjetas."""
+    try:
+        import io
+        from PIL import Image
+        img = Image.open(io.BytesIO(file_bytes))
+        img.thumbnail((450, 450), Image.Resampling.LANCZOS)
+        out = io.BytesIO()
+        if img.mode in ("RGBA", "P"):
+            img.save(out, format="WEBP", quality=80)
+            new_filename = original_filename.rsplit(".", 1)[0] + ".webp"
+            return out.getvalue(), new_filename, "image/webp"
+        else:
+            img = img.convert("RGB")
+            img.save(out, format="JPEG", quality=80)
+            new_filename = original_filename.rsplit(".", 1)[0] + ".jpg"
+            return out.getvalue(), new_filename, "image/jpeg"
+    except Exception:
+        return file_bytes, original_filename, content_type
+
+
+
 # ─── DTO de respuesta ─────────────────────────────────────────────────────────
 
 @dataclass
@@ -166,13 +188,17 @@ class CategoryImageService:
         if category.image_url:
             self._storage.delete(category.image_url)
 
-        # 5. Subir al storage (RN-CAT-IMG-03)
-        file_bytes: bytes = file.read()
+        # 5. Optimizar bytes y subir al storage (RN-CAT-IMG-03)
+        raw_bytes: bytes = file.read()
+        file_bytes, opt_filename, opt_content_type = _optimize_image_bytes(
+            raw_bytes, file.filename, file.content_type
+        )
         public_url: str = self._storage.upload(
             file_bytes=file_bytes,
-            filename=file.filename,
-            content_type=file.content_type,
+            filename=opt_filename,
+            content_type=opt_content_type,
         )
+
 
         # 6. Persistir en BD
         category.image_url = public_url

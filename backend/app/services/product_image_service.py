@@ -188,6 +188,7 @@ class ProductImageService:
 
     @staticmethod
     def _get_product_or_404(db: Session, product_id: str) -> ProductModel:
+        """Busca el producto en BD; maneja UUIDs de PostgreSQL y cadenas sin lanzar HTTP 500."""
         product: Optional[ProductModel] = None
         try:
             uuid_obj = UUID(product_id)
@@ -196,7 +197,10 @@ class ProductImageService:
             pass
 
         if product is None:
-            product = db.get(ProductModel, product_id)
+            try:
+                product = db.get(ProductModel, product_id)
+            except Exception:
+                product = None
 
         if not product:
             raise DomainException(
@@ -204,4 +208,5 @@ class ProductImageService:
                 status_code=404,
             )
         return product
+
 

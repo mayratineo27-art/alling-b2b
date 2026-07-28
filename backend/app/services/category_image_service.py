@@ -130,7 +130,7 @@ class CategoryImageService:
             )
 
     def _get_category_or_404(self, db: Session, category_id: str) -> CategoryModel:
-        """Busca la categoría en BD; convierte a UUID si es necesario para PostgreSQL."""
+        """Busca la categoría en BD; maneja UUIDs de PostgreSQL y cadenas sin lanzar HTTP 500."""
         cat: Optional[CategoryModel] = None
         try:
             from uuid import UUID
@@ -140,7 +140,10 @@ class CategoryImageService:
             pass
 
         if cat is None:
-            cat = db.get(CategoryModel, category_id)
+            try:
+                cat = db.get(CategoryModel, category_id)
+            except Exception:
+                cat = None
 
         if cat is None:
             raise DomainException(
@@ -148,6 +151,7 @@ class CategoryImageService:
                 status_code=404,
             )
         return cat
+
 
 
     # ── operaciones públicas ──────────────────────────────────────────────────

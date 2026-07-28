@@ -95,15 +95,21 @@ def require_admin(token: str = Depends(oauth2_scheme)) -> tuple:
     Handles both 2-tuple and 3-tuple returns from get_current_user_with_role
     (tests mock it with a 2-tuple).
     """
-    _this = sys.modules[__name__]
-    result = _this.get_current_user_with_role(token)
+    try:
+        _this = sys.modules.get(__name__)
+        if _this and hasattr(_this, "get_current_user_with_role"):
+            result = _this.get_current_user_with_role(token)
+        else:
+            result = get_current_user_with_role(token)
+    except Exception:
+        result = get_current_user_with_role(token)
 
-    # Support mocked 2-tuple (user_id, role) as well as real 3-tuple
     if len(result) == 2:
         user_id, role = result
         mfa_validated = False
     else:
         user_id, role, mfa_validated = result
+
 
     if role != "ADMIN":
         raise HTTPException(

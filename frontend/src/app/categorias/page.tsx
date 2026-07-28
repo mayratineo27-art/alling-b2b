@@ -1,9 +1,12 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import apiClient from '@/lib/api';
 import { CategoryGrid } from '@/components/catalogo/CategoryGrid';
 import Link from 'next/link';
+
 
 interface CategoryCount {
     nombre: string;

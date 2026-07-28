@@ -1,10 +1,13 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect, useCallback } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
 import CategoryImageUploader from "@/components/admin/CategoryImageUploader";
 import apiClient from "@/lib/api";
+
 
 interface Category {
   id: string;

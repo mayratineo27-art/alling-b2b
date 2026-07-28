@@ -31,7 +31,7 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
                         href={`/productos?categoria=${encodeURIComponent(cat.nombre)}`} 
                         className="group flex flex-col items-center justify-between rounded-xl bg-white overflow-hidden shadow-sm border border-gray-100 hover:border-[#10B981] hover:shadow-md transition-all cursor-pointer"
                     >
-                        <div className="relative w-full aspect-video bg-gray-50 overflow-hidden">
+                        <div className="relative w-full h-36 bg-gray-50 overflow-hidden">
                             <img
                                 src={imgSrc}
                                 alt={`Categoría: ${cat.nombre}`}
@@ -41,6 +41,7 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
                                 }}
                             />
                         </div>
+
                         <div className="p-4 flex flex-col items-center w-full">
                             <span className="text-base font-semibold text-gray-800 text-center group-hover:text-[#10B981] transition-colors truncate w-full">
                                 {cat.nombre}

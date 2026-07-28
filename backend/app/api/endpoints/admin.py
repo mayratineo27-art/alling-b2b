@@ -976,43 +976,58 @@ class CategoryImageResponse(BaseModel):
 
 
 class ImageUrlJSONRequest(BaseModel):
-    image_url: Optional[str] = Field(None, description="Data URI o URL remota de la imagen")
+    image_url: str = Field(..., description="Data URI o URL remota de la imagen")
 
 
 @router.patch(
     "/categorias/{category_id}/imagen",
     response_model=CategoryImageResponse,
-    summary="Subir/reemplazar imagen de referencia de una categoría",
+    summary="Actualizar imagen de referencia de categoría vía JSON",
     status_code=status.HTTP_200_OK,
     tags=["Admin — Categorías"],
 )
-def upload_category_image(
+def update_category_image_json(
     category_id: str,
-    file: Optional[UploadFile] = FastAPIFile(None, description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
-    body: Optional[ImageUrlJSONRequest] = None,
+    body: ImageUrlJSONRequest,
     current_user: tuple = Depends(require_admin),
     db: Session = Depends(get_db),
     svc: CategoryImageService = Depends(get_category_image_service),
 ) -> CategoryImageResponse:
-    if body and body.image_url:
+    try:
         result = svc.save_image_from_url_or_data_uri(
             db=db,
             category_id=category_id,
             image_data=body.image_url,
             actor_role="ADMIN",
         )
-        return CategoryImageResponse(category_id=result.category_id, image_url=result.image_url)
+    except _DomainException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Error al procesar la imagen: {str(exc)}")
 
-    if not file:
-        raise HTTPException(status_code=422, detail="Se requiere un archivo de imagen o un JSON con 'image_url'")
+    return CategoryImageResponse(category_id=result.category_id, image_url=result.image_url)
 
+
+@router.post(
+    "/categorias/{category_id}/imagen/upload",
+    response_model=CategoryImageResponse,
+    summary="Subir archivo de imagen de referencia de categoría",
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Categorías"],
+)
+def upload_category_image_file(
+    category_id: str,
+    file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+    svc: CategoryImageService = Depends(get_category_image_service),
+) -> CategoryImageResponse:
     try:
         content: bytes = file.file.read()
     except Exception:
         content = b""
 
     class _SyncUploadFile:
-        """Wrapper síncrono sobre UploadFile para compatibilidad con CategoryImageService."""
         def __init__(self, fn: str, ct: str, data: bytes) -> None:
             self.filename: str = fn
             self.content_type: str = ct
@@ -1033,7 +1048,7 @@ def upload_category_image(
             db=db,
             category_id=category_id,
             file=sync_file,
-            actor_role="ADMIN",   # ya garantizado por require_admin
+            actor_role="ADMIN",
         )
     except _DomainException as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.message)
@@ -1046,17 +1061,9 @@ def upload_category_image(
     )
 
 
-
-
 @router.delete(
     "/categorias/{category_id}/imagen",
     summary="Eliminar imagen de referencia de una categoría",
-    description=(
-        "**RF-CAT-009 / OPS-CAT-004** — Solo ADMIN. "
-        "Elimina la imagen de referencia de la categoría y resetea `image_url` a `null`. "
-        "La categoría NO se elimina. Los componentes mostrarán el placeholder SVG. "
-        "(RN-CAT-IMG-04, RN-CAT-IMG-05)"
-    ),
     status_code=status.HTTP_200_OK,
     tags=["Admin — Categorías"],
 )
@@ -1066,18 +1073,11 @@ def delete_category_image(
     db: Session = Depends(get_db),
     svc: CategoryImageService = Depends(get_category_image_service),
 ) -> dict:
-    """
-    DELETE /admin/categorias/{category_id}/imagen
-
-    - **200 OK** → imagen eliminada; `image_url` = null en BD.
-    - **403 Forbidden** → actor no es ADMIN.
-    - **404 Not Found** → categoría no existe.
-    """
     try:
         svc.delete_image(
             db=db,
             category_id=category_id,
-            actor_role="ADMIN",   # ya garantizado por require_admin
+            actor_role="ADMIN",
         )
     except _DomainException as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.message)
@@ -1106,36 +1106,50 @@ class ProductImageResponse(BaseModel):
 @router.patch(
     "/productos/{product_id}/imagen",
     response_model=ProductImageResponse,
-    summary="Subir/reemplazar imagen de referencia de un producto",
+    summary="Actualizar imagen de referencia de producto vía JSON",
     status_code=status.HTTP_200_OK,
     tags=["Admin — Productos"],
 )
-def upload_product_image(
+def update_product_image_json(
     product_id: str,
-    file: Optional[UploadFile] = FastAPIFile(None, description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
-    body: Optional[ImageUrlJSONRequest] = None,
+    body: ImageUrlJSONRequest,
     current_user: tuple = Depends(require_admin),
     db: Session = Depends(get_db),
     svc: ProductImageService = Depends(get_product_image_service),
 ) -> ProductImageResponse:
-    if body and body.image_url:
+    try:
         result = svc.save_image_from_url_or_data_uri(
             db=db,
             product_id=product_id,
             image_data=body.image_url,
             actor_role="ADMIN",
         )
-        return ProductImageResponse(product_id=result.product_id, image_url=result.image_url)
+    except _DomainException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Error al procesar la imagen: {str(exc)}")
 
-    if not file:
-        raise HTTPException(status_code=422, detail="Se requiere un archivo de imagen o un JSON con 'image_url'")
+    return ProductImageResponse(product_id=result.product_id, image_url=result.image_url)
 
+
+@router.post(
+    "/productos/{product_id}/imagen/upload",
+    response_model=ProductImageResponse,
+    summary="Subir archivo de imagen de referencia de un producto",
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Productos"],
+)
+def upload_product_image_file(
+    product_id: str,
+    file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+    svc: ProductImageService = Depends(get_product_image_service),
+) -> ProductImageResponse:
     try:
         content: bytes = file.file.read()
     except Exception:
         content = b""
-
-
 
     class _SyncUploadFile:
         def __init__(self, fn: str, ct: str, data: bytes) -> None:
@@ -1169,6 +1183,7 @@ def upload_product_image(
         product_id=result.product_id,
         image_url=result.image_url,
     )
+
 
 
 

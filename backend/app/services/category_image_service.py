@@ -27,9 +27,10 @@ from app.models.category import CategoryModel
 
 # ─── CONSTANTES ──────────────────────────────────────────────────────────────
 
-_ALLOWED_TYPES: frozenset[str] = frozenset({"image/png", "image/jpeg", "image/webp"})
+_ALLOWED_TYPES: frozenset[str] = frozenset({"image/png", "image/jpeg", "image/jpg", "image/webp", "image/pjpeg"})
 _MAX_BYTES: int = 2 * 1024 * 1024          # 2 MB  (RN-CAT-IMG-02)
 _PLACEHOLDER_URL: str = "/assets/category-placeholder.svg"  # static asset
+
 
 
 def _optimize_image_bytes(file_bytes: bytes, original_filename: str, content_type: str) -> tuple[bytes, str, str]:
@@ -129,19 +130,25 @@ class CategoryImageService:
             )
 
     def _get_category_or_404(self, db: Session, category_id: str) -> CategoryModel:
-        """Busca la categoría en BD; lanza DomainException 404 si no existe.
+        """Busca la categoría en BD; convierte a UUID si es necesario para PostgreSQL."""
+        cat: Optional[CategoryModel] = None
+        try:
+            from uuid import UUID
+            uuid_obj = UUID(category_id)
+            cat = db.get(CategoryModel, uuid_obj)
+        except (ValueError, TypeError):
+            pass
 
-        Nota: db.get() de SQLModel/SQLAlchemy acepta la clave primaria como
-        argumento posicional. Para UUID almacenados como str en SQLite se pasa
-        directamente el string; el ORM lo convierte según el tipo de columna.
-        """
-        cat: Optional[CategoryModel] = db.get(CategoryModel, category_id)
+        if cat is None:
+            cat = db.get(CategoryModel, category_id)
+
         if cat is None:
             raise DomainException(
                 message=f"Categoría '{category_id}' no encontrada.",
                 status_code=404,
             )
         return cat
+
 
     # ── operaciones públicas ──────────────────────────────────────────────────
 

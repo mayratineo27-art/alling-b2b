@@ -18,8 +18,9 @@ from app.domain.exceptions import DomainException
 from app.models.product import ProductModel
 
 
-_ALLOWED_TYPES: frozenset[str] = frozenset({"image/png", "image/jpeg", "image/webp"})
+_ALLOWED_TYPES: frozenset[str] = frozenset({"image/png", "image/jpeg", "image/jpg", "image/webp", "image/pjpeg"})
 _MAX_BYTES: int = 2 * 1024 * 1024          # 2 MB (RN-PROD-IMG-02)
+
 
 
 def _optimize_image_bytes(file_bytes: bytes, original_filename: str, content_type: str) -> tuple[bytes, str, str]:
@@ -144,18 +145,20 @@ class ProductImageService:
 
     @staticmethod
     def _get_product_or_404(db: Session, product_id: str) -> ProductModel:
+        product: Optional[ProductModel] = None
         try:
             uuid_obj = UUID(product_id)
-        except ValueError:
-            raise DomainException(
-                message=f"ID de producto inválido: '{product_id}'",
-                status_code=404,
-            )
+            product = db.get(ProductModel, uuid_obj)
+        except (ValueError, TypeError):
+            pass
 
-        product = db.get(ProductModel, uuid_obj)
+        if product is None:
+            product = db.get(ProductModel, product_id)
+
         if not product:
             raise DomainException(
                 message=f"Producto con ID '{product_id}' no encontrado",
                 status_code=404,
             )
         return product
+

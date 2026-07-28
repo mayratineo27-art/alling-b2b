@@ -506,26 +506,27 @@ class KitComponent(SQLModel, table=True):
 
 ---
 
-### 🆕 OPS-CAT-004 — Gestionar imagen de referencia de categoría _(ADMIN)_
+### 🆕 OPS-CAT-005 — Gestionar imagen de referencia de producto _(ADMIN)_
 
-- **Objetivo de negocio:** Permitir que ADMIN asigne imágenes representativas a categorías para mejorar la experiencia visual en `SCR-CAT-003` (Landing) y `SCR-CAT-004` (Exploración intermedia)
+- **Objetivo de negocio:** Permitir que ADMIN asigne imágenes representativas y livianas a cada producto para potenciar la conversión visual en la tienda y catálogo.
 - **Actor:** ADMIN
-- **Proceso de negocio de origen:** 6.1 (mejorar conversión en catálogo)
+- **Proceso de negocio de origen:** 6.1 (conversión en catálogo)
 - **Estados de FSM involucrados:** ninguno (operación administrativa independiente)
-- **Entidades afectadas:** `Category` (campo `image_url: Optional[str]`)
-- **Eventos de dominio:** `EVT-CAT-003` (`CategoriaImagenActualizada`)
-- **Pantallas:** `SCR-ADM-*` (panel de administración de categorías)
-- **Botones/acciones que la disparan:** `BTN-CAT-010` (subir), `BTN-CAT-011` (eliminar)
-- **Resultado esperado:** `category.image_url` actualizado; todos los componentes que consumen la categoría reflejan la nueva imagen en la siguiente carga
-- **Servicios de dominio involucrados:** `CategoryImageService` (nuevo), `StorageService`
-- **Prioridad funcional:** Post-MVP (mejora visual)
-- **RN relacionadas:** `RN-CAT-IMG-01`, `RN-CAT-IMG-02`, `RN-CAT-IMG-03`, `RN-CAT-IMG-04`, `RN-CAT-IMG-05`
-- **RF relacionados:** `RF-CAT-009`
-- **RNF relacionados:** `RNF-CAT-001` (performance), `RNF-SEC-001` (validación de tipo de archivo)
-- **HU relacionadas:** `HU-CAT-009` _(pendiente de creación en CRITERIOS_DE_ACEPTACION.md)_
-- **UC relacionados:** `UC-CAT-004` _(pendiente)_
-- **CA relacionados:** `CA-CAT-009` _(ver CRITERIOS_DE_ACEPTACION.md)_
-- **TEST relacionados:** `TEST-CAT-009` _(pendiente de creación en PLAN_DE_PRUEBAS_TDD)_
+- **Entidades afectadas:** `Product` (campo `image_url: Optional[str]`)
+- **Eventos de dominio:** `EVT-CAT-004` (`ProductoImagenActualizada`)
+- **Pantallas:** `SCR-ADM-001` (panel de administración de productos `/admin/productos`)
+- **Botones/acciones que la disparan:** `BTN-PROD-001` (subir imagen), `BTN-PROD-002` (eliminar imagen)
+- **Resultado esperado:** `product.image_url` actualizado en BD con formato optimizado WebP/JPEG; visible en catálogo público
+- **Servicios de dominio involucrados:** `ProductImageService`, `StorageService`
+- **Prioridad funcional:** MVP
+- **RN relacionadas:** `RN-PROD-IMG-01`, `RN-PROD-IMG-02`, `RN-PROD-IMG-03`, `RN-PROD-IMG-04`, `RN-PROD-IMG-05`
+- **RF relacionados:** `RF-PROD-004`
+- **RNF relacionados:** `RNF-CAT-001` (performance y carga ultra-rápida), `RNF-SEC-001` (validación de tipo MIME y tamaño)
+- **CA relacionados:** `CA-PROD-004`
+- **TEST relacionados:** `TEST-PROD-004`
+
+---
+
 
 ---
 

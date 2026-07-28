@@ -55,6 +55,8 @@
 | **RF-CAT-007** 🆕 | HU-CAT-007: Como CUSTOMER quiero guardar favoritos | Solo CUSTOMER; persistencia entre sesiones; acceso desde header | `FavoriteService` + `CMP-CAT-029` | GUEST intenta favoritar → botón oculto; CUSTOMER → funciona | ✅ Listo |
 | **RF-CAT-008** 🆕 | HU-CAT-008: Como GUEST quiero consultar producto por Telegram | Botón Telegram en card → abre `t.me` con payload (SKU, nombre) | `CMP-CAT-030` + deep link | Verificar URL con payload correcto | ✅ Listo |
 | **RF-CAT-009** 🆕 | HU-CAT-009: Como ADMIN quiero asignar imagen de referencia a una categoría | ADMIN puede hacer `PATCH /categories/{id}/image`; archivo ≤2MB, tipos: png/jpeg/webp; `image_url` se persiste; componentes `CMP-CAT-025` y `CMP-CAT-027` renderizan la imagen; si `image_url=null` se muestra placeholder SVG | `CategoryImageService` + `StorageService` + `PATCH/DELETE /admin/categorias/{id}/imagen` | 20/20 unit tests PASSED — upload válido, tamaño, MIME, RBAC, delete, placeholder, reemplazo | ✅ Listo (2026-07-27 · TDD RED→GREEN→REFACTOR) |
+| **RF-PROD-004** 🆕 | HU-PROD-004: Como ADMIN quiero asignar imagen de referencia a un producto | ADMIN puede hacer `PATCH /admin/productos/{id}/imagen`; archivo ≤2MB, tipos: png/jpeg/webp; optimización automática WebP/JPEG; `image_url` se persiste; `ProductCard` renderiza la imagen; si `image_url=null` se muestra placeholder | `ProductImageService` + `StorageService` + `PATCH/DELETE /admin/productos/{id}/imagen` | Unit tests PASSED — upload válido, optimización Pillow, MIME, RBAC, delete, placeholder, reemplazo | ✅ Listo (2026-07-28 · SDD/TDD) |
+
 
 
 

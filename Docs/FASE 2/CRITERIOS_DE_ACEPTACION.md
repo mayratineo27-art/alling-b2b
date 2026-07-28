@@ -684,3 +684,46 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 - **Then** el sistema retorna HTTP `200 OK`
 - **And** `category.image_url` se actualiza a la nueva URL
 - **And** la imagen anterior es eliminada del almacenamiento de objetos
+
+---
+
+#### **CA-PROD-004 (Asignar imagen de referencia a un producto)**
+- **Objetivo:** Verificar la carga, validación, optimización automática y eliminación de imágenes de referencia por cada producto del catálogo.
+- **RF relacionado:** RF-PROD-004
+- **HU relacionada:** HU-PROD-004
+- **UC relacionado:** UC-CAT-005
+
+**Escenarios:**
+
+**Escenario 1: Carga exitosa de imagen de producto con optimización automática**
+- **Given** un ADMIN autenticado con JWT de rol `ADMIN`
+- **And** un producto existente con `id = <uuid>`
+- **And** un archivo `producto_cable.png` de 1.5 MB (tipo `image/png`)
+- **When** el ADMIN ejecuta `PATCH /admin/productos/{id}/imagen`
+- **Then** el sistema optimiza y comprime la imagen a WebP/JPEG liviano (< 40 KB)
+- **And** retorna HTTP `200 OK` con `{ "image_url": "..." }`
+- **And** `product.image_url` queda persistido en la base de datos
+- **And** `ProductCard` renderiza la nueva imagen referencial
+
+**Escenario 2: Archivo excede el límite de tamaño de 2 MB**
+- **Given** un ADMIN autenticado
+- **And** un producto existente
+- **And** un archivo `foto_4k.png` de 3.8 MB
+- **When** el ADMIN ejecuta `PATCH /admin/productos/{id}/imagen`
+- **Then** el sistema rechaza la operación con HTTP `422 Unprocessable Entity`
+- **And** `product.image_url` no sufre cambios
+
+**Escenario 3: Tipo de archivo no permitido**
+- **Given** un ADMIN autenticado
+- **And** un archivo `manual.pdf` (tipo `application/pdf`)
+- **When** el ADMIN ejecuta `PATCH /admin/productos/{id}/imagen`
+- **Then** el sistema rechaza la operación con HTTP `422 Unprocessable Entity`
+
+**Escenario 4: ADMIN elimina la imagen del producto**
+- **Given** un ADMIN autenticado
+- **And** un producto con `image_url != null`
+- **When** el ADMIN ejecuta `DELETE /admin/productos/{id}/imagen`
+- **Then** el sistema retorna HTTP `200 OK`
+- **And** `product.image_url` queda en `null`
+- **And** el producto vuelve a mostrar la imagen por defecto o placeholder SVG
+

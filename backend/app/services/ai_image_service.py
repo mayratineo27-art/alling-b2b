@@ -73,29 +73,17 @@ class AIImageGeneratorService:
                 f"B2B networking hardware equipment, clean white background, studio lights, 8k product render"
             )
 
+        import random
+        seed = random.randint(100, 999999)
         encoded_prompt = urllib.parse.quote(enriched_prompt)
         pollinations_url = (
             f"https://image.pollinations.ai/prompt/{encoded_prompt}"
-            f"?width=512&height=512&nologo=true&seed=42"
+            f"?width=512&height=512&nologo=true&seed={seed}"
         )
 
-        try:
-            req = urllib.request.Request(
-                pollinations_url,
-                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-            )
-            with urllib.request.urlopen(req, timeout=12) as response:
-                image_bytes = response.read()
-        except Exception as exc:
-            raise DomainException(
-                message=f"Error en el motor de generación IA: {str(exc)}",
-                status_code=502,
-            )
-
-        data_uri = _compress_to_webp_data_uri(image_bytes)
-
         return {
-            "image_url": data_uri,
+            "image_url": pollinations_url,
             "prompt_used": enriched_prompt,
             "message": "Imagen generada con IA exitosamente",
         }
+

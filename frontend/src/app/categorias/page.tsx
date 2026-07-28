@@ -8,7 +8,9 @@ import Link from 'next/link';
 interface CategoryCount {
     nombre: string;
     count: number;
+    image_url?: string | null;
 }
+
 
 export default function CategoriasPage() {
     const [categorias, setCategorias] = useState<CategoryCount[]>([]);

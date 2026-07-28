@@ -50,17 +50,43 @@ class ProductQueryService:
         {
             "destacados": [Product],      # is_featured=True, sin precio
             "novedades": [Product],       # created_at > hace 7 días
-            "categorias_conteo": [{"nombre": str, "count": int}]
+            "categorias_conteo": [{"nombre": str, "count": int, "image_url": str | None}]
         }
         """
         destacados = self.repo.list_featured(limit=8)
         novedades = self.repo.list_recent(limit=8)
         categorias_dict = self.repo.get_category_counts()
-        
-        categorias_list = [
-            {"nombre": cat, "count": count} 
-            for cat, count in categorias_dict.items()
-        ]
+        counts_normalized = {k.lower().strip(): v for k, v in categorias_dict.items() if k}
+
+        categorias_list: List[Dict[str, Any]] = []
+        try:
+            from sqlmodel import select
+            from app.models.category import CategoryModel
+            if hasattr(self.repo, 'session') and self.repo.session:
+                category_models = self.repo.session.exec(
+                    select(CategoryModel).order_by(CategoryModel.name)
+                ).all()
+
+                for cat in category_models:
+                    cnt = counts_normalized.get(cat.name.lower().strip(), 0)
+                    categorias_list.append({
+                        "nombre": cat.name,
+                        "count": cnt,
+                        "image_url": cat.image_url
+                    })
+        except Exception:
+            pass
+
+        if not categorias_list:
+            categorias_list = [
+                {
+                    "nombre": cat,
+                    "count": count,
+                    "image_url": None
+                } 
+                for cat, count in categorias_dict.items()
+            ]
+
         
         return {
             "destacados": destacados,

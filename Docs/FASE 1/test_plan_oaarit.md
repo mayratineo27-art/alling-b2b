@@ -80,15 +80,15 @@ Para garantizar la trazabilidad absoluta, todos los artefactos de prueba seguir�
 
 ### 3.1 Estructura de Homoclaves
 
-|Nivel|Formato|Ejemplo|Descripción|
-|---|---|---|---|
-|**Unitario**|`TC_ALLING_UNIT_[MOD]_[NNN]`|`TC_ALLING_UNIT_FSM_005`|Prueba de lógica de dominio aislada (sin DB).|
-|**Integración**|`TC_ALLING_INT_[MOD]_[NNN]`|`TC_ALLING_INT_PAY_003`|Prueba con DB real o servicios externos (MP Mock).|
-|**E2E**|`TC_ALLING_E2E_[NNN]`|`TC_ALLING_E2E_007`|Flujo completo de UI (Frontend + Backend).|
-|**Seguridad**|`TC_ALLING_SEC_[MOD]_[NNN]`|`TC_ALLING_SEC_RLS_001`|Pruebas específicas de seguridad (RLS, HMAC, JWT).|
-|**Performance**|`TC_ALLING_PERF_[MOD]_[NNN]`|`TC_ALLING_PERF_001`|Pruebas de tiempos de respuesta y carga.|
-|**Defecto**|`DEF_ALLING_[MOD]_[NNN]`|`DEF_ALLING_CHK_002`|Hallazgo documentado durante la ejecución.|
-|**Evidencia**|`EV_ALLING_[TIPO]_[NNN]`|`EV_ALLING_SCREENSHOT_015`|Artefacto generado (log, screenshot, video, JSON).|
+| Nivel           | Formato                      | Ejemplo                    | Descripción                                        |
+| --------------- | ---------------------------- | -------------------------- | -------------------------------------------------- |
+| **Unitario**    | `TC_ALLING_UNIT_[MOD]_[NNN]` | `TC_ALLING_UNIT_FSM_005`   | Prueba de lógica de dominio aislada (sin DB).      |
+| **Integración** | `TC_ALLING_INT_[MOD]_[NNN]`  | `TC_ALLING_INT_PAY_003`    | Prueba con DB real o servicios externos (MP Mock). |
+| **E2E**         | `TC_ALLING_E2E_[NNN]`        | `TC_ALLING_E2E_007`        | Flujo completo de UI (Frontend + Backend).         |
+| **Seguridad**   | `TC_ALLING_SEC_[MOD]_[NNN]`  | `TC_ALLING_SEC_RLS_001`    | Pruebas específicas de seguridad (RLS, HMAC, JWT). |
+| **Performance** | `TC_ALLING_PERF_[MOD]_[NNN]` | `TC_ALLING_PERF_001`       | Pruebas de tiempos de respuesta y carga.           |
+| **Defecto**     | `DEF_ALLING_[MOD]_[NNN]`     | `DEF_ALLING_CHK_002`       | Hallazgo documentado durante la ejecución.         |
+| **Evidencia**   | `EV_ALLING_[TIPO]_[NNN]`     | `EV_ALLING_SCREENSHOT_015` | Artefacto generado (log, screenshot, video, JSON). |
 
 ### 3.2 Módulos de Referencia (MOD)
 

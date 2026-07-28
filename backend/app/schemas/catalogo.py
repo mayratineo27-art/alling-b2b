@@ -56,6 +56,8 @@ class CategoryResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nombre: str
     count: int
+    image_url: Optional[str] = None
+
 
 class LandingResponseSchema(BaseModel):
     destacados: list[LandingProductSchema]

@@ -231,13 +231,13 @@ MOD-ADM-01 — Panel ADMIN (Usuarios, Catálogo, Métricas, Configuración)
 
 **`SCR-ADM-001`:**
 
-|ID|Tipo|Función en el proceso|Datos consumidos|Datos producidos|Dependencias|
-|---|---|---|---|---|---|
-|`CMP-ADM-001`|Tabla de usuarios|Soporta `OPS-ADM-001`|`User[]`|selección de fila|`CMP-ADM-002`|
-|`CMP-ADM-002`|Filtro por rol|Refina `OPS-ADM-001`|—|`role[]` filtrado|`CMP-ADM-001`|
-|`CMP-ADM-003`|Modal de creación de usuario|Soporta `OPS-ADM-002`|—|`email`, `name`, `role`|`BTN-ADM-001`|
-|`CMP-ADM-004`|Badge de estado (activo/suspendido)|Comunica `is_suspended`|`User.is_suspended`|—|—|
-|`CMP-ADM-005`|Modal de confirmación de eliminación|Previene eliminación accidental|—|confirmación del usuario|`BTN-ADM-003`|
+| ID            | Tipo                                 | Función en el proceso           | Datos consumidos    | Datos producidos         | Dependencias  |
+| ------------- | ------------------------------------ | ------------------------------- | ------------------- | ------------------------ | ------------- |
+| `CMP-ADM-001` | Tabla de usuarios                    | Soporta `OPS-ADM-001`           | `User[]`            | selección de fila        | `CMP-ADM-002` |
+| `CMP-ADM-002` | Filtro por rol                       | Refina `OPS-ADM-001`            | —                   | `role[]` filtrado        | `CMP-ADM-001` |
+| `CMP-ADM-003` | Modal de creación de usuario         | Soporta `OPS-ADM-002`           | —                   | `email`, `name`, `role`  | `BTN-ADM-001` |
+| `CMP-ADM-004` | Badge de estado (activo/suspendido)  | Comunica `is_suspended`         | `User.is_suspended` | —                        | —             |
+| `CMP-ADM-005` | Modal de confirmación de eliminación | Previene eliminación accidental | —                   | confirmación del usuario | `BTN-ADM-003` |
 
 **`SCR-ADM-002`:**
 

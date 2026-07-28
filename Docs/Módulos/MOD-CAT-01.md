@@ -264,7 +264,7 @@
 
 ### Requisitos Funcionales relacionados (RF)
 
-`RF-CAT-001`, `RF-CAT-002`, `RF-CAT-003`
+`RF-CAT-001`, `RF-CAT-002`, `RF-CAT-003`, `RF-CAT-004`, `RF-CAT-005`, `RF-CAT-006`, `RF-CAT-007`, `RF-CAT-008`, `RF-CAT-009`
 
 ### Requisitos No Funcionales relacionados (RNF)
 
@@ -312,6 +312,7 @@
 - **RF-CAT-006:** Gestión de Kits (agrupaciones dinámicas con precio calculado)
 - **RF-CAT-007:** Favoritos de productos (solo CUSTOMER)
 - **RF-CAT-008:** Consulta rápida por Telegram desde tarjeta de producto
+- **RF-CAT-009:** Imágenes de referencia por categoría — permite que ADMIN asigne una imagen representativa a cada categoría; esa imagen se muestra en `CMP-CAT-025`, `CMP-CAT-027` y `SCR-CAT-004`
 
 ### 🖼️ Nuevas Pantallas (SCR-*)
 
@@ -361,6 +362,14 @@
 **CMP-CAT-027: Grid de Categorías**
 - Layout responsive (1 col mobile, 2 tablet, 3 desktop)
 - Tarjetas clickeables
+- Imagen de referencia de la categoría (si existe `category.image_url`, se muestra; si no, se usa placeholder SVG con ícono de red)
+
+**CMP-CAT-031: Uploader de Imagen de Categoría** _(Solo ADMIN — SCR-ADM)_
+- Input de tipo `file` (acepta `image/png`, `image/jpeg`, `image/webp`; máx. 2 MB)
+- Preview en tiempo real antes de guardar
+- Botón "Guardar imagen" → `PATCH /categories/{id}/image`
+- Botón "Eliminar imagen" → `DELETE /categories/{id}/image` (restaura placeholder)
+- Indicador de carga / éxito / error
 
 **CMP-CAT-028: Kit Card**
 - Imagen compuesta del Kit
@@ -401,6 +410,17 @@
 - **Acción:** POST /kits/{id}/add-to-formato
 - **Validación:** Stock del Kit (mínimo de componentes)
 - **Permiso:** GUEST, CUSTOMER
+
+**BTN-CAT-010: Subir imagen de categoría** _(ADMIN)_
+- **Acción:** `PATCH /categories/{id}/image` (multipart/form-data)
+- **Validación:** tipo de archivo (`image/*`) + tamaño ≤ 2 MB
+- **Postcondición:** `category.image_url` actualizado; `CMP-CAT-025` y `CMP-CAT-027` renderizan nueva imagen
+- **Permiso:** ADMIN only
+
+**BTN-CAT-011: Eliminar imagen de categoría** _(ADMIN)_
+- **Acción:** `DELETE /categories/{id}/image`
+- **Postcondición:** `category.image_url` = `null`; componentes muestran placeholder SVG
+- **Permiso:** ADMIN only
 
 ### 📦 Nueva Entidad: Kit
 
@@ -447,6 +467,12 @@ class KitComponent(SQLModel, table=True):
 
 **RN-KIT-01:** Precio dinámico de Kit = suma de precios de componentes **RN-KIT-02:** Kit requiere mínimo 2 componentes **RN-KIT-03:** Stock de Kit = mínimo stock de componentes **RN-FAV-01:** Solo CUSTOMER puede tener favoritos **RN-TG-01:** Payload Telegram debe incluir SKU + nombre + cantidad
 
+**RN-CAT-IMG-01:** Solo un ADMIN autenticado puede subir, reemplazar o eliminar la imagen de referencia de una categoría.
+**RN-CAT-IMG-02:** El archivo de imagen debe ser de tipo `image/png`, `image/jpeg` o `image/webp` y no superar 2 MB. Cualquier otro tipo o tamaño retorna HTTP 422.
+**RN-CAT-IMG-03:** La imagen se almacena en almacenamiento de objetos (Supabase Storage / S3-compatible). El campo `category.image_url` guarda únicamente la URL pública resultante.
+**RN-CAT-IMG-04:** Si una categoría no tiene imagen asignada (`image_url = null`), los componentes `CMP-CAT-025`, `CMP-CAT-027` muestran un placeholder SVG neutro; nunca una URL rota.
+**RN-CAT-IMG-05:** La eliminación de la imagen no elimina la categoría; solo resetea `image_url` a `null`.
+
 ### 🔄 Impacto en Actores
 
 **GUEST:**
@@ -477,6 +503,29 @@ class KitComponent(SQLModel, table=True):
 
 **NAV-CAT-003:** Header → SCR-CAT-003 (Landing) **NAV-CAT-004:** SCR-CAT-003 → SCR-CAT-004 (clic en categoría) **NAV-CAT-005:** SCR-CAT-004 → SCR-CAT-001 (clic en categoría) **NAV-CAT-006:** SCR-CAT-001 → Modal Telegram (BTN-CAT-007)
 
+
+---
+
+### 🆕 OPS-CAT-004 — Gestionar imagen de referencia de categoría _(ADMIN)_
+
+- **Objetivo de negocio:** Permitir que ADMIN asigne imágenes representativas a categorías para mejorar la experiencia visual en `SCR-CAT-003` (Landing) y `SCR-CAT-004` (Exploración intermedia)
+- **Actor:** ADMIN
+- **Proceso de negocio de origen:** 6.1 (mejorar conversión en catálogo)
+- **Estados de FSM involucrados:** ninguno (operación administrativa independiente)
+- **Entidades afectadas:** `Category` (campo `image_url: Optional[str]`)
+- **Eventos de dominio:** `EVT-CAT-003` (`CategoriaImagenActualizada`)
+- **Pantallas:** `SCR-ADM-*` (panel de administración de categorías)
+- **Botones/acciones que la disparan:** `BTN-CAT-010` (subir), `BTN-CAT-011` (eliminar)
+- **Resultado esperado:** `category.image_url` actualizado; todos los componentes que consumen la categoría reflejan la nueva imagen en la siguiente carga
+- **Servicios de dominio involucrados:** `CategoryImageService` (nuevo), `StorageService`
+- **Prioridad funcional:** Post-MVP (mejora visual)
+- **RN relacionadas:** `RN-CAT-IMG-01`, `RN-CAT-IMG-02`, `RN-CAT-IMG-03`, `RN-CAT-IMG-04`, `RN-CAT-IMG-05`
+- **RF relacionados:** `RF-CAT-009`
+- **RNF relacionados:** `RNF-CAT-001` (performance), `RNF-SEC-001` (validación de tipo de archivo)
+- **HU relacionadas:** `HU-CAT-009` _(pendiente de creación en CRITERIOS_DE_ACEPTACION.md)_
+- **UC relacionados:** `UC-CAT-004` _(pendiente)_
+- **CA relacionados:** `CA-CAT-009` _(ver CRITERIOS_DE_ACEPTACION.md)_
+- **TEST relacionados:** `TEST-CAT-009` _(pendiente de creación en PLAN_DE_PRUEBAS_TDD)_
 
 ---
 

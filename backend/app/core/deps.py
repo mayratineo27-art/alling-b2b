@@ -49,3 +49,16 @@ def get_product_repository(
     """
     from app.infra.repositories.product_repository_impl import ProductRepositoryImpl
     return ProductRepositoryImpl(session=session)
+
+
+def get_category_image_service() -> "CategoryImageService":
+    """
+    Factory de CategoryImageService para FastAPI Depends().
+    Inyecta el StorageService apropiado según USE_MOCK_DB.
+
+    RF-CAT-009 / OPS-CAT-004
+    """
+    from app.services.category_image_service import CategoryImageService  # type: ignore[attr-defined]
+    from app.services.storage_service import get_storage_service
+    return CategoryImageService(storage=get_storage_service())
+

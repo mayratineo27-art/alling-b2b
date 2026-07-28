@@ -269,6 +269,7 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
     - *Given* un usuario visualizando el detalle de un producto o el catálogo
     - *When* hace clic en "Consultar por Telegram" (`BTN-CAT-007`)
     - *Then* el sistema abre una pestaña externa a `https://t.me/allingtechnology` con el mensaje formateado que incluye el SKU e ID del producto (RN-TG-01).
+- **CA-CAT-009 (Imagen de referencia por categoría):** _(ver sección completa al final del documento)_
 
 ###  Criterios de Formato Único (FU)
 - **CA-FU-012:** Al iniciar sesión, un CUSTOMER debe ser redirigido automáticamente a su Dashboard.
@@ -547,11 +548,11 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 
 ---
 
-#### **CA-CAT-009 (Carrito flotante — Drawer y notificación no intrusiva)**
+#### **CA-CAT-010 (Carrito flotante — Drawer y notificación no intrusiva)**
 - **Objetivo:** Verificar que agregar un producto muestra una notificación no bloqueante y que el badge del Header refleja la cantidad de ítems en tiempo real.
-- **RF relacionado:** RF-CAT-009
-- **HU relacionada:** HU-CAT-009
-- **UC relacionado:** UC-CAT-009
+- **RF relacionado:** RF-CAT-010 _(ID reasignado — el ID RF-CAT-009 fue reservado para Imagen de referencia por categoría el 2026-07-27)_
+- **HU relacionada:** HU-CAT-010
+- **UC relacionado:** UC-CAT-010
 
 **Escenarios:**
 
@@ -608,3 +609,78 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 - **Then** el sistema rechaza la operación con HTTP `400 Bad Request`
 - **And** el descuento no es aplicado y el subtotal permanece inalterado (RN-ADM-04)
 
+---
+
+#### **CA-CAT-009 — Imagen de referencia por categoría** 🆕
+- **Objetivo:** Verificar que ADMIN puede asignar, reemplazar y eliminar una imagen representativa de una categoría, y que los componentes del catálogo la renderizan correctamente o muestran un placeholder cuando no existe.
+- **RF relacionado:** `RF-CAT-009`
+- **HU relacionada:** `HU-CAT-009`
+- **UC relacionado:** `UC-CAT-004`
+- **RN relacionadas:** `RN-CAT-IMG-01`, `RN-CAT-IMG-02`, `RN-CAT-IMG-03`, `RN-CAT-IMG-04`, `RN-CAT-IMG-05`
+- **Servicios involucrados:** `CategoryImageService`, `StorageService`
+- **Endpoints:** `PATCH /categories/{id}/image`, `DELETE /categories/{id}/image`
+
+**Escenarios:**
+
+**Escenario 1: ADMIN sube imagen válida (Happy Path)**
+- **Given** un ADMIN autenticado con JWT RS256 válido y rol `ADMIN`
+- **And** una categoría existente con `id = <uuid>` y `image_url = null`
+- **And** un archivo `fibra_optica.webp` de 800 KB (tipo `image/webp`)
+- **When** el ADMIN ejecuta `PATCH /categories/{id}/image` con el archivo en `multipart/form-data`
+- **Then** el sistema retorna HTTP `200 OK`
+- **And** el body incluye `{ "image_url": "https://<storage>/categories/<uuid>/fibra_optica.webp" }`
+- **And** `category.image_url` queda persistido en base de datos
+- **And** `CMP-CAT-025` y `CMP-CAT-027` renderizan la nueva imagen en la siguiente carga
+
+**Escenario 2: Archivo excede el límite de tamaño (RN-CAT-IMG-02)**
+- **Given** un ADMIN autenticado
+- **And** una categoría existente
+- **And** un archivo `banner_hd.png` de 3.5 MB (tipo `image/png`)
+- **When** el ADMIN ejecuta `PATCH /categories/{id}/image`
+- **Then** el sistema rechaza la operación con HTTP `422 Unprocessable Entity`
+- **And** el mensaje de error indica: `"El archivo supera el tamaño máximo permitido de 2 MB"`
+- **And** `category.image_url` no es modificada
+
+**Escenario 3: Tipo de archivo no permitido (RN-CAT-IMG-02)**
+- **Given** un ADMIN autenticado
+- **And** una categoría existente
+- **And** un archivo `documento.pdf` (tipo `application/pdf`) de 500 KB
+- **When** el ADMIN ejecuta `PATCH /categories/{id}/image`
+- **Then** el sistema rechaza la operación con HTTP `422 Unprocessable Entity`
+- **And** el mensaje indica: `"Tipo de archivo no permitido. Use png, jpeg o webp"`
+
+**Escenario 4: Actor sin permiso intenta subir imagen (RN-CAT-IMG-01)**
+- **Given** un usuario autenticado con rol `CUSTOMER` o `SELLER`
+- **And** una categoría existente
+- **When** el usuario ejecuta `PATCH /categories/{id}/image`
+- **Then** el sistema rechaza la operación con HTTP `403 Forbidden`
+- **And** `category.image_url` no es modificada
+
+**Escenario 5: GUEST intenta subir imagen (Zero Trust)**
+- **Given** una petición sin JWT (sin header `Authorization`)
+- **When** se ejecuta `PATCH /categories/{id}/image`
+- **Then** el sistema retorna HTTP `401 Unauthorized`
+
+**Escenario 6: ADMIN elimina imagen existente (RN-CAT-IMG-05)**
+- **Given** un ADMIN autenticado
+- **And** una categoría con `image_url != null`
+- **When** el ADMIN ejecuta `DELETE /categories/{id}/image`
+- **Then** el sistema retorna HTTP `200 OK`
+- **And** `category.image_url` queda en `null` en base de datos
+- **And** la categoría NO es eliminada
+- **And** `CMP-CAT-025` y `CMP-CAT-027` muestran el placeholder SVG neutro (RN-CAT-IMG-04)
+
+**Escenario 7: Categoría sin imagen muestra placeholder (RN-CAT-IMG-04)**
+- **Given** una categoría con `image_url = null`
+- **When** cualquier actor (GUEST, CUSTOMER) carga `SCR-CAT-004` o `SCR-CAT-003`
+- **Then** `CMP-CAT-025` y `CMP-CAT-027` renderizan el placeholder SVG neutro
+- **And** no se produce ninguna petición de imagen rota (HTTP 404) ni error en consola
+
+**Escenario 8: Reemplazo de imagen existente**
+- **Given** un ADMIN autenticado
+- **And** una categoría con `image_url != null` (imagen previa)
+- **And** un archivo nuevo `redes_v2.jpeg` de 1.2 MB (tipo `image/jpeg`)
+- **When** el ADMIN ejecuta `PATCH /categories/{id}/image`
+- **Then** el sistema retorna HTTP `200 OK`
+- **And** `category.image_url` se actualiza a la nueva URL
+- **And** la imagen anterior es eliminada del almacenamiento de objetos

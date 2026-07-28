@@ -1,17 +1,17 @@
-# 📊 MATRIZ DE TRAZABILIDAD GLOBAL — Proyecto Alling v1.8.0
+# 📊 MATRIZ DE TRAZABILIDAD GLOBAL — Proyecto Alling v1.9.0
 
 **Documento:** `04_EJECUCION/MATRIZ_TRAZABILIDAD_GLOBAL.md`  
-**Versión:** 1.8.0 (Actualizada al 100% con 87 RFs y 24 RNFs)  
+**Versión:** 1.9.0 (Actualizada — 88 RFs / 24 RNFs; se añade RF-CAT-009 el 2026-07-27)  
 **Metodología:** Scrum + Spec-Driven Development (SDD)  
-**Alcance Global:** 87 Requisitos Funcionales (RF) + 24 Requisitos No Funcionales (RNF) en 10 Módulos + Capa Zero Trust  
+**Alcance Global:** 88 Requisitos Funcionales (RF) + 24 Requisitos No Funcionales (RNF) en 10 Módulos + Capa Zero Trust  
 
 
 
 > [!IMPORTANT]
-> **RESUMEN EJECUTIVO DE TRAZABILIDAD GLOBAL (v1.8.0):**
-> - 🎯 **87 Requisitos Funcionales (RF):** 100% integrados y mapeados en las secciones 1 a 5.
+> **RESUMEN EJECUTIVO DE TRAZABILIDAD GLOBAL (v1.9.0):**
+> - 🎯 **88 Requisitos Funcionales (RF):** 100% integrados y mapeados en las secciones 1 a 5.
 > - 🛡️ **24 Requisitos No Funcionales (RNF):** 100% integrados y mapeados en la sección 7.
-> - ⚡ **Estado de Desarrollo:** 74 RFs implementados (Sprints 1 al 7) + 13 RFs de infraestructura/Sprint 8.
+> - ⚡ **Estado de Desarrollo:** 74 RFs implementados (Sprints 1 al 7) + 13 RFs de infraestructura/Sprint 8 + **1 RF nuevo pendiente (RF-CAT-009)**.
 
 ---
 
@@ -54,6 +54,9 @@
 | **RF-CAT-006** | HU-CAT-006: Como B2B quiero ver Kits pre-armados | Precio calculado dinámicamente; stock = mínimo de componentes | `KitService` + `CMP-CAT-028` | Cambiar precio componente → precio Kit se actualiza | ✅ Listo |
 | **RF-CAT-007** 🆕 | HU-CAT-007: Como CUSTOMER quiero guardar favoritos | Solo CUSTOMER; persistencia entre sesiones; acceso desde header | `FavoriteService` + `CMP-CAT-029` | GUEST intenta favoritar → botón oculto; CUSTOMER → funciona | ✅ Listo |
 | **RF-CAT-008** 🆕 | HU-CAT-008: Como GUEST quiero consultar producto por Telegram | Botón Telegram en card → abre `t.me` con payload (SKU, nombre) | `CMP-CAT-030` + deep link | Verificar URL con payload correcto | ✅ Listo |
+| **RF-CAT-009** 🆕 | HU-CAT-009: Como ADMIN quiero asignar imagen de referencia a una categoría | ADMIN puede hacer `PATCH /categories/{id}/image`; archivo ≤2MB, tipos: png/jpeg/webp; `image_url` se persiste; componentes `CMP-CAT-025` y `CMP-CAT-027` renderizan la imagen; si `image_url=null` se muestra placeholder SVG | `CategoryImageService` + `StorageService` + `PATCH/DELETE /admin/categorias/{id}/imagen` | 20/20 unit tests PASSED — upload válido, tamaño, MIME, RBAC, delete, placeholder, reemplazo | ✅ Listo (2026-07-27 · TDD RED→GREEN→REFACTOR) |
+
+
 
 ---
 

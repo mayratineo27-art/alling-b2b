@@ -1,4 +1,4 @@
-﻿# MÁQUINA DE ESTADOS FINITOS (FSM) — Sistema Alling
+# MÁQUINA DE ESTADOS FINITOS (FSM) — Sistema Alling
 
 |Campo|Valor|
 |---|---|

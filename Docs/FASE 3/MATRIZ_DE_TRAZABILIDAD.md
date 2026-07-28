@@ -28,16 +28,16 @@ Esta matriz documenta la trazabilidad completa entre todos los artefactos del pr
 
 ### 2.1 MOD-CAT-01 (Catálogo)
 
-|Proceso|Módulo|OPS|RN|RF|RNF|HU|UC|CA|TEST|Entidad|FSM|Servicio|CMP|Pantalla|Botón|Evento|
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|6.1, 6.2|MOD-CAT-01|OPS-CAT-001|—|RF-CAT-001|RNF-PERF-001|HU-CAT-001|UC-CAT-001|CA-CAT-001|TEST-CAT-001|Product, Category|—|ProductQueryService|CMP-CAT-001..014|SCR-CAT-001|ACT-CAT-002..005, BTN-CAT-002|—|
-|6.1, 6.2|MOD-CAT-01|OPS-CAT-002|—|RF-CAT-002|RNF-PERF-001|HU-CAT-002|UC-CAT-002|CA-CAT-002|TEST-CAT-002|Product|—|ProductQueryService|CMP-CAT-015..022|SCR-CAT-002|BTN-CAT-003, ACT-CAT-001|EVT-CAT-001|
-|6.1, 6.2|MOD-CAT-01|OPS-CAT-003|RN-GUEST-01|RF-CAT-003|—|HU-CAT-003|UC-CAT-003|CA-CAT-003|TEST-CAT-003|FormatoUnico, FormatoUnicoItem|FU-T-01|FormatoUnicoService, InventoryService|CMP-CAT-007, CMP-CAT-014, CMP-CAT-022|SCR-CAT-001, SCR-CAT-002|BTN-CAT-001, BTN-CAT-004|EVT-FU-001, EVT-CAT-002, EVT-FU-002|
-|6.1|MOD-CAT-01|—|—|RF-CAT-004|RNF-PERF-001|HU-CAT-004|UC-CAT-004|—|—|Product|—|ProductQueryService|CMP-CAT-023..026|SCR-CAT-003|BTN-CAT-003|—|
-|6.1, 6.2|MOD-CAT-01|—|—|RF-CAT-005|RNF-PERF-001|HU-CAT-005|UC-CAT-005|—|—|Category|—|ProductQueryService|CMP-CAT-027|SCR-CAT-004|—|—|
-|6.1, 6.2|MOD-CAT-01|—|RN-KIT-01..03|RF-CAT-006|—|HU-CAT-006|UC-CAT-006|—|—|Kit, KitComponent|—|KitService|CMP-CAT-028|/kits|BTN-CAT-008..009|—|
-|6.1, 6.2|MOD-CAT-01|—|RN-FAV-01|RF-CAT-007|—|HU-CAT-007|UC-CAT-007|—|—|Product|—|FavoriteService|CMP-CAT-029|/favoritos|BTN-CAT-006|—|
-|6.1, 6.2|MOD-CAT-01|—|RN-TG-01|RF-CAT-008|—|HU-CAT-008|UC-CAT-008|—|—|Product|—|—|CMP-CAT-030|—|BTN-CAT-007|—|
+| Proceso  | Módulo     | OPS         | RN            | RF         | RNF          | HU         | UC         | CA         | TEST         | Entidad                        | FSM     | Servicio                              | CMP                                   | Pantalla                 | Botón                         | Evento                              |
+| -------- | ---------- | ----------- | ------------- | ---------- | ------------ | ---------- | ---------- | ---------- | ------------ | ------------------------------ | ------- | ------------------------------------- | ------------------------------------- | ------------------------ | ----------------------------- | ----------------------------------- |
+| 6.1, 6.2 | MOD-CAT-01 | OPS-CAT-001 | —             | RF-CAT-001 | RNF-PERF-001 | HU-CAT-001 | UC-CAT-001 | CA-CAT-001 | TEST-CAT-001 | Product, Category              | —       | ProductQueryService                   | CMP-CAT-001..014                      | SCR-CAT-001              | ACT-CAT-002..005, BTN-CAT-002 | —                                   |
+| 6.1, 6.2 | MOD-CAT-01 | OPS-CAT-002 | —             | RF-CAT-002 | RNF-PERF-001 | HU-CAT-002 | UC-CAT-002 | CA-CAT-002 | TEST-CAT-002 | Product                        | —       | ProductQueryService                   | CMP-CAT-015..022                      | SCR-CAT-002              | BTN-CAT-003, ACT-CAT-001      | EVT-CAT-001                         |
+| 6.1, 6.2 | MOD-CAT-01 | OPS-CAT-003 | RN-GUEST-01   | RF-CAT-003 | —            | HU-CAT-003 | UC-CAT-003 | CA-CAT-003 | TEST-CAT-003 | FormatoUnico, FormatoUnicoItem | FU-T-01 | FormatoUnicoService, InventoryService | CMP-CAT-007, CMP-CAT-014, CMP-CAT-022 | SCR-CAT-001, SCR-CAT-002 | BTN-CAT-001, BTN-CAT-004      | EVT-FU-001, EVT-CAT-002, EVT-FU-002 |
+| 6.1      | MOD-CAT-01 | —           | —             | RF-CAT-004 | RNF-PERF-001 | HU-CAT-004 | UC-CAT-004 | —          | —            | Product                        | —       | ProductQueryService                   | CMP-CAT-023..026                      | SCR-CAT-003              | BTN-CAT-003                   | —                                   |
+| 6.1, 6.2 | MOD-CAT-01 | —           | —             | RF-CAT-005 | RNF-PERF-001 | HU-CAT-005 | UC-CAT-005 | —          | —            | Category                       | —       | ProductQueryService                   | CMP-CAT-027                           | SCR-CAT-004              | —                             | —                                   |
+| 6.1, 6.2 | MOD-CAT-01 | —           | RN-KIT-01..03 | RF-CAT-006 | —            | HU-CAT-006 | UC-CAT-006 | —          | —            | Kit, KitComponent              | —       | KitService                            | CMP-CAT-028                           | /kits                    | BTN-CAT-008..009              | —                                   |
+| 6.1, 6.2 | MOD-CAT-01 | —           | RN-FAV-01     | RF-CAT-007 | —            | HU-CAT-007 | UC-CAT-007 | —          | —            | Product                        | —       | FavoriteService                       | CMP-CAT-029                           | /favoritos               | BTN-CAT-006                   | —                                   |
+| 6.1, 6.2 | MOD-CAT-01 | —           | RN-TG-01      | RF-CAT-008 | —            | HU-CAT-008 | UC-CAT-008 | —          | —            | Product                        | —       | —                                     | CMP-CAT-030                           | —                        | BTN-CAT-007                   | —                                   |
 
 ---
 

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
+import CategoryImageUploader from "@/components/admin/CategoryImageUploader";
 import apiClient from "@/lib/api";
 
 interface Category {
@@ -11,6 +12,7 @@ interface Category {
   slug: string;
   description?: string;
   icon?: string;
+  image_url?: string | null;
 }
 
 interface Product {
@@ -41,6 +43,7 @@ export default function AdminProductosPage() {
   // State for categories
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [selectedCategoryForImage, setSelectedCategoryForImage] = useState<Category | null>(null);
 
   // General feedback
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -48,6 +51,7 @@ export default function AdminProductosPage() {
   // Modals / Forms
   const [showProductModal, setShowProductModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+
   const [savingProduct, setSavingProduct] = useState(false);
   const [savingCategory, setSavingCategory] = useState(false);
   const [uploadingExcel, setUploadingExcel] = useState(false);
@@ -472,6 +476,7 @@ export default function AdminProductosPage() {
                       <tr>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Icono</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Categoría</th>
+                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Imagen Ref.</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Slug</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Descripción</th>
                         <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Acciones</th>
@@ -480,7 +485,7 @@ export default function AdminProductosPage() {
                     <tbody className="divide-y divide-[var(--alling-border)]">
                       {categories.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
+                          <td colSpan={6} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
                             No se han creado categorías de catálogo.
                           </td>
                         </tr>
@@ -491,16 +496,42 @@ export default function AdminProductosPage() {
                             <td className="px-6 py-4 font-semibold text-[var(--alling-text)]">
                               {c.name}
                             </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <div className="w-10 h-10 rounded border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0">
+                                  <img
+                                    src={c.image_url ?? "/assets/category-placeholder.svg"}
+                                    alt={c.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = "/assets/category-placeholder.svg";
+                                    }}
+                                  />
+                                </div>
+                                <button
+                                  onClick={() => setSelectedCategoryForImage(c)}
+                                  className="text-xs font-bold text-[var(--alling-primary)] hover:underline px-2 py-1 rounded bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                                >
+                                  {c.image_url ? "Cambiar" : "+ Subir"}
+                                </button>
+                              </div>
+                            </td>
                             <td className="px-6 py-4 text-xs font-mono text-[var(--alling-metadata)]">
                               {c.slug}
                             </td>
                             <td className="px-6 py-4 text-gray-600">
                               {c.description ?? "—"}
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-6 py-4 text-center space-x-2">
+                              <button
+                                onClick={() => setSelectedCategoryForImage(c)}
+                                className="text-xs font-bold text-gray-700 hover:text-gray-900 hover:underline px-2.5 py-1 rounded bg-gray-100 hover:bg-gray-200 transition-colors"
+                              >
+                                🖼️ Imagen
+                              </button>
                               <button
                                 onClick={() => handleDeleteCategory(c.id, c.name)}
-                                className="text-xs font-bold text-red-600 hover:text-red-800 hover:underline px-3 py-1 rounded bg-red-50 hover:bg-red-100 transition-colors"
+                                className="text-xs font-bold text-red-600 hover:text-red-800 hover:underline px-2.5 py-1 rounded bg-red-50 hover:bg-red-100 transition-colors"
                               >
                                 Eliminar
                               </button>
@@ -509,6 +540,7 @@ export default function AdminProductosPage() {
                         ))
                       )}
                     </tbody>
+
                   </table>
                 </div>
               )}
@@ -725,8 +757,33 @@ export default function AdminProductosPage() {
               </div>
             </div>
           )}
+
+          {/* CATEGORY IMAGE MANAGEMENT MODAL */}
+          {selectedCategoryForImage && (
+
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative">
+                <button
+                  onClick={() => setSelectedCategoryForImage(null)}
+                  className="absolute top-4 right-4 z-10 text-gray-400 hover:text-[var(--alling-text)] text-xl font-bold bg-white/80 rounded-full w-8 h-8 flex items-center justify-center"
+                >
+                  ×
+                </button>
+                <CategoryImageUploader
+                  category={selectedCategoryForImage}
+                  onImageUpdated={(catId, newUrl) => {
+                    setCategories((prev) =>
+                      prev.map((cat) => (cat.id === catId ? { ...cat, image_url: newUrl } : cat))
+                    );
+                    fetchCategories();
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </AdminLayout>
     </ProtectedRoute>
   );
 }
+

@@ -11,4 +11,6 @@ class CategoryModel(SQLModel, table=True):
     slug: str = Field(index=True, unique=True)
     description: Optional[str] = None
     icon: Optional[str] = None
+    image_url: Optional[str] = Field(default=None, description="URL pública de la imagen de referencia. None = mostrar placeholder SVG (RN-CAT-IMG-04).")
     created_at: datetime = Field(default_factory=datetime.utcnow)
+

@@ -1,4 +1,4 @@
-﻿# Especificación Técnica Detallada de Requisitos (ETDR) — Formato Único y Checkout
+# Especificación Técnica Detallada de Requisitos (ETDR) — Formato Único y Checkout
 
 Este documento especifica de manera formal y técnica la vinculación entre los Requisitos de Negocio, el Diseño de Arquitectura, la Implementación de Código y los Tests de Integración en el sistema Alling B2B.
 

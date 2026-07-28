@@ -1,4 +1,4 @@
-﻿# 📊 MATRICES COMPLEMENTARIAS — Módulos Restantes
+# 📊 MATRICES COMPLEMENTARIAS — Módulos Restantes
 
 **Documento:** `04_EJECUCION/MATRIZ_TRAZABILIDAD_COMPLEMENTARIA.md`
 **Versión:** 1.2.0

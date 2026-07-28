@@ -1,4 +1,4 @@
-﻿## MOD-FU-01 — Formato Único Interactivo
+## MOD-FU-01 — Formato Único Interactivo
 
 - **Objetivo:** Gestionar el contenedor central de intención de compra/consulta/cotización del usuario.
 - **Actores:** GUEST, CUSTOMER

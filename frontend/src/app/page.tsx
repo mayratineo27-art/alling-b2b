@@ -13,7 +13,9 @@ import { ProductCard, SkeletonCard, Product } from '@/components/catalogo/Produc
 interface CategoryCount {
     nombre: string;
     count: number;
+    image_url?: string | null;
 }
+
 
 interface LandingData {
     destacados: Product[];

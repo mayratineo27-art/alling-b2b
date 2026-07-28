@@ -164,7 +164,9 @@ class CategoryResponseSchema(BaseModel):
     slug: str
     description: Optional[str] = None
     icon: Optional[str] = None
+    image_url: Optional[str] = None
     created_at: datetime
+
 
 
 class DiscountOverrideSchema(BaseModel):
@@ -953,3 +955,130 @@ def aplicar_descuento_cotizacion(
         "subtotal": float(fu.subtotal),
         "pdf_url": fu.pdf_url
     }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RF-CAT-009 — Imágenes de referencia por categoría (OPS-CAT-004)
+# RN-CAT-IMG-01..05  |  CA-CAT-009
+# ─────────────────────────────────────────────────────────────────────────────
+
+from fastapi import UploadFile, File as FastAPIFile   # noqa: E402
+from app.core.deps import get_category_image_service   # noqa: E402
+from app.services.category_image_service import CategoryImageService  # noqa: E402
+from app.domain.exceptions import DomainException as _DomainException  # noqa: E402
+
+
+class CategoryImageResponse(BaseModel):
+    """Schema de respuesta para operaciones de imagen de categoría."""
+    category_id: str
+    image_url: str
+    message: str = "Imagen actualizada correctamente"
+
+
+@router.patch(
+    "/categorias/{category_id}/imagen",
+    response_model=CategoryImageResponse,
+    summary="Subir/reemplazar imagen de referencia de una categoría",
+    description=(
+        "**RF-CAT-009 / OPS-CAT-004** — Solo ADMIN. "
+        "Sube una imagen PNG, JPEG o WebP (máx. 2 MB) como imagen de referencia "
+        "de la categoría. Si ya existía una imagen, la reemplaza y elimina la anterior "
+        "del almacenamiento. (RN-CAT-IMG-01..03)"
+    ),
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Categorías"],
+)
+async def upload_category_image(
+    category_id: str,
+    file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+    svc: CategoryImageService = Depends(get_category_image_service),
+) -> CategoryImageResponse:
+    """
+    PATCH /admin/categorias/{category_id}/imagen
+
+    - **200 OK** → imagen subida y URL persistida en BD.
+    - **403 Forbidden** → actor no es ADMIN.
+    - **404 Not Found** → categoría no existe.
+    - **422 Unprocessable Entity** → tipo de archivo o tamaño inválido.
+    """
+    # Adaptar UploadFile de FastAPI al protocolo IUploadFile del servicio.
+    # UploadFile.size puede ser None en versiones antiguas de FastAPI;
+    # lo calculamos leyendo el contenido si es necesario.
+    content: bytes = await file.read()
+    file_size: int = len(content)
+
+    class _SyncUploadFile:
+        """Wrapper síncrono sobre UploadFile para compatibilidad con CategoryImageService."""
+        def __init__(self, fn: str, ct: str, data: bytes) -> None:
+            self.filename: str = fn
+            self.content_type: str = ct
+            self.size: int = len(data)
+            self._data: bytes = data
+
+        def read(self) -> bytes:
+            return self._data
+
+    sync_file = _SyncUploadFile(
+        fn=file.filename or "upload",
+        ct=file.content_type or "application/octet-stream",
+        data=content,
+    )
+
+    try:
+        result = svc.upload_image(
+            db=db,
+            category_id=category_id,
+            file=sync_file,
+            actor_role="ADMIN",   # ya garantizado por require_admin
+        )
+    except _DomainException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    return CategoryImageResponse(
+        category_id=result.category_id,
+        image_url=result.image_url,
+    )
+
+
+@router.delete(
+    "/categorias/{category_id}/imagen",
+    summary="Eliminar imagen de referencia de una categoría",
+    description=(
+        "**RF-CAT-009 / OPS-CAT-004** — Solo ADMIN. "
+        "Elimina la imagen de referencia de la categoría y resetea `image_url` a `null`. "
+        "La categoría NO se elimina. Los componentes mostrarán el placeholder SVG. "
+        "(RN-CAT-IMG-04, RN-CAT-IMG-05)"
+    ),
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Categorías"],
+)
+def delete_category_image(
+    category_id: str,
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+    svc: CategoryImageService = Depends(get_category_image_service),
+) -> dict:
+    """
+    DELETE /admin/categorias/{category_id}/imagen
+
+    - **200 OK** → imagen eliminada; `image_url` = null en BD.
+    - **403 Forbidden** → actor no es ADMIN.
+    - **404 Not Found** → categoría no existe.
+    """
+    try:
+        svc.delete_image(
+            db=db,
+            category_id=category_id,
+            actor_role="ADMIN",   # ya garantizado por require_admin
+        )
+    except _DomainException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    return {
+        "category_id": category_id,
+        "image_url": None,
+        "message": "Imagen eliminada. Los componentes mostrarán el placeholder SVG.",
+    }
+

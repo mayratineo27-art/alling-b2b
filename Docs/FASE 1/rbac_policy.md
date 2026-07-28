@@ -1,4 +1,4 @@
-﻿# RBAC Policy — Sistema Alling
+# RBAC Policy — Sistema Alling
 
 |Campo|Valor|
 |---|---|
@@ -39,13 +39,13 @@ Este documento define las políticas de **Control de Acceso Basado en Roles (RBA
 
 ## 3. Actores del Sistema
 
-|ID|Actor|Tipo|Autenticación|MFA|Vigencia Sesión|
-|---|---|---|---|---|---|
-|**ACT-01**|GUEST|Humano/Externo|Cookie anónima firmada|No|24h sliding|
-|**ACT-02**|CUSTOMER|Humano/Externo|OAuth Google + JWT RS256|Opcional TOTP|12h access / 7d refresh|
-|**ACT-03**|SELLER|Humano/Interno|Credenciales locales + JWT|Recomendado TOTP|8h access / 24h refresh|
-|**ACT-04**|ADMIN|Humano/Interno|Credenciales locales + JWT|**OBLIGATORIO TOTP**|2h access / 8h refresh|
-|**ACT-05**|DISTRIBUTOR|Sistema/Externo|API Key + HMAC-SHA256|N/A|Stateless|
+| ID         | Actor       | Tipo            | Autenticación              | MFA                  | Vigencia Sesión         |
+| ---------- | ----------- | --------------- | -------------------------- | -------------------- | ----------------------- |
+| **ACT-01** | GUEST       | Humano/Externo  | Cookie anónima firmada     | No                   | 24h sliding             |
+| **ACT-02** | CUSTOMER    | Humano/Externo  | OAuth Google + JWT RS256   | Opcional TOTP        | 12h access / 7d refresh |
+| **ACT-03** | SELLER      | Humano/Interno  | Credenciales locales + JWT | Recomendado TOTP     | 8h access / 24h refresh |
+| **ACT-04** | ADMIN       | Humano/Interno  | Credenciales locales + JWT | **OBLIGATORIO TOTP** | 2h access / 8h refresh  |
+| **ACT-05** | DISTRIBUTOR | Sistema/Externo | API Key + HMAC-SHA256      | N/A                  | Stateless               |
 
 ---
 

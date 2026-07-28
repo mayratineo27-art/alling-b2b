@@ -1,4 +1,4 @@
-﻿# DECISIONES TÉCNICAS — Proyecto Alling
+# DECISIONES TÉCNICAS — Proyecto Alling
 
 | Campo | Valor |
 |---|---|

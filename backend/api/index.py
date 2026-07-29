@@ -1,8 +1,6 @@
 """
-Punto de entrada para Vercel Serverless Functions.
-Mangum actúa como adaptador entre el handler Lambda de Vercel y el ASGI app de FastAPI.
+Punto de entrada oficial para Vercel Serverless Functions (@vercel/python).
+Vercel expone la aplicación ASGI directamente mediante `app`.
 """
-from mangum import Mangum
-from app.main import app
 
-handler = Mangum(app, lifespan="off")
+from app.main import app  # noqa: F401

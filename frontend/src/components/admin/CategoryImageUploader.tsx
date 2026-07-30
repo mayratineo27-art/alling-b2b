@@ -332,14 +332,15 @@ export function CategoryImageUploader({
           <button
             id={`btn-cat-010-${category.id}`}
             onClick={handleUpload}
-            disabled={!selectedFile || isBusy}
+            disabled={(!selectedFile && !previewUrl) || isBusy}
             className={[
               "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-200",
-              selectedFile && !isBusy
-                ? "bg-[var(--alling-primary,#10B981)] text-white hover:bg-[var(--alling-primary-hover,#059669)] shadow-sm active:scale-95"
+              (selectedFile || previewUrl) && !isBusy
+                ? "bg-[var(--alling-primary,#10B981)] text-white hover:bg-[var(--alling-primary-hover,#059669)] shadow-sm active:scale-95 cursor-pointer"
                 : "bg-gray-100 text-gray-400 cursor-not-allowed",
             ].join(" ")}
           >
+
             {isUploading ? (
               <><Loader2 size={15} className="animate-spin" /> Subiendo…</>
             ) : (

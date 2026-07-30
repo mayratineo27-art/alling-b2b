@@ -253,16 +253,17 @@ export default function ProductImageUploader({
           </button>
         )}
 
-        {selectedFile && (
+        {(selectedFile || previewUrl) && (
           <button
             type="button"
             onClick={handleUpload}
             disabled={uploading}
-            className="px-4 py-1.5 rounded text-xs font-semibold text-white bg-[#10B981] hover:bg-emerald-600 transition-colors shadow-sm disabled:opacity-50"
+            className="px-4 py-1.5 rounded text-xs font-semibold text-white bg-[#10B981] hover:bg-emerald-600 transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
           >
-            {uploading ? "Subiendo..." : "Guardar Imagen"}
+            {uploading ? "Guardando..." : "Guardar Imagen"}
           </button>
         )}
+
       </div>
     </div>
   );

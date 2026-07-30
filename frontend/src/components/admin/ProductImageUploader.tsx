@@ -154,11 +154,9 @@ export default function ProductImageUploader({
       });
       const generatedDataUri = response.data.image_url;
       setPreviewUrl(generatedDataUri);
-      const fetchRes = await fetch(generatedDataUri);
-      const blob = await fetchRes.blob();
-      const file = new File([blob], `${product.name || "prod"}-ai.webp`, { type: "image/webp" });
-      setSelectedFile(file);
-      setSuccess("✨ Imagen generada con IA. Haz clic en 'Guardar Imagen' para confirmar.");
+      setSelectedFile(null);
+      setSuccess("✨ Imagen generada con IA. Haz clic en 'Guardar imagen' para confirmar.");
+
     } catch (err: any) {
       const msg = err.response?.data?.detail || "Error al generar imagen con IA.";
       setError(msg);

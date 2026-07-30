@@ -97,8 +97,9 @@ class CategoryImageService:
     Los tests inyectan un MagicMock como storage (pytest-mock).
     """
 
-    def __init__(self, storage: IStorageService) -> None:
-        self._storage = storage
+    def __init__(self, storage: Optional[IStorageService] = None, storage_service: Optional[IStorageService] = None) -> None:
+        self._storage = storage or storage_service
+
 
     # ── validaciones privadas ─────────────────────────────────────────────────
 

@@ -66,8 +66,10 @@ class IStorageService(Protocol):
 
 
 class ProductImageService:
-    def __init__(self, storage_service: IStorageService) -> None:
-        self._storage: IStorageService = storage_service
+    def __init__(self, storage: Optional[IStorageService] = None, storage_service: Optional[IStorageService] = None) -> None:
+        self._storage: IStorageService = storage or storage_service  # type: ignore
+
+
 
     def upload_image(
         self,

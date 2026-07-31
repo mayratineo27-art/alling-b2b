@@ -377,34 +377,41 @@ export default function AdminProductosPage() {
       <AdminLayout>
         <div className="space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-[var(--alling-border)] pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
-              <h1 className="text-3xl font-extrabold text-[var(--alling-text)]">Gobernanza del Catálogo</h1>
-              <p className="text-sm text-[var(--alling-metadata)] mt-1">
-                Administra los productos de referencia, imágenes, categorías y cargas masivas del catálogo.
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Gobernanza del Catálogo</h1>
+              <p className="text-xs text-slate-500 mt-1">
+                Gestión centralizada de productos de referencia, imágenes, categorías y cargas masivas.
               </p>
             </div>
-            {/* Tab selector */}
-            <div className="flex bg-gray-200 p-1.5 rounded-lg border border-[var(--alling-border)]">
+
+            {/* Segmented Control Tabs */}
+            <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-xs">
               <button
                 onClick={() => setActiveTab("productos")}
-                className={`px-4 py-2 text-xs font-semibold rounded-md transition-all ${
+                className={`flex items-center gap-2 px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                   activeTab === "productos"
-                    ? "bg-white text-[var(--alling-text)] shadow-sm"
-                    : "text-gray-600 hover:text-[var(--alling-text)]"
+                    ? "bg-white text-slate-900 shadow-xs border border-slate-200/60 font-bold"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
               >
-                📦 Productos
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                Productos
               </button>
               <button
                 onClick={() => setActiveTab("categorias")}
-                className={`px-4 py-2 text-xs font-semibold rounded-md transition-all ${
+                className={`flex items-center gap-2 px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                   activeTab === "categorias"
-                    ? "bg-white text-[var(--alling-text)] shadow-sm"
-                    : "text-gray-600 hover:text-[var(--alling-text)]"
+                    ? "bg-white text-slate-900 shadow-xs border border-slate-200/60 font-bold"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
               >
-                🏷️ Categorías
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Categorías
               </button>
             </div>
           </div>
@@ -412,13 +419,13 @@ export default function AdminProductosPage() {
           {/* Toast Notification */}
           {toast && (
             <div
-              className={`p-4 rounded-md shadow-md flex justify-between items-center transition-all ${
+              className={`p-4 rounded-lg shadow-xs flex justify-between items-center transition-all ${
                 toast.type === "success"
-                  ? "bg-green-50 border-l-4 border-green-500 text-green-700"
-                  : "bg-red-50 border-l-4 border-red-500 text-red-700"
+                  ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
+                  : "bg-red-50 border border-red-200 text-red-800"
               }`}
             >
-              <span className="text-sm font-medium">{toast.message}</span>
+              <span className="text-xs font-semibold">{toast.message}</span>
               <button onClick={() => setToast(null)} className="text-xs font-bold hover:underline ml-4">
                 [Cerrar]
               </button>
@@ -427,9 +434,9 @@ export default function AdminProductosPage() {
 
           {activeTab === "productos" ? (
             /* TAB: PRODUCTS */
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Toolbar Actions */}
-              <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-lg border border-[var(--alling-border)] shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
                 {/* Search & Filters */}
                 <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[300px]">
                   <div className="relative flex-1 max-w-sm">
@@ -438,16 +445,18 @@ export default function AdminProductosPage() {
                       placeholder="Buscar por nombre o SKU..."
                       value={productSearch}
                       onChange={(e) => setProductSearch(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 border border-[var(--alling-border)] rounded-md text-sm outline-none focus:ring-2 focus:ring-[var(--alling-primary)]"
+                      className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all text-slate-800"
                     />
-                    <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
+                    <svg className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
                   </div>
 
                   {/* Brand Filter */}
                   <select
                     value={brandFilter}
                     onChange={(e) => setBrandFilter(e.target.value)}
-                    className="border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm bg-white"
+                    className="border border-slate-200 rounded-lg px-3 py-2 text-xs bg-slate-50 text-slate-700 font-medium focus:ring-2 focus:ring-emerald-500 outline-none"
                   >
                     <option value="all">Todas las marcas</option>
                     {uniqueBrands.map((brand) => (
@@ -461,7 +470,7 @@ export default function AdminProductosPage() {
                   <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm bg-white"
+                    className="border border-slate-200 rounded-lg px-3 py-2 text-xs bg-slate-50 text-slate-700 font-medium focus:ring-2 focus:ring-emerald-500 outline-none"
                   >
                     <option value="all">Todas las categorías</option>
                     {categories.map((cat) => (
@@ -475,8 +484,11 @@ export default function AdminProductosPage() {
                 {/* Import/Create Button */}
                 <div className="flex items-center gap-3">
                   {/* CSV Importer */}
-                  <label className="flex items-center gap-2 cursor-pointer bg-white border border-[var(--alling-border)] px-4 py-2 rounded-md text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-xs">
-                    📥 {uploadingExcel ? "Cargando..." : "Carga Masiva (CSV)"}
+                  <label className="flex items-center gap-2 cursor-pointer bg-white border border-slate-200 px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs">
+                    <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    {uploadingExcel ? "Cargando..." : "Carga Masiva (CSV)"}
                     <input
                       type="file"
                       accept=".csv, .xlsx"
@@ -488,12 +500,16 @@ export default function AdminProductosPage() {
 
                   <button
                     onClick={() => setShowProductModal(true)}
-                    className="bg-[var(--alling-primary)] text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-[var(--alling-primary-hover)] transition-colors shadow-sm"
+                    className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-xs flex items-center gap-1.5"
                   >
-                    + Nuevo Producto
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Nuevo Producto
                   </button>
                 </div>
               </div>
+
 
               {/* Products Table */}
               {loadingProducts ? (
@@ -501,20 +517,21 @@ export default function AdminProductosPage() {
                   Cargando catálogo de productos...
                 </div>
               ) : (
-                <div className="bg-white rounded-lg border border-[var(--alling-border)] overflow-hidden shadow-sm">
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50 border-b border-[var(--alling-border)]">
+                <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs">
+                  <table className="w-full text-xs">
+                    <thead className="bg-slate-50/80 border-b border-slate-200 uppercase text-[0.68rem] font-bold tracking-wider text-slate-500">
                       <tr>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Producto</th>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">SKU</th>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Marca</th>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Categoría</th>
-                        <th className="text-right px-6 py-3 font-semibold text-[var(--alling-text)]">Precio Público</th>
-                        <th className="text-right px-6 py-3 font-semibold text-[var(--alling-text)]">Stock</th>
-                        <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Estado</th>
-                        <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Acciones</th>
+                        <th className="text-left px-5 py-3.5">Producto</th>
+                        <th className="text-left px-5 py-3.5">SKU</th>
+                        <th className="text-left px-5 py-3.5">Marca</th>
+                        <th className="text-left px-5 py-3.5">Categoría</th>
+                        <th className="text-right px-5 py-3.5">Precio Público</th>
+                        <th className="text-right px-5 py-3.5">Stock</th>
+                        <th className="text-center px-5 py-3.5">Estado</th>
+                        <th className="text-center px-5 py-3.5">Acciones</th>
                       </tr>
                     </thead>
+
                     <tbody className="divide-y divide-[var(--alling-border)]">
                       {filteredProducts.length === 0 ? (
                         <tr>
@@ -643,39 +660,43 @@ export default function AdminProductosPage() {
             </div>
           ) : (
             /* TAB: CATEGORIES */
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Category creation and quick statistics */}
-              <div className="flex items-center justify-between bg-white p-4 rounded-lg border border-[var(--alling-border)] shadow-sm">
+              <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
                 <div>
-                  <h3 className="text-base font-semibold text-[var(--alling-text)]">Listado de Categorías</h3>
-                  <p className="text-xs text-[var(--alling-metadata)]">
-                    Define la clasificación de componentes para facilitar los filtros de Kits.
+                  <h3 className="text-sm font-bold text-slate-900">Listado de Categorías</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Define la clasificación de componentes para estructurar filtros y cotizaciones.
                   </p>
                 </div>
                 <button
                   onClick={() => setShowCategoryModal(true)}
-                  className="bg-[var(--alling-primary)] text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-[var(--alling-primary-hover)] transition-colors shadow-sm"
+                  className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-xs flex items-center gap-1.5"
                 >
-                  + Nueva Categoría
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Nueva Categoría
                 </button>
               </div>
 
               {/* Categories table */}
               {loadingCategories ? (
-                <div className="text-center py-12 text-[var(--alling-metadata)]">
+                <div className="text-center py-12 text-slate-400 text-xs font-medium">
                   Cargando categorías...
                 </div>
               ) : (
-                <div className="bg-white rounded-lg border border-[var(--alling-border)] overflow-hidden shadow-sm">
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50 border-b border-[var(--alling-border)]">
+                <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs">
+                  <table className="w-full text-xs">
+                    <thead className="bg-slate-50/80 border-b border-slate-200 uppercase text-[0.68rem] font-bold tracking-wider text-slate-500">
                       <tr>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Categoría</th>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Slug</th>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Descripción</th>
-                        <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Acciones</th>
+                        <th className="text-left px-5 py-3.5">Categoría</th>
+                        <th className="text-left px-5 py-3.5">Slug</th>
+                        <th className="text-left px-5 py-3.5">Descripción</th>
+                        <th className="text-center px-5 py-3.5">Acciones</th>
                       </tr>
                     </thead>
+
                     <tbody className="divide-y divide-[var(--alling-border)]">
                       {categories.length === 0 ? (
                         <tr>

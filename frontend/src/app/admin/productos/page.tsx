@@ -62,6 +62,49 @@ export default function AdminProductosPage() {
   const [savingCategory, setSavingCategory] = useState(false);
   const [uploadingExcel, setUploadingExcel] = useState(false);
 
+  // Category edit states
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+  const [updatingCategory, setUpdatingCategory] = useState(false);
+  const [editCategoryForm, setEditCategoryForm] = useState({
+    name: "",
+    description: "",
+    icon: "",
+  });
+
+  const handleOpenEditCategory = (cat: Category) => {
+    setEditingCategory(cat);
+    setEditCategoryForm({
+      name: cat.name || "",
+      description: cat.description || "",
+      icon: cat.icon || "",
+    });
+    setShowEditCategoryModal(true);
+  };
+
+  const handleUpdateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCategory) return;
+    if (!editCategoryForm.name.trim()) {
+      showToast("El nombre de la categoría es obligatorio", "error");
+      return;
+    }
+    setUpdatingCategory(true);
+    try {
+      await apiClient.put(`/admin/categorias/${editingCategory.id}`, editCategoryForm);
+      showToast(`Categoría "${editCategoryForm.name}" actualizada correctamente`);
+      setShowEditCategoryModal(false);
+      setEditingCategory(null);
+      fetchCategories();
+      fetchProducts();
+    } catch (err: any) {
+      showToast(err.response?.data?.detail ?? "Error al actualizar la categoría", "error");
+    } finally {
+      setUpdatingCategory(false);
+    }
+  };
+
+
   // Product form
   const [productForm, setProductForm] = useState({
     name: "",
@@ -552,6 +595,12 @@ export default function AdminProductosPage() {
                             </td>
                             <td className="px-6 py-4 text-center space-x-2">
                               <button
+                                onClick={() => handleOpenEditCategory(c)}
+                                className="text-xs font-bold text-amber-700 hover:text-amber-900 hover:underline px-2.5 py-1 rounded bg-amber-50 hover:bg-amber-100 transition-colors"
+                              >
+                                ✏️ Editar
+                              </button>
+                              <button
                                 onClick={() => setSelectedCategoryForImage(c)}
                                 className="text-xs font-bold text-gray-700 hover:text-gray-900 hover:underline px-2.5 py-1 rounded bg-gray-100 hover:bg-gray-200 transition-colors"
                               >
@@ -564,6 +613,7 @@ export default function AdminProductosPage() {
                                 Eliminar
                               </button>
                             </td>
+
                           </tr>
                         ))
                       )}
@@ -782,9 +832,100 @@ export default function AdminProductosPage() {
                     </button>
                   </div>
                 </form>
+
               </div>
             </div>
           )}
+
+          {/* CATEGORY EDIT MODAL */}
+
+          {showEditCategoryModal && editingCategory && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                <div className="flex items-center justify-between border-b border-[var(--alling-border)] pb-3 mb-4">
+                  <h2 className="text-lg font-bold text-[var(--alling-text)]">Editar Categoría</h2>
+                  <button
+                    onClick={() => {
+                      setShowEditCategoryModal(false);
+                      setEditingCategory(null);
+                    }}
+                    className="text-gray-400 hover:text-[var(--alling-text)] text-lg"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <form onSubmit={handleUpdateCategory} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                      Nombre de la Categoría *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ej. Fibra Óptica, Routers..."
+                      value={editCategoryForm.name}
+                      onChange={(e) =>
+                        setEditCategoryForm({ ...editCategoryForm, name: e.target.value })
+                      }
+                      className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                      Icono / Emoji
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. 🔌, 📦, 🏷️"
+                      value={editCategoryForm.icon}
+                      onChange={(e) =>
+                        setEditCategoryForm({ ...editCategoryForm, icon: e.target.value })
+                      }
+                      className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                      Descripción
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Descripción detallada del grupo de componentes..."
+                      value={editCategoryForm.description}
+                      onChange={(e) =>
+                        setEditCategoryForm({ ...editCategoryForm, description: e.target.value })
+                      }
+                      className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none resize-none"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-3 border-t border-[var(--alling-border)] pt-4 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowEditCategoryModal(false);
+                        setEditingCategory(null);
+                      }}
+                      className="px-4 py-2 text-sm text-[var(--alling-metadata)] hover:text-[var(--alling-text)] font-semibold"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={updatingCategory}
+                      className="bg-[var(--alling-primary)] text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-[var(--alling-primary-hover)] disabled:opacity-50 transition-colors shadow-sm"
+                    >
+                      {updatingCategory ? "Guardando..." : "Guardar Cambios"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
 
           {/* CATEGORY IMAGE MANAGEMENT MODAL */}
           {selectedCategoryForImage && (

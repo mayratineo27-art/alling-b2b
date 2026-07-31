@@ -679,14 +679,23 @@ def actualizar_categoria(
     if not cat:
         raise HTTPException(status_code=404, detail="Categoría no encontrada")
 
+    old_name = cat.name
     slug = body.name.lower().strip().replace(" ", "-").replace("/", "-")
     cat.name = body.name
     cat.slug = slug
     cat.description = body.description
     cat.icon = body.icon
+
+    # Sincronizar campo denormalizado category en productos vinculados
+    if old_name != body.name:
+        db.query(ProductModel).filter(ProductModel.category_id == cat.id).update(
+            {ProductModel.category: body.name}, synchronize_session=False
+        )
+
     db.commit()
     db.refresh(cat)
     return cat
+
 
 
 @router.delete("/categorias/{cat_id}")

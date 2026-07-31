@@ -548,6 +548,23 @@ class KitComponent(SQLModel, table=True):
 
 ---
 
+### 🆕 OPS-CAT-007 — Editar y actualizar categoría _(ADMIN)_
+
+- **Objetivo de negocio:** Permitir que ADMIN edite el nombre, descripción e icono de una categoría sin alterar los productos asociados ni comprometer la integridad referencial.
+- **Actor:** ADMIN
+- **Proceso de negocio de origen:** Gobernanza y gestión del catálogo
+- **Estados de FSM involucrados:** ninguno (operación administrativa)
+- **Entidades afectadas:** `CategoryModel` (campos `name`, `description`, `icon`, `slug`) y sincronización denormalizada en `ProductModel.category`
+- **Eventos de dominio:** `EVT-CAT-006` (`CategoriaActualizada`)
+- **Pantallas:** `SCR-ADM-001` (panel de administración `/admin/productos` -> Pestaña Categorías)
+- **Botones/acciones que la disparan:** `BTN-CAT-010` (botón "✏️ Editar" en tabla de categorías)
+- **Resultado esperado:** Categoría actualizada correctamente en BD y sincronizada en tiempo real sin romper los productos existentes
+- **Servicios de dominio involucrados:** `CategoryQueryService`
+- **Prioridad funcional:** MVP
+- **RF relacionados:** `RF-CAT-010`
+
+---
+
 ### 🔘 Mapeo de Botones y Requerimiento de Color
 
 | ID Botón | Nombre / Función del Botón | Componente / Archivo Frontend | Requerimiento de Color |
@@ -555,3 +572,5 @@ class KitComponent(SQLModel, table=True):
 | **`BTN-CAT-001`** | Agregar al Formato Único | `src/components/catalogo/ProductCard.tsx` | **Verde Esmeralda CTA (`#10B981`)** con texto blanco. |
 | **`BTN-CAT-002`** | Agregar Kit Completo | `src/components/catalogo/KitCard.tsx` | **Verde Esmeralda CTA (`#10B981`)** con texto blanco. |
 | **`BTN-CAT-003`** | Consultar por Telegram | `src/components/TelegramButton.tsx` | **Azul Oficial Telegram (`#229ED9`)** con texto e ícono blanco. |
+| **`BTN-CAT-010`** | Editar Categoría | `src/app/admin/productos/page.tsx` | **Ámbar Suave (`#F59E0B`)** con texto oscuro y efecto hover. |
+

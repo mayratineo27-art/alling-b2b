@@ -35,8 +35,10 @@ from app.models.category import CategoryModel
 from app.models.system_config import SystemConfigModel
 from app.models.formato_unico import FormatoUnico as FormatoUnicoModel
 from app.infra.repositories.in_memory_product_repository import InMemoryProductRepository
-from app.core.deps import get_product_repository
+from app.core.deps import get_product_repository, get_kit_service
+from app.services.kit_service import KitService
 from app.domain.product import Product
+
 
 router = APIRouter()
 
@@ -637,14 +639,84 @@ def exportar_datos(
 # ─── RF-ADM-009: CRUD Kits ──────────────────────────────────────────────────
 
 @router.get("/kits")
-def listar_kits_admin(admin_info: tuple = Depends(require_admin)):
+def listar_kits_admin(
+    admin_info: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+    svc: KitService = Depends(get_kit_service),
+):
     """
-    RF-ADM-009: Lista todos los kits (MVP: in-memory).
+    RF-ADM-009: Lista todos los kits del catálogo (unificando precargados del sistema y creados en BD).
     
     @sdd-endpoint GET /admin/kits
     @sdd-rf RF-ADM-009
     """
-    return list(_kits_store.values())
+    from app.models.kit import KitModel, KitComponentLink
+
+    public_kits = svc.list_kits()
+    result = []
+    seen_ids = set()
+
+    for k in public_kits:
+        kid = str(k.id)
+        seen_ids.add(kid)
+        comp_ids = [str(item.product.id) for item in k.items for _ in range(item.quantity)]
+        result.append({
+            "id": kid,
+            "name": k.name,
+            "description": k.description,
+            "component_ids": comp_ids,
+            "price": k.calculated_price,
+            "created_at": datetime.utcnow().isoformat(),
+        })
+
+    db_kits = db.query(KitModel).all()
+    for db_k in db_kits:
+        kid = str(db_k.id)
+        if kid not in seen_ids:
+            seen_ids.add(kid)
+            links = db.query(KitComponentLink).filter(KitComponentLink.kit_id == db_k.id).all()
+            comp_ids = []
+            for link in links:
+                comp_ids.extend([str(link.product_id)] * link.quantity)
+            result.append({
+                "id": kid,
+                "name": db_k.name,
+                "description": db_k.description,
+                "component_ids": comp_ids,
+                "created_at": db_k.created_at.isoformat() if hasattr(db_k, "created_at") and db_k.created_at else datetime.utcnow().isoformat(),
+            })
+
+    for kid, k in _kits_store.items():
+        if kid not in seen_ids:
+            seen_ids.add(kid)
+            result.append(k)
+
+    return result
+
+
+@router.delete("/kits/{kit_id}")
+def eliminar_kit(
+    kit_id: str,
+    admin_info: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    """
+    RF-ADM-009: Elimina un kit de la tienda.
+    """
+    from app.models.kit import KitModel, KitComponentLink
+
+    if kit_id in _kits_store:
+        del _kits_store[kit_id]
+
+    k_uuid = uuid.UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
+    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+    if db_kit:
+        db.query(KitComponentLink).filter(KitComponentLink.kit_id == k_uuid).delete()
+        db.delete(db_kit)
+        db.commit()
+
+    return {"message": "Kit eliminado exitosamente"}
+
 
 
 @router.post("/kits", status_code=201)

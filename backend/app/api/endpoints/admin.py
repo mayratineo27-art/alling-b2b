@@ -732,6 +732,51 @@ def eliminar_kit(
     return {"message": "Kit eliminado exitosamente"}
 
 
+@router.put("/kits/{kit_id}")
+def actualizar_kit(
+    kit_id: str,
+    body: KitCreateSchema,
+    admin_info: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    """
+    RF-ADM-009: Actualizar componentes y metadatos de un kit existente.
+    """
+    from app.models.kit import KitModel, KitComponentLink
+    from collections import Counter
+
+    if kit_id in _kits_store:
+        _kits_store[kit_id]["name"] = body.name
+        _kits_store[kit_id]["description"] = body.description
+        _kits_store[kit_id]["component_ids"] = body.component_ids
+
+    k_uuid = uuid.UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
+    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+    if db_kit:
+        db_kit.name = body.name
+        db_kit.description = body.description
+        db.query(KitComponentLink).filter(KitComponentLink.kit_id == k_uuid).delete()
+        counts = Counter(body.component_ids)
+        for p_id_str, qty in counts.items():
+            comp_uuid = uuid.UUID(p_id_str) if isinstance(p_id_str, str) and len(p_id_str) == 36 else p_id_str
+            link = KitComponentLink(
+                kit_id=k_uuid,
+                product_id=comp_uuid,
+                quantity=qty
+            )
+            db.add(link)
+        db.commit()
+
+    return {
+        "id": kit_id,
+        "name": body.name,
+        "description": body.description,
+        "component_ids": body.component_ids,
+        "message": "Kit actualizado exitosamente"
+    }
+
+
+
 
 @router.post("/kits", status_code=201)
 def crear_kit(

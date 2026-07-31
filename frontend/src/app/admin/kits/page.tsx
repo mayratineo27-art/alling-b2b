@@ -108,7 +108,61 @@ export default function AdminKitsPage() {
     0
   );
 
-  // Submit creation
+  // Kit edit and options dropdown state
+  const [editingKit, setEditingKit] = useState<Kit | null>(null);
+  const [openDropdownKitId, setOpenDropdownKitId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = () => {
+      setOpenDropdownKitId(null);
+    };
+    window.addEventListener("click", handleOutsideClick);
+    return () => window.removeEventListener("click", handleOutsideClick);
+  }, []);
+
+  const handleOpenCreateKit = () => {
+    setEditingKit(null);
+    setKitName("");
+    setKitDescription("");
+    setSelectedComponents([]);
+    setShowModal(true);
+  };
+
+  const handleOpenEditKit = (k: Kit) => {
+    setEditingKit(k);
+    setKitName(k.name || "");
+    setKitDescription(k.description || "");
+
+    const countsMap: { [id: string]: number } = {};
+    (k.component_ids || []).forEach((id) => {
+      countsMap[id] = (countsMap[id] || 0) + 1;
+    });
+
+    const preloaded: SelectedComponent[] = [];
+    Object.entries(countsMap).forEach(([pId, qty]) => {
+      const prod = products.find((p) => p.id === pId);
+      if (prod) {
+        preloaded.push({ product: prod, quantity: qty });
+      }
+    });
+
+    setSelectedComponents(preloaded);
+    setShowModal(true);
+  };
+
+  const handleDeleteKit = async (kitId: string, kitName: string) => {
+    if (!confirm(`¿Estás seguro de que deseas eliminar el kit "${kitName}"?`)) {
+      return;
+    }
+    try {
+      const res = await apiClient.delete(`/admin/kits/${kitId}`);
+      showToast(res.data?.message || `Kit "${kitName}" eliminado`);
+      fetchKits();
+    } catch (err: any) {
+      showToast(err.response?.data?.detail ?? "Error al eliminar el kit", "error");
+    }
+  };
+
   const handleCreateKit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!kitName.trim()) {
@@ -116,8 +170,6 @@ export default function AdminKitsPage() {
       return;
     }
 
-    // Map list of IDs (e.g. if quantity is 3, include it 3 times, or just list unique IDs based on backend requirement)
-    // BTN-ADM-009 says: minimum 2 components. Let's make sure we have at least 2 distinct products or total count >= 2.
     const totalComponentCount = selectedComponents.reduce((acc, c) => acc + c.quantity, 0);
     if (totalComponentCount < 2) {
       showToast("Se requieren al menos 2 componentes (BTN-ADM-009)", "error");
@@ -133,20 +185,29 @@ export default function AdminKitsPage() {
 
     setSaving(true);
     try {
-      await apiClient.post("/admin/kits", {
-        name: kitName,
-        description: kitDescription || undefined,
-        component_ids: componentIds,
-      });
-      showToast("Kit creado exitosamente");
+      if (editingKit) {
+        await apiClient.put(`/admin/kits/${editingKit.id}`, {
+          name: kitName,
+          description: kitDescription || undefined,
+          component_ids: componentIds,
+        });
+        showToast("Kit actualizado exitosamente");
+      } else {
+        await apiClient.post("/admin/kits", {
+          name: kitName,
+          description: kitDescription || undefined,
+          component_ids: componentIds,
+        });
+        showToast("Kit creado exitosamente");
+      }
       setShowModal(false);
-      // Reset form
+      setEditingKit(null);
       setKitName("");
       setKitDescription("");
       setSelectedComponents([]);
       fetchKits();
     } catch (err: any) {
-      showToast(err.response?.data?.detail ?? "Error al crear el kit", "error");
+      showToast(err.response?.data?.detail ?? "Error al guardar el kit", "error");
     } finally {
       setSaving(false);
     }
@@ -179,7 +240,7 @@ export default function AdminKitsPage() {
               </p>
             </div>
             <button
-              onClick={() => setShowModal(true)}
+              onClick={handleOpenCreateKit}
               className="bg-[var(--alling-primary)] text-white px-5 py-2.5 rounded-md text-sm font-semibold hover:bg-[var(--alling-primary-hover)] transition-colors shadow-sm"
             >
               + Nuevo Kit Personalizado
@@ -214,14 +275,46 @@ export default function AdminKitsPage() {
               {kits.map((k) => (
                 <div
                   key={k.id}
-                  className="bg-white rounded-lg border border-[var(--alling-border)] p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between"
+                  className="bg-white rounded-lg border border-[var(--alling-border)] p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between relative"
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-2 gap-2">
                       <h3 className="font-bold text-lg text-[var(--alling-text)] truncate">{k.name}</h3>
-                      <span className="bg-blue-50 text-blue-700 border border-blue-150 px-2 py-0.5 rounded text-[0.7rem] font-semibold">
-                        Kit FTTH
-                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenDropdownKitId(openDropdownKitId === k.id ? null : k.id);
+                        }}
+                        className="p-1 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors font-bold text-base w-7 h-7 flex items-center justify-center shrink-0"
+                        aria-label="Menú de opciones"
+                      >
+                        ⋮
+                      </button>
+
+                      {openDropdownKitId === k.id && (
+                        <div className="absolute right-4 top-12 w-44 bg-white border border-gray-200 rounded-lg shadow-xl z-30 py-1 text-left text-xs font-medium">
+                          <button
+                            onClick={() => {
+                              setOpenDropdownKitId(null);
+                              handleOpenEditKit(k);
+                            }}
+                            className="w-full px-4 py-2 hover:bg-amber-50 text-amber-900 flex items-center gap-2 transition-colors"
+                          >
+                            ✏️ Editar kit
+                          </button>
+                          <div className="border-t border-gray-100 my-1"></div>
+                          <button
+                            onClick={() => {
+                              setOpenDropdownKitId(null);
+                              handleDeleteKit(k.id, k.name);
+                            }}
+                            className="w-full px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2 transition-colors font-semibold"
+                          >
+                            🗑️ Eliminar kit
+                          </button>
+                        </div>
+                      )}
                     </div>
                     {k.description ? (
                       <p className="text-sm text-[var(--alling-metadata)] line-clamp-2 mb-4">
@@ -231,18 +324,22 @@ export default function AdminKitsPage() {
                       <p className="text-sm text-gray-400 italic mb-4">Sin descripción</p>
                     )}
                   </div>
+
                   <div className="border-t border-gray-150 pt-3 flex items-center justify-between">
                     <span className="text-xs text-[var(--alling-metadata)] font-medium">
                       📋 {k.component_ids.length} Componentes
                     </span>
-                    <span className="text-xs text-slate-400">
-                      ID: {k.id.split("-")[0]}...
-                    </span>
+                    {(k as any).price !== undefined && (
+                      <span className="text-sm font-bold text-[var(--alling-primary)]">
+                        S/ {Number((k as any).price).toFixed(2)}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           )}
+
 
           {/* BUILDER MODAL */}
           {showModal && (
@@ -251,11 +348,14 @@ export default function AdminKitsPage() {
                 {/* Modal Title */}
                 <div className="flex items-center justify-between border-b border-[var(--alling-border)] pb-3">
                   <div>
-                    <h2 className="text-lg font-bold text-[var(--alling-text)]">Constructor de Kits</h2>
+                    <h2 className="text-lg font-bold text-[var(--alling-text)]">
+                      {editingKit ? "Editar Kit B2B" : "Constructor de Kits"}
+                    </h2>
                     <p className="text-xs text-[var(--alling-metadata)]">
                       Combina varios componentes en un kit con precio acumulado dinámico.
                     </p>
                   </div>
+
                   <button
                     onClick={() => setShowModal(false)}
                     className="text-gray-400 hover:text-[var(--alling-text)] text-lg"
@@ -432,8 +532,9 @@ export default function AdminKitsPage() {
                     disabled={saving}
                     className="bg-[var(--alling-primary)] text-white px-5 py-2.5 rounded-md text-sm font-semibold hover:bg-[var(--alling-primary-hover)] disabled:opacity-50 transition-colors shadow-sm"
                   >
-                    {saving ? "Crear Kit..." : "Confirmar y Guardar Kit"}
+                    {saving ? "Guardando..." : editingKit ? "Guardar Cambios del Kit" : "Confirmar y Crear Kit"}
                   </button>
+
                 </div>
               </div>
             </div>

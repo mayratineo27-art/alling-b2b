@@ -104,6 +104,79 @@ export default function AdminProductosPage() {
     }
   };
 
+  // Product edit and delete states
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
+  const [updatingProduct, setUpdatingProduct] = useState(false);
+  const [editProductForm, setEditProductForm] = useState({
+    name: "",
+    sku: "",
+    price_public: "",
+    stock: "0",
+    description: "",
+    category: "",
+    brand: "",
+  });
+
+  const handleOpenEditProduct = (p: Product) => {
+    setEditingProduct(p);
+    setEditProductForm({
+      name: p.name || "",
+      sku: p.sku || "",
+      price_public: p.price_public ? String(p.price_public) : "",
+      stock: p.stock !== undefined ? String(p.stock) : "0",
+      description: p.description || "",
+      category: p.category || "",
+      brand: p.brand || "",
+    });
+    setShowEditProductModal(true);
+  };
+
+  const handleUpdateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+    if (!editProductForm.name.trim() || !editProductForm.sku.trim() || !editProductForm.price_public) {
+      showToast("Nombre, SKU y Precio son obligatorios", "error");
+      return;
+    }
+
+    setUpdatingProduct(true);
+    try {
+      await apiClient.put(`/admin/productos/${editingProduct.id}`, {
+        name: editProductForm.name.trim(),
+        sku: editProductForm.sku.trim(),
+        price_public: parseFloat(editProductForm.price_public),
+        stock: parseInt(editProductForm.stock || "0", 10),
+        description: editProductForm.description.trim(),
+        category: editProductForm.category.trim(),
+        brand: editProductForm.brand.trim(),
+      });
+
+      showToast(`Producto "${editProductForm.name}" actualizado correctamente`);
+      setShowEditProductModal(false);
+      setEditingProduct(null);
+      fetchProducts();
+    } catch (err: any) {
+      showToast(err.response?.data?.detail ?? "Error al actualizar el producto", "error");
+    } finally {
+      setUpdatingProduct(false);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string, productName: string) => {
+    if (!confirm(`¿Estás seguro de que deseas eliminar el producto "${productName}"?`)) {
+      return;
+    }
+    try {
+      const res = await apiClient.delete(`/admin/productos/${productId}`);
+      showToast(res.data?.message || `Producto "${productName}" eliminado`);
+      fetchProducts();
+    } catch (err: any) {
+      showToast(err.response?.data?.detail ?? "Error al eliminar el producto", "error");
+    }
+  };
+
+
 
   // Product form
   const [productForm, setProductForm] = useState({
@@ -427,12 +500,13 @@ export default function AdminProductosPage() {
                         <th className="text-right px-6 py-3 font-semibold text-[var(--alling-text)]">Stock</th>
                         <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Estado</th>
                         <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Visibilidad</th>
+                        <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Acciones</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--alling-border)]">
                       {filteredProducts.length === 0 ? (
                         <tr>
-                          <td colSpan={9} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
+                          <td colSpan={10} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
                             No se encontraron productos coincidentes en el catálogo.
                           </td>
                         </tr>
@@ -508,8 +582,23 @@ export default function AdminProductosPage() {
                                 {p.is_active ? "Desactivar" : "Activar"}
                               </button>
                             </td>
+                            <td className="px-6 py-4 text-center space-x-2">
+                              <button
+                                onClick={() => handleOpenEditProduct(p)}
+                                className="text-xs font-bold text-amber-700 hover:text-amber-900 hover:underline px-2.5 py-1 rounded bg-amber-50 hover:bg-amber-100 transition-colors"
+                              >
+                                ✏️ Editar
+                              </button>
+                              <button
+                                onClick={() => handleDeleteProduct(p.id, p.name)}
+                                className="text-xs font-bold text-red-600 hover:text-red-800 hover:underline px-2.5 py-1 rounded bg-red-50 hover:bg-red-100 transition-colors"
+                              >
+                                🗑️ Eliminar
+                              </button>
+                            </td>
                           </tr>
                         ))
+
                       )}
                     </tbody>
                   </table>
@@ -927,7 +1016,159 @@ export default function AdminProductosPage() {
           )}
 
 
+          {/* PRODUCT EDIT MODAL */}
+          {showEditProductModal && editingProduct && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
+              <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 my-8">
+                <div className="flex items-center justify-between border-b border-[var(--alling-border)] pb-3 mb-4">
+                  <h2 className="text-lg font-bold text-[var(--alling-text)]">Editar Producto</h2>
+                  <button
+                    onClick={() => {
+                      setShowEditProductModal(false);
+                      setEditingProduct(null);
+                    }}
+                    className="text-gray-400 hover:text-[var(--alling-text)] text-lg"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <form onSubmit={handleUpdateProduct} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                      Nombre del Producto *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={editProductForm.name}
+                      onChange={(e) =>
+                        setEditProductForm({ ...editProductForm, name: e.target.value })
+                      }
+                      className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                        SKU *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={editProductForm.sku}
+                        onChange={(e) =>
+                          setEditProductForm({ ...editProductForm, sku: e.target.value })
+                        }
+                        className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                        Precio Público (S/) *
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        required
+                        value={editProductForm.price_public}
+                        onChange={(e) =>
+                          setEditProductForm({ ...editProductForm, price_public: e.target.value })
+                        }
+                        className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                        Stock
+                      </label>
+                      <input
+                        type="number"
+                        value={editProductForm.stock}
+                        onChange={(e) =>
+                          setEditProductForm({ ...editProductForm, stock: e.target.value })
+                        }
+                        className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                        Marca
+                      </label>
+                      <input
+                        type="text"
+                        value={editProductForm.brand}
+                        onChange={(e) =>
+                          setEditProductForm({ ...editProductForm, brand: e.target.value })
+                        }
+                        className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                        Categoría
+                      </label>
+                      <select
+                        value={editProductForm.category}
+                        onChange={(e) =>
+                          setEditProductForm({ ...editProductForm, category: e.target.value })
+                        }
+                        className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none bg-white"
+                      >
+                        <option value="">Seleccionar...</option>
+                        {categories.map((c) => (
+                          <option key={c.id} value={c.name}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                      Descripción
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={editProductForm.description}
+                      onChange={(e) =>
+                        setEditProductForm({ ...editProductForm, description: e.target.value })
+                      }
+                      className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none resize-none"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-3 border-t border-[var(--alling-border)] pt-4 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowEditProductModal(false);
+                        setEditingProduct(null);
+                      }}
+                      className="px-4 py-2 text-sm text-[var(--alling-metadata)] hover:text-[var(--alling-text)] font-semibold"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={updatingProduct}
+                      className="bg-[var(--alling-primary)] text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-[var(--alling-primary-hover)] disabled:opacity-50 transition-colors shadow-sm"
+                    >
+                      {updatingProduct ? "Guardando..." : "Guardar Cambios"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
           {/* CATEGORY IMAGE MANAGEMENT MODAL */}
+
           {selectedCategoryForImage && (
 
             <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">

@@ -414,6 +414,93 @@ def toggle_product_active(
     return {"message": "Estado de producto actualizado", "is_active": product.is_active}
 
 
+@router.put("/productos/{product_id}")
+def actualizar_producto(
+    product_id: str,
+    body: ProductCreateSchema,
+    admin_info: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    """
+    RF-ADM-005: Actualizar información de un producto existente.
+    
+    @sdd-endpoint PUT /admin/productos/{product_id}
+    @sdd-rf RF-ADM-005
+    """
+    from decimal import Decimal
+
+    p_uuid = uuid.UUID(product_id) if isinstance(product_id, str) and len(product_id) == 36 else product_id
+    product = db.query(ProductModel).filter(ProductModel.id == p_uuid).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+
+    # Verificar si el SKU cambió y pertenece a otro producto
+    if body.sku != product.sku:
+        existing = db.query(ProductModel).filter(ProductModel.sku == body.sku, ProductModel.id != p_uuid).first()
+        if existing:
+            raise HTTPException(status_code=409, detail=f"El SKU '{body.sku}' ya está asignado a otro producto")
+
+    # Vincular ID de categoría si coincide por nombre
+    cat_id = product.category_id
+    if body.category:
+        cat = db.query(CategoryModel).filter(CategoryModel.name == body.category).first()
+        if cat:
+            cat_id = cat.id
+
+    product.name = body.name
+    product.sku = body.sku
+    product.price_public = Decimal(str(body.price_public))
+    product.stock = body.stock
+    product.description = body.description
+    product.category = body.category
+    product.category_id = cat_id
+    product.brand = body.brand
+    product.slug = body.sku.lower().replace(" ", "-").replace("/", "-")
+
+    db.commit()
+    db.refresh(product)
+    return {
+        "id": str(product.id),
+        "name": product.name,
+        "sku": product.sku,
+        "message": "Producto actualizado correctamente",
+    }
+
+
+@router.delete("/productos/{product_id}")
+def eliminar_producto(
+    product_id: str,
+    admin_info: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    """
+    RF-ADM-005: Eliminar o desactivar un producto del catálogo.
+    
+    @sdd-endpoint DELETE /admin/productos/{product_id}
+    @sdd-rf RF-ADM-005
+    """
+    p_uuid = uuid.UUID(product_id) if isinstance(product_id, str) and len(product_id) == 36 else product_id
+    product = db.query(ProductModel).filter(ProductModel.id == p_uuid).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+
+    name = product.name
+    try:
+        db.delete(product)
+        db.commit()
+        return {"message": f"Producto '{name}' eliminado correctamente"}
+    except Exception:
+        db.rollback()
+        # Fallback a soft-delete si existen dependencias/FKs activas
+        product = db.query(ProductModel).filter(ProductModel.id == p_uuid).first()
+        if product:
+            product.is_active = False
+            db.commit()
+            return {"message": f"Producto '{name}' desactivado (soft-delete por registros históricos asociados)"}
+        raise HTTPException(status_code=400, detail="Error al procesar eliminación de producto")
+
+
+
 # ─── RF-ADM-006: Métricas de ventas ─────────────────────────────────────────
 
 @router.get("/metricas/ventas", response_model=MetricsResponseSchema)

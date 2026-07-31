@@ -38,6 +38,32 @@ def _compress_to_webp_data_uri(raw_bytes: bytes, max_dim: int = 500, quality: in
         return f"data:image/png;base64,{b64_str}"
 
 
+def _generate_fallback_b2b_svg(prompt: str) -> str:
+    import base64
+    clean_title = (prompt[:35] + "...") if len(prompt) > 35 else prompt
+    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#061D17"/>
+      <stop offset="50%" stop-color="#092A22"/>
+      <stop offset="100%" stop-color="#020A08"/>
+    </linearGradient>
+    <linearGradient id="badge" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <rect width="500" height="500" fill="url(#bg)"/>
+  <circle cx="250" cy="200" r="80" fill="#10B981" fill-opacity="0.1" stroke="#10B981" stroke-width="2" stroke-dasharray="6,6"/>
+  <path d="M220 180L250 150L280 180M250 150V230M210 220H290" stroke="#34D399" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="50" y="320" width="400" height="46" rx="10" fill="url(#badge)"/>
+  <text x="250" y="349" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">{clean_title}</text>
+  <text x="250" y="410" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#6EE7B7" text-anchor="middle">ALLING B2B — HARDWARE &amp; FIBRA ÓPTICA</text>
+</svg>'''
+    b64_svg = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
+    return f"data:image/svg+xml;base64,{b64_svg}"
+
+
 class AIImageGeneratorService:
     def generate_image(
         self,
@@ -81,9 +107,27 @@ class AIImageGeneratorService:
             f"?width=512&height=512&nologo=true&seed={seed}"
         )
 
+        final_image_url = None
+        try:
+            req = urllib.request.Request(
+                pollinations_url,
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+            )
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                if resp.status == 200:
+                    raw_bytes = resp.read()
+                    if raw_bytes and len(raw_bytes) > 500:
+                        final_image_url = _compress_to_webp_data_uri(raw_bytes)
+        except Exception as exc:
+            print(f"[AIImageGeneratorService] Pollinations no disponible ({exc}), usando fallback Data URI B2B.")
+
+        if not final_image_url:
+            final_image_url = _generate_fallback_b2b_svg(clean_prompt)
+
         return {
-            "image_url": pollinations_url,
+            "image_url": final_image_url,
             "prompt_used": enriched_prompt,
             "message": "Imagen generada con IA exitosamente",
         }
+
 

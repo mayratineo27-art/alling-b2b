@@ -62,13 +62,17 @@ export default function KitImageUploader({
       return;
     }
     setSelectedFile(file);
-    const objectUrl = URL.createObjectURL(file);
-    setPreviewUrl(objectUrl);
-
-    if (onImageSelectedForNewKit) {
-      onImageSelectedForNewKit(objectUrl);
-    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      setPreviewUrl(dataUrl);
+      if (onImageSelectedForNewKit) {
+        onImageSelectedForNewKit(dataUrl);
+      }
+    };
+    reader.readAsDataURL(file);
   };
+
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

@@ -54,6 +54,20 @@ export default function AdminProductosPage() {
   // General feedback
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
+  // Dropdown menus state
+  const [openProductDropdownId, setOpenProductDropdownId] = useState<string | null>(null);
+  const [openCategoryDropdownId, setOpenCategoryDropdownId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = () => {
+      setOpenProductDropdownId(null);
+      setOpenCategoryDropdownId(null);
+    };
+    window.addEventListener("click", handleOutsideClick);
+    return () => window.removeEventListener("click", handleOutsideClick);
+  }, []);
+
+
   // Modals / Forms
   const [showProductModal, setShowProductModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -492,21 +506,19 @@ export default function AdminProductosPage() {
                     <thead className="bg-gray-50 border-b border-[var(--alling-border)]">
                       <tr>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Producto</th>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Imagen Ref.</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">SKU</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Marca</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Categoría</th>
                         <th className="text-right px-6 py-3 font-semibold text-[var(--alling-text)]">Precio Público</th>
                         <th className="text-right px-6 py-3 font-semibold text-[var(--alling-text)]">Stock</th>
                         <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Estado</th>
-                        <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Visibilidad</th>
                         <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Acciones</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--alling-border)]">
                       {filteredProducts.length === 0 ? (
                         <tr>
-                          <td colSpan={10} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
+                          <td colSpan={8} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
                             No se encontraron productos coincidentes en el catálogo.
                           </td>
                         </tr>
@@ -514,16 +526,8 @@ export default function AdminProductosPage() {
                         filteredProducts.map((p) => (
                           <tr key={p.id} className="hover:bg-gray-50/55 transition-colors">
                             <td className="px-6 py-4">
-                              <div className="font-semibold text-[var(--alling-text)]">{p.name}</div>
-                              {p.description && (
-                                <div className="text-xs text-[var(--alling-metadata)] truncate max-w-sm">
-                                  {p.description}
-                                </div>
-                              )}
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-2">
-                                <div className="w-10 h-10 rounded border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0">
                                   <img
                                     src={p.image_url ?? "/assets/category-placeholder.svg"}
                                     alt={p.name}
@@ -533,12 +537,14 @@ export default function AdminProductosPage() {
                                     }}
                                   />
                                 </div>
-                                <button
-                                  onClick={() => setSelectedProductForImage(p)}
-                                  className="text-xs font-bold text-[var(--alling-primary)] hover:underline px-2 py-1 rounded bg-emerald-50 hover:bg-emerald-100 transition-colors"
-                                >
-                                  {p.image_url ? "Cambiar" : "+ Subir"}
-                                </button>
+                                <div>
+                                  <div className="font-semibold text-[var(--alling-text)]">{p.name}</div>
+                                  {p.description && (
+                                    <div className="text-xs text-[var(--alling-metadata)] truncate max-w-xs">
+                                      {p.description}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </td>
 
@@ -570,34 +576,64 @@ export default function AdminProductosPage() {
                                 {p.is_active ? "Activo" : "Inactivo"}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-6 py-4 text-center relative">
                               <button
-                                onClick={() => handleToggleActive(p.id, p.is_active)}
-                                className={`text-xs font-semibold px-3 py-1 rounded-md border shadow-xs transition-colors ${
-                                  p.is_active
-                                    ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
-                                    : "border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
-                                }`}
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenProductDropdownId(openProductDropdownId === p.id ? null : p.id);
+                                }}
+                                className="p-1.5 rounded-md hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors font-bold text-base w-8 h-8 flex items-center justify-center mx-auto"
+                                aria-label="Menú de opciones"
                               >
-                                {p.is_active ? "Desactivar" : "Activar"}
+                                ⋮
                               </button>
-                            </td>
-                            <td className="px-6 py-4 text-center space-x-2">
-                              <button
-                                onClick={() => handleOpenEditProduct(p)}
-                                className="text-xs font-bold text-amber-700 hover:text-amber-900 hover:underline px-2.5 py-1 rounded bg-amber-50 hover:bg-amber-100 transition-colors"
-                              >
-                                ✏️ Editar
-                              </button>
-                              <button
-                                onClick={() => handleDeleteProduct(p.id, p.name)}
-                                className="text-xs font-bold text-red-600 hover:text-red-800 hover:underline px-2.5 py-1 rounded bg-red-50 hover:bg-red-100 transition-colors"
-                              >
-                                🗑️ Eliminar
-                              </button>
+
+                              {openProductDropdownId === p.id && (
+                                <div className="absolute right-6 top-12 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-30 py-1 text-left text-xs font-medium">
+                                  <button
+                                    onClick={() => {
+                                      setOpenProductDropdownId(null);
+                                      handleOpenEditProduct(p);
+                                    }}
+                                    className="w-full px-4 py-2 hover:bg-amber-50 text-amber-900 flex items-center gap-2 transition-colors"
+                                  >
+                                    ✏️ Editar producto
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setOpenProductDropdownId(null);
+                                      setSelectedProductForImage(p);
+                                    }}
+                                    className="w-full px-4 py-2 hover:bg-emerald-50 text-emerald-900 flex items-center gap-2 transition-colors"
+                                  >
+                                    🖼️ Gestionar imagen
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setOpenProductDropdownId(null);
+                                      handleToggleActive(p.id, p.is_active);
+                                    }}
+                                    className="w-full px-4 py-2 hover:bg-gray-100 text-gray-700 flex items-center gap-2 transition-colors"
+                                  >
+                                    {p.is_active ? "🙈 Desactivar producto" : "👁️ Activar producto"}
+                                  </button>
+                                  <div className="border-t border-gray-100 my-1"></div>
+                                  <button
+                                    onClick={() => {
+                                      setOpenProductDropdownId(null);
+                                      handleDeleteProduct(p.id, p.name);
+                                    }}
+                                    className="w-full px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2 transition-colors font-semibold"
+                                  >
+                                    🗑️ Eliminar producto
+                                  </button>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         ))
+
 
                       )}
                     </tbody>
@@ -634,9 +670,7 @@ export default function AdminProductosPage() {
                   <table className="w-full text-sm">
                     <thead className="bg-gray-50 border-b border-[var(--alling-border)]">
                       <tr>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Icono</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Categoría</th>
-                        <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Imagen Ref.</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Slug</th>
                         <th className="text-left px-6 py-3 font-semibold text-[var(--alling-text)]">Descripción</th>
                         <th className="text-center px-6 py-3 font-semibold text-[var(--alling-text)]">Acciones</th>
@@ -645,20 +679,17 @@ export default function AdminProductosPage() {
                     <tbody className="divide-y divide-[var(--alling-border)]">
                       {categories.length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
+                          <td colSpan={4} className="px-6 py-12 text-center text-[var(--alling-metadata)]">
                             No se han creado categorías de catálogo.
                           </td>
                         </tr>
                       ) : (
                         categories.map((c) => (
                           <tr key={c.id} className="hover:bg-gray-50/55 transition-colors">
-                            <td className="px-6 py-4 text-lg">{c.icon ?? "🏷️"}</td>
                             <td className="px-6 py-4 font-semibold text-[var(--alling-text)]">
-                              {c.name}
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-2">
-                                <div className="w-10 h-10 rounded border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0">
+                              <div className="flex items-center gap-3">
+                                <span className="text-xl shrink-0">{c.icon ?? "🏷️"}</span>
+                                <div className="w-8 h-8 rounded border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0">
                                   <img
                                     src={c.image_url ?? "/assets/category-placeholder.svg"}
                                     alt={c.name}
@@ -668,12 +699,7 @@ export default function AdminProductosPage() {
                                     }}
                                   />
                                 </div>
-                                <button
-                                  onClick={() => setSelectedCategoryForImage(c)}
-                                  className="text-xs font-bold text-[var(--alling-primary)] hover:underline px-2 py-1 rounded bg-emerald-50 hover:bg-emerald-100 transition-colors"
-                                >
-                                  {c.image_url ? "Cambiar" : "+ Subir"}
-                                </button>
+                                <span>{c.name}</span>
                               </div>
                             </td>
                             <td className="px-6 py-4 text-xs font-mono text-[var(--alling-metadata)]">
@@ -682,29 +708,55 @@ export default function AdminProductosPage() {
                             <td className="px-6 py-4 text-gray-600">
                               {c.description ?? "—"}
                             </td>
-                            <td className="px-6 py-4 text-center space-x-2">
+                            <td className="px-6 py-4 text-center relative">
                               <button
-                                onClick={() => handleOpenEditCategory(c)}
-                                className="text-xs font-bold text-amber-700 hover:text-amber-900 hover:underline px-2.5 py-1 rounded bg-amber-50 hover:bg-amber-100 transition-colors"
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenCategoryDropdownId(openCategoryDropdownId === c.id ? null : c.id);
+                                }}
+                                className="p-1.5 rounded-md hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors font-bold text-base w-8 h-8 flex items-center justify-center mx-auto"
+                                aria-label="Menú de opciones"
                               >
-                                ✏️ Editar
+                                ⋮
                               </button>
-                              <button
-                                onClick={() => setSelectedCategoryForImage(c)}
-                                className="text-xs font-bold text-gray-700 hover:text-gray-900 hover:underline px-2.5 py-1 rounded bg-gray-100 hover:bg-gray-200 transition-colors"
-                              >
-                                🖼️ Imagen
-                              </button>
-                              <button
-                                onClick={() => handleDeleteCategory(c.id, c.name)}
-                                className="text-xs font-bold text-red-600 hover:text-red-800 hover:underline px-2.5 py-1 rounded bg-red-50 hover:bg-red-100 transition-colors"
-                              >
-                                Eliminar
-                              </button>
-                            </td>
 
+                              {openCategoryDropdownId === c.id && (
+                                <div className="absolute right-6 top-12 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-30 py-1 text-left text-xs font-medium">
+                                  <button
+                                    onClick={() => {
+                                      setOpenCategoryDropdownId(null);
+                                      handleOpenEditCategory(c);
+                                    }}
+                                    className="w-full px-4 py-2 hover:bg-amber-50 text-amber-900 flex items-center gap-2 transition-colors"
+                                  >
+                                    ✏️ Editar categoría
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setOpenCategoryDropdownId(null);
+                                      setSelectedCategoryForImage(c);
+                                    }}
+                                    className="w-full px-4 py-2 hover:bg-emerald-50 text-emerald-900 flex items-center gap-2 transition-colors"
+                                  >
+                                    🖼️ Gestionar imagen
+                                  </button>
+                                  <div className="border-t border-gray-100 my-1"></div>
+                                  <button
+                                    onClick={() => {
+                                      setOpenCategoryDropdownId(null);
+                                      handleDeleteCategory(c.id, c.name);
+                                    }}
+                                    className="w-full px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2 transition-colors font-semibold"
+                                  >
+                                    🗑️ Eliminar categoría
+                                  </button>
+                                </div>
+                              )}
+                            </td>
                           </tr>
                         ))
+
                       )}
                     </tbody>
 

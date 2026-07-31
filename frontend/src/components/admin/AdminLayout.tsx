@@ -95,15 +95,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar */}
       <aside className="w-64 bg-gradient-to-b from-[#061D17] via-[#041511] to-[#020A08] flex flex-col fixed inset-y-0 left-0 z-20 border-r border-emerald-950/60 shadow-2xl">
         {/* Brand Header */}
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-emerald-950/60">
-          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-emerald-950/50 p-1 border border-emerald-800/40 flex items-center justify-center shadow-xs">
-            <Image src="/alling-logo.png" alt="Alling" width={28} height={28} className="w-full h-full object-contain" />
+        <div className="h-20 flex items-center gap-3.5 px-6 border-b border-emerald-950/60">
+          <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-white/95 p-1.5 border border-emerald-800/40 flex items-center justify-center shadow-sm">
+            <Image src="/alling-logo.png" alt="Alling" width={42} height={42} className="w-full h-full object-contain" />
           </div>
-          <div>
-            <span className="text-white font-bold text-base tracking-tight block leading-none font-sans">Alling B2B</span>
-            <span className="text-[0.6rem] uppercase font-bold tracking-[0.2em] text-emerald-400/90 mt-1 block">PANEL ADMIN</span>
+          <div className="flex flex-col justify-center">
+            <span className="text-white font-extrabold text-lg tracking-tight block leading-none font-sans">Alling B2B</span>
+            <span className="text-[0.65rem] uppercase font-bold tracking-[0.22em] text-emerald-400 mt-1 block">PANEL ADMIN</span>
           </div>
         </div>
+
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">

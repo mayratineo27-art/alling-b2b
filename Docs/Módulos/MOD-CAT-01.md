@@ -110,7 +110,8 @@
 
 |ID|Tipo|Función en el proceso|Datos consumidos|Datos producidos|Dependencias|
 |---|---|---|---|---|---|
-|`CMP-CAT-001`|Buscador|Ejecuta `OPS-CAT-001` por texto libre|`query` string|parámetro de búsqueda aplicado|`AUTO-CAT-002`|
+|`CMP-CAT-001`|Buscador con Selector de Categoría|Ejecuta `OPS-CAT-001` por texto libre y/o categoría seleccionada|`query` string, `Category[]`|`query`, `categoria` aplicados|`AUTO-CAT-002`, `Category`|
+
 |`CMP-CAT-002`|Filtro categoría|Ejecuta `OPS-CAT-001` por categoría|`Category[]`|`category_id[]`|`Category` (lectura)|
 |`CMP-CAT-003`|Filtro precio|Ejecuta `OPS-CAT-001` por rango|rango del catálogo (min/max)|`price_min`, `price_max`|`Product.price_public`|
 |`CMP-CAT-004`|Filtro marca|Ejecuta `OPS-CAT-001` por marca|marcas distintas|`brand[]`|`Product.brand`|

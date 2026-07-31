@@ -3,22 +3,56 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import apiClient from "@/lib/api";
 import NotificationBadge from "./NotificationBadge";
 import CartBadge from "./CartBadge";
 import { getShortName, getInitials } from "@/lib/user";
 
+
+interface CategoryOption {
+  id: string;
+  name: string;
+  icon?: string;
+}
+
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
 
   const isCustomer = user?.role === "CUSTOMER";
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await apiClient.get("/categorias");
+        if (Array.isArray(res.data)) {
+          setCategories(res.data);
+        }
+      } catch (err) {
+        console.error("Error al cargar categorías en buscador:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/productos?q=${encodeURIComponent(searchQuery.trim())}`;
+    const query = searchQuery.trim();
+    const cat = selectedCategory.trim();
+
+    if (!query && !cat) {
+      window.location.href = "/productos";
+      return;
     }
+
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (cat) params.set("categoria", cat);
+
+    window.location.href = `/productos?${params.toString()}`;
   };
 
   return (
@@ -38,28 +72,48 @@ export default function Header() {
           <span className="font-bold text-[var(--alling-text)] text-lg hidden sm:block">Alling</span>
         </Link>
 
-        {/* Search */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-auto">
-          <div className="relative flex items-center border border-[var(--alling-border)] rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-[var(--alling-primary)] focus-within:border-transparent">
+        {/* Search with Category Select */}
+        <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-auto">
+          <div className="relative flex items-center border border-[var(--alling-border)] rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[var(--alling-primary)] focus-within:border-transparent bg-white shadow-xs">
+            {/* Category Dropdown */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 text-xs sm:text-sm font-semibold text-gray-700 bg-gray-50 border-r border-[var(--alling-border)] outline-none hover:bg-gray-100 cursor-pointer max-w-[130px] sm:max-w-[170px] truncate"
+              aria-label="Seleccionar categoría de búsqueda"
+            >
+              <option value="">Todas las categorías</option>
+              {categories.map((cat) => (
+                <option key={cat.id || cat.name} value={cat.name}>
+                  {cat.icon ? `${cat.icon} ` : ""}{cat.name}
+                </option>
+              ))}
+            </select>
+
+            {/* Search Input */}
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar productos..."
-              className="flex-1 px-4 py-2 text-sm text-[var(--alling-text)] outline-none bg-white"
+              placeholder="Buscar por producto, SKU o marca..."
+              className="flex-1 min-w-0 px-3 py-2 text-sm text-[var(--alling-text)] outline-none bg-transparent"
               aria-label="Buscar productos"
             />
+
+            {/* Submit Button */}
             <button
               type="submit"
-              className="px-4 py-2 bg-[var(--alling-primary)] text-white text-sm font-medium hover:bg-[var(--alling-primary-hover)] transition-colors"
+              className="px-4 py-2 bg-[var(--alling-primary)] text-white text-sm font-semibold hover:bg-[var(--alling-primary-hover)] transition-colors flex items-center gap-1.5 shrink-0"
               aria-label="Buscar"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
+              <span className="hidden sm:inline">Buscar</span>
             </button>
           </div>
         </form>
+
 
         {/* Icons right */}
         <div className="flex items-center gap-3 flex-shrink-0">

@@ -53,6 +53,14 @@ function ProductosContent() {
                 if (qParam) {
                     // Full-text search (RF-CAT-003)
                     response = await apiClient.get('/productos/buscar/', { params: { q: qParam } });
+                    let results: Product[] = response.data || [];
+                    if (categoriaParam) {
+                        results = results.filter(
+                            (p) => p.category && p.category.toLowerCase() === categoriaParam.toLowerCase()
+                        );
+                    }
+
+                    setProducts(results);
                 } else {
                     // Standard listing with filters (RF-CAT-001)
                     const params: any = { skip: skipParam, limit: limitParam };
@@ -63,9 +71,10 @@ function ProductosContent() {
                     if (inStockParam === 'true') params.in_stock = true;
 
                     response = await apiClient.get('/productos/', { params });
+                    setProducts(response.data);
                 }
-                setProducts(response.data);
                 setError(null);
+
             } catch (err: any) {
                 console.error(err);
                 setError(err.response?.data?.detail || 'Error al cargar productos');

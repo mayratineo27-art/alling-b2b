@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
+import KitImageUploader from "@/components/admin/KitImageUploader";
 import apiClient from "@/lib/api";
 
 interface Product {
@@ -25,9 +26,11 @@ interface Kit {
   id: string;
   name: string;
   description?: string;
+  image_url?: string | null;
   component_ids: string[];
   created_at: string;
 }
+
 
 export default function AdminKitsPage() {
   const [kits, setKits] = useState<Kit[]>([]);
@@ -111,6 +114,7 @@ export default function AdminKitsPage() {
   // Kit edit and options dropdown state
   const [editingKit, setEditingKit] = useState<Kit | null>(null);
   const [openDropdownKitId, setOpenDropdownKitId] = useState<string | null>(null);
+  const [kitImageUrl, setKitImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const handleOutsideClick = () => {
@@ -124,6 +128,7 @@ export default function AdminKitsPage() {
     setEditingKit(null);
     setKitName("");
     setKitDescription("");
+    setKitImageUrl(null);
     setSelectedComponents([]);
     setShowModal(true);
   };
@@ -132,6 +137,7 @@ export default function AdminKitsPage() {
     setEditingKit(k);
     setKitName(k.name || "");
     setKitDescription(k.description || "");
+    setKitImageUrl(k.image_url ?? null);
 
     const countsMap: { [id: string]: number } = {};
     (k.component_ids || []).forEach((id) => {
@@ -189,6 +195,7 @@ export default function AdminKitsPage() {
         await apiClient.put(`/admin/kits/${editingKit.id}`, {
           name: kitName,
           description: kitDescription || undefined,
+          image_url: kitImageUrl || undefined,
           component_ids: componentIds,
         });
         showToast("Kit actualizado exitosamente");
@@ -196,6 +203,7 @@ export default function AdminKitsPage() {
         await apiClient.post("/admin/kits", {
           name: kitName,
           description: kitDescription || undefined,
+          image_url: kitImageUrl || undefined,
           component_ids: componentIds,
         });
         showToast("Kit creado exitosamente");
@@ -204,6 +212,7 @@ export default function AdminKitsPage() {
       setEditingKit(null);
       setKitName("");
       setKitDescription("");
+      setKitImageUrl(null);
       setSelectedComponents([]);
       fetchKits();
     } catch (err: any) {
@@ -212,6 +221,7 @@ export default function AdminKitsPage() {
       setSaving(false);
     }
   };
+
 
   // Unique categories for component filter
   const uniqueCategories = Array.from(
@@ -265,107 +275,125 @@ export default function AdminKitsPage() {
               </button>
             </div>
           )}
-
           {loading ? (
             <p className="text-center py-12 text-slate-400 text-xs font-medium">Cargando kits y componentes...</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {kits.length === 0 && (
+              {kits.length === 0 ? (
                 <div className="col-span-full bg-white rounded-xl border border-slate-200/80 p-12 text-center text-slate-500 text-xs shadow-xs font-medium">
                   No se han estructurado kits de instalación. Utiliza el botón superior para crear tu primer kit.
                 </div>
-              )}
-              {kits.map((k) => (
-                <div
-                  key={k.id}
-                  className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between relative"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-2 gap-2">
-                      <h3 className="font-bold text-base text-slate-900 truncate">{k.name}</h3>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpenDropdownKitId(openDropdownKitId === k.id ? null : k.id);
+              ) : (
+                kits.map((k) => (
+                  <div
+                    key={k.id}
+                    className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between relative group"
+                  >
+                    {/* Kit Image Header */}
+                    <div className="w-full h-36 bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                      <img
+                        src={k.image_url || "/assets/category-placeholder.svg"}
+                        alt={k.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/assets/category-placeholder.svg";
                         }}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors font-bold text-base w-7 h-7 flex items-center justify-center shrink-0"
-                        aria-label="Menú de opciones"
-                      >
-                        ⋮
-                      </button>
-
-                      {openDropdownKitId === k.id && (
-                        <div className="absolute right-4 top-12 w-44 bg-white border border-slate-200 rounded-lg shadow-xl z-30 py-1 text-left text-xs font-medium">
-                          <button
-                            onClick={() => {
-                              setOpenDropdownKitId(null);
-                              handleOpenEditKit(k);
-                            }}
-                            className="w-full px-4 py-2 hover:bg-amber-50 text-amber-900 flex items-center gap-2 transition-colors"
-                          >
-                            ✏️ Editar kit
-                          </button>
-                          <div className="border-t border-slate-100 my-1"></div>
-                          <button
-                            onClick={() => {
-                              setOpenDropdownKitId(null);
-                              handleDeleteKit(k.id, k.name);
-                            }}
-                            className="w-full px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2 transition-colors font-semibold"
-                          >
-                            🗑️ Eliminar kit
-                          </button>
-                        </div>
+                      />
+                      {!k.image_url && (
+                        <span className="absolute inset-0 flex items-center justify-center text-slate-400 text-xs font-semibold bg-slate-100/80 backdrop-blur-xs">
+                          📦 Sin imagen de kit
+                        </span>
                       )}
                     </div>
-                    {k.description ? (
-                      <p className="text-xs text-slate-500 line-clamp-2 mb-4">
-                        {k.description}
-                      </p>
-                    ) : (
-                      <p className="text-xs text-slate-400 italic mb-4">Sin descripción adicional</p>
-                    )}
-                  </div>
 
-                  <div className="border-t border-slate-100 pt-3.5 flex items-center justify-between">
-                    <span className="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                      </svg>
-                      {k.component_ids.length} Componentes
-                    </span>
-                    {(k as any).price !== undefined && (
-                      <span className="text-sm font-bold text-slate-900">
-                        S/ {Number((k as any).price).toFixed(2)}
-                      </span>
-                    )}
+                    <div className="p-4 flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-2 gap-2">
+                          <h3 className="font-bold text-base text-slate-900 truncate">{k.name}</h3>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenDropdownKitId(openDropdownKitId === k.id ? null : k.id);
+                            }}
+                            className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors font-bold text-base w-7 h-7 flex items-center justify-center shrink-0"
+                            aria-label="Menú de opciones"
+                          >
+                            ⋮
+                          </button>
+
+                          {openDropdownKitId === k.id && (
+                            <div className="absolute right-4 top-12 w-44 bg-white border border-slate-200 rounded-lg shadow-xl z-30 py-1 text-left text-xs font-medium">
+                              <button
+                                onClick={() => {
+                                  setOpenDropdownKitId(null);
+                                  handleOpenEditKit(k);
+                                }}
+                                className="w-full px-4 py-2 hover:bg-amber-50 text-amber-900 flex items-center gap-2 transition-colors"
+                              >
+                                ✏️ Editar kit
+                              </button>
+                              <div className="border-t border-slate-100 my-1"></div>
+                              <button
+                                onClick={() => {
+                                  setOpenDropdownKitId(null);
+                                  handleDeleteKit(k.id, k.name);
+                                }}
+                                className="w-full px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2 transition-colors font-semibold"
+                              >
+                                🗑️ Eliminar kit
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        {k.description ? (
+                          <p className="text-xs text-slate-500 line-clamp-2 mb-4">
+                            {k.description}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-slate-400 italic mb-4">Sin descripción adicional</p>
+                        )}
+                      </div>
+
+                      <div className="border-t border-slate-100 pt-3.5 flex items-center justify-between">
+                        <span className="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
+                          <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          </svg>
+                          {k.component_ids.length} Componentes
+                        </span>
+                        {(k as any).price !== undefined && (
+                          <span className="text-sm font-bold text-slate-900">
+                            S/ {Number((k as any).price).toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           )}
 
-
-
           {/* BUILDER MODAL */}
+
           {showModal && (
             <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl p-6 h-[85vh] flex flex-col justify-between">
+              <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl p-6 h-[88vh] flex flex-col justify-between">
                 {/* Modal Title */}
-                <div className="flex items-center justify-between border-b border-[var(--alling-border)] pb-3">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <div>
-                    <h2 className="text-lg font-bold text-[var(--alling-text)]">
+                    <h2 className="text-lg font-bold text-slate-900">
                       {editingKit ? "Editar Kit B2B" : "Constructor de Kits"}
                     </h2>
-                    <p className="text-xs text-[var(--alling-metadata)]">
-                      Combina varios componentes en un kit con precio acumulado dinámico.
+                    <p className="text-xs text-slate-500">
+                      Combina varios componentes en un kit con imagen y precio acumulado dinámico.
                     </p>
                   </div>
 
                   <button
                     onClick={() => setShowModal(false)}
-                    className="text-gray-400 hover:text-[var(--alling-text)] text-lg"
+                    className="text-slate-400 hover:text-slate-900 text-xl font-bold"
                   >
                     ×
                   </button>
@@ -373,11 +401,11 @@ export default function AdminKitsPage() {
 
                 {/* Modal Split Content */}
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 my-4 overflow-hidden">
-                  {/* Left Column: Form & Current Selection */}
-                  <div className="flex flex-col justify-between overflow-y-auto pr-2 space-y-4">
+                  {/* Left Column: Form & Image Uploader */}
+                  <div className="flex flex-col overflow-y-auto pr-2 space-y-4">
                     <div className="space-y-3">
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
                           Nombre del Kit *
                         </label>
                         <input
@@ -386,11 +414,11 @@ export default function AdminKitsPage() {
                           placeholder="Ej. Kit Abonado Fibra Óptica"
                           value={kitName}
                           onChange={(e) => setKitName(e.target.value)}
-                          className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
                           Descripción
                         </label>
                         <textarea
@@ -398,9 +426,17 @@ export default function AdminKitsPage() {
                           placeholder="Propósito, velocidad, etc."
                           value={kitDescription}
                           onChange={(e) => setKitDescription(e.target.value)}
-                          className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none resize-none"
+                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 outline-none resize-none"
                         />
                       </div>
+
+                      {/* Kit Image Uploader (PC & IA) */}
+                      <KitImageUploader
+                        kit={editingKit}
+                        initialImageUrl={kitImageUrl}
+                        onImageUpdated={(kitId, newUrl) => setKitImageUrl(newUrl)}
+                        onImageSelectedForNewKit={(url) => setKitImageUrl(url)}
+                      />
                     </div>
 
                     {/* Selected Components Table */}

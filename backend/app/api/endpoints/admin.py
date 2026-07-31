@@ -20,7 +20,7 @@ Endpoints:
 import uuid
 import sys
 from typing import List, Optional, Literal
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 from datetime import datetime
@@ -195,9 +195,11 @@ class MetricsResponseSchema(BaseModel):
 class KitCreateSchema(BaseModel):
     name: str = Field(..., min_length=1)
     description: Optional[str] = None
+    image_url: Optional[str] = None
     component_ids: List[str] = Field(
         ..., min_length=2, description="Minimum 2 components (BTN-ADM-009)"
     )
+
 
 
 # ─── RF-ADM-001: Listar usuarios ────────────────────────────────────────────
@@ -638,6 +640,16 @@ def exportar_datos(
 
 # ─── RF-ADM-009: CRUD Kits ──────────────────────────────────────────────────
 
+class ImageUrlJSONRequest(BaseModel):
+    image_url: str
+
+
+class KitImageResponse(BaseModel):
+    kit_id: str
+    image_url: Optional[str] = None
+
+
+
 @router.get("/kits")
 def listar_kits_admin(
     admin_info: tuple = Depends(require_admin),
@@ -669,6 +681,7 @@ def listar_kits_admin(
                 "id": kid,
                 "name": k.name,
                 "description": k.description or "",
+                "image_url": getattr(k, "image_url", None),
                 "component_ids": comp_ids,
                 "price": price_val,
                 "created_at": datetime.utcnow().isoformat(),
@@ -692,6 +705,7 @@ def listar_kits_admin(
                     "id": kid,
                     "name": db_k.name,
                     "description": db_k.description or "",
+                    "image_url": db_k.image_url,
                     "component_ids": comp_ids,
                     "created_at": db_k.created_at.isoformat() if hasattr(db_k, "created_at") and db_k.created_at else datetime.utcnow().isoformat(),
                 })
@@ -748,6 +762,7 @@ def actualizar_kit(
     if kit_id in _kits_store:
         _kits_store[kit_id]["name"] = body.name
         _kits_store[kit_id]["description"] = body.description
+        _kits_store[kit_id]["image_url"] = body.image_url
         _kits_store[kit_id]["component_ids"] = body.component_ids
 
     k_uuid = uuid.UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
@@ -755,10 +770,12 @@ def actualizar_kit(
     if db_kit:
         db_kit.name = body.name
         db_kit.description = body.description
+        if body.image_url is not None:
+            db_kit.image_url = body.image_url
         db.query(KitComponentLink).filter(KitComponentLink.kit_id == k_uuid).delete()
         counts = Counter(body.component_ids)
         for p_id_str, qty in counts.items():
-            comp_uuid = uuid.UUID(p_id_str) if isinstance(p_id_str, str) and len(p_id_str) == 36 else p_id_str
+            comp_uuid = UUID(p_id_str) if isinstance(p_id_str, str) and len(p_id_str) == 36 else p_id_str
             link = KitComponentLink(
                 kit_id=k_uuid,
                 product_id=comp_uuid,
@@ -771,6 +788,7 @@ def actualizar_kit(
         "id": kit_id,
         "name": body.name,
         "description": body.description,
+        "image_url": body.image_url,
         "component_ids": body.component_ids,
         "message": "Kit actualizado exitosamente"
     }
@@ -797,39 +815,149 @@ def crear_kit(
     kit_uuid = uuid.uuid4()
     kit_id = str(kit_uuid)
     
-    # Guardar en memoria (retrocompatibilidad/logs)
     kit = {
         "id": kit_id,
         "name": body.name,
         "description": body.description,
+        "image_url": body.image_url,
         "component_ids": body.component_ids,
         "created_at": datetime.utcnow().isoformat(),
     }
     _kits_store[kit_id] = kit
 
-    # Guardar en Base de Datos Real
     kit_model = KitModel(
         id=kit_uuid,
         name=body.name,
         description=body.description,
+        image_url=body.image_url,
         is_active=True
     )
     db.add(kit_model)
     db.flush()
 
-    # Agrupar cantidades de componentes
     counts = Counter(body.component_ids)
     for p_id_str, qty in counts.items():
-        comp_uuid = uuid.UUID(p_id_str)
+        comp_uuid = UUID(p_id_str) if isinstance(p_id_str, str) and len(p_id_str) == 36 else p_id_str
         link = KitComponentLink(
             kit_id=kit_uuid,
             product_id=comp_uuid,
             quantity=qty
         )
         db.add(link)
-
     db.commit()
-    return kit
+
+    return {
+        "id": kit_id,
+        "name": body.name,
+        "description": body.description,
+        "image_url": body.image_url,
+        "component_ids": body.component_ids,
+        "message": "Kit creado exitosamente",
+    }
+
+
+@router.patch(
+    "/kits/{kit_id}/imagen",
+    response_model=KitImageResponse,
+    summary="Actualizar imagen de referencia de kit vía JSON",
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Kits"],
+)
+def update_kit_image_json(
+    kit_id: str,
+    body: ImageUrlJSONRequest,
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> KitImageResponse:
+    from app.models.kit import KitModel
+
+    if kit_id in _kits_store:
+        _kits_store[kit_id]["image_url"] = body.image_url
+
+    k_uuid = UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
+    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+    if db_kit:
+        db_kit.image_url = body.image_url
+        db.commit()
+
+    return KitImageResponse(kit_id=kit_id, image_url=body.image_url)
+
+
+@router.post(
+    "/kits/{kit_id}/imagen/upload",
+    response_model=KitImageResponse,
+    summary="Subir archivo de imagen de referencia de un kit",
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Kits"],
+)
+@router.patch(
+    "/kits/{kit_id}/imagen/upload",
+    response_model=KitImageResponse,
+    include_in_schema=False,
+)
+def upload_kit_image_file(
+    kit_id: str,
+    file: UploadFile = File(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> KitImageResponse:
+
+    from app.models.kit import KitModel
+    from app.services.storage_service import StorageService
+    from app.services.product_image_service import LocalStorageBackend
+
+    try:
+        content: bytes = file.file.read()
+    except Exception:
+        content = b""
+
+    filename = file.filename or f"kit_{kit_id}.webp"
+    ext = filename.split(".")[-1] if "." in filename else "webp"
+    target_filename = f"kits/{kit_id}_{uuid.uuid4().hex[:8]}.{ext}"
+
+    storage_svc = StorageService(backend=LocalStorageBackend())
+    image_url = storage_svc.upload_file(content, target_filename, file.content_type or "image/webp")
+
+    if kit_id in _kits_store:
+        _kits_store[kit_id]["image_url"] = image_url
+
+    k_uuid = UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
+    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+    if db_kit:
+        db_kit.image_url = image_url
+        db.commit()
+
+    return KitImageResponse(kit_id=kit_id, image_url=image_url)
+
+
+@router.delete(
+    "/kits/{kit_id}/imagen",
+    summary="Eliminar imagen de referencia de un kit",
+    status_code=status.HTTP_200_OK,
+    tags=["Admin — Kits"],
+)
+def delete_kit_image(
+    kit_id: str,
+    current_user: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    from app.models.kit import KitModel
+
+    if kit_id in _kits_store:
+        _kits_store[kit_id]["image_url"] = None
+
+    k_uuid = UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
+    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+    if db_kit:
+        db_kit.image_url = None
+        db.commit()
+
+    return {
+        "kit_id": kit_id,
+        "image_url": None,
+        "message": "Imagen de kit eliminada correctamente.",
+    }
+
 
 
 # ─── Módulo de Categorías ───────────────────────────────────────────────────

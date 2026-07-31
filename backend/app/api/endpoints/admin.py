@@ -1030,7 +1030,13 @@ def update_category_image_json(
     status_code=status.HTTP_200_OK,
     tags=["Admin — Categorías"],
 )
+@router.patch(
+    "/categorias/{category_id}/imagen/upload",
+    response_model=CategoryImageResponse,
+    include_in_schema=False,
+)
 def upload_category_image_file(
+
     category_id: str,
     file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
     current_user: tuple = Depends(require_admin),
@@ -1154,7 +1160,13 @@ def update_product_image_json(
     status_code=status.HTTP_200_OK,
     tags=["Admin — Productos"],
 )
+@router.patch(
+    "/productos/{product_id}/imagen/upload",
+    response_model=ProductImageResponse,
+    include_in_schema=False,
+)
 def upload_product_image_file(
+
     product_id: str,
     file: UploadFile = FastAPIFile(..., description="Imagen PNG/JPEG/WebP ≤ 2 MB"),
     current_user: tuple = Depends(require_admin),

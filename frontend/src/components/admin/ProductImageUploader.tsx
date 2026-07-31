@@ -92,12 +92,13 @@ export default function ProductImageUploader({
         // Prioridad 1: Archivo local subido por el usuario
         const formData = new FormData();
         formData.append("file", selectedFile);
-        response = await apiClient.patch(
-          `/admin/productos/${product.id}/imagen`,
+        response = await apiClient.post(
+          `/admin/productos/${product.id}/imagen/upload`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
       } else if (previewUrl && !previewUrl.startsWith("blob:")) {
+
         // Prioridad 2: Imagen remota generada con IA
         response = await apiClient.patch(
           `/admin/productos/${product.id}/imagen`,

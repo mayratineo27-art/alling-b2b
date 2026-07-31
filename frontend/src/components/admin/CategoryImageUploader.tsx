@@ -121,8 +121,8 @@ export function CategoryImageUploader({
         // Prioridad 1: Archivo local subido por el usuario
         const formData = new FormData();
         formData.append("file", selectedFile);
-        res = await apiClient.patch(
-          `/admin/categorias/${category.id}/imagen`,
+        res = await apiClient.post(
+          `/admin/categorias/${category.id}/imagen/upload`,
           formData,
           { headers: { ...headers, "Content-Type": "multipart/form-data" } }
         );
@@ -134,6 +134,7 @@ export function CategoryImageUploader({
           { headers: { ...headers, "Content-Type": "application/json" } }
         );
       } else {
+
         setErrorMsg("Selecciona un archivo de imagen válido para subir.");
         setStatus("error");
         return;

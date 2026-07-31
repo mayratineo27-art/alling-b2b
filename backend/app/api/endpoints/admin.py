@@ -19,7 +19,7 @@ Endpoints:
 
 import uuid
 import sys
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Any
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
@@ -722,6 +722,17 @@ def listar_kits_admin(
 
 
 
+def _parse_uuid(val: Any) -> Optional[uuid.UUID]:
+    if isinstance(val, uuid.UUID):
+        return val
+    if isinstance(val, str) and len(val) == 36:
+        try:
+            return uuid.UUID(val)
+        except ValueError:
+            return None
+    return None
+
+
 @router.delete("/kits/{kit_id}")
 def eliminar_kit(
     kit_id: str,
@@ -736,12 +747,13 @@ def eliminar_kit(
     if kit_id in _kits_store:
         del _kits_store[kit_id]
 
-    k_uuid = uuid.UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
-    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
-    if db_kit:
-        db.query(KitComponentLink).filter(KitComponentLink.kit_id == k_uuid).delete()
-        db.delete(db_kit)
-        db.commit()
+    k_uuid = _parse_uuid(kit_id)
+    if k_uuid:
+        db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+        if db_kit:
+            db.query(KitComponentLink).filter(KitComponentLink.kit_id == k_uuid).delete()
+            db.delete(db_kit)
+            db.commit()
 
     return {"message": "Kit eliminado exitosamente"}
 
@@ -765,24 +777,26 @@ def actualizar_kit(
         _kits_store[kit_id]["image_url"] = body.image_url
         _kits_store[kit_id]["component_ids"] = body.component_ids
 
-    k_uuid = uuid.UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
-    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
-    if db_kit:
-        db_kit.name = body.name
-        db_kit.description = body.description
-        if body.image_url is not None:
-            db_kit.image_url = body.image_url
-        db.query(KitComponentLink).filter(KitComponentLink.kit_id == k_uuid).delete()
-        counts = Counter(body.component_ids)
-        for p_id_str, qty in counts.items():
-            comp_uuid = UUID(p_id_str) if isinstance(p_id_str, str) and len(p_id_str) == 36 else p_id_str
-            link = KitComponentLink(
-                kit_id=k_uuid,
-                product_id=comp_uuid,
-                quantity=qty
-            )
-            db.add(link)
-        db.commit()
+    k_uuid = _parse_uuid(kit_id)
+    if k_uuid:
+        db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+        if db_kit:
+            db_kit.name = body.name
+            db_kit.description = body.description
+            if body.image_url is not None:
+                db_kit.image_url = body.image_url
+            db.query(KitComponentLink).filter(KitComponentLink.kit_id == k_uuid).delete()
+            counts = Counter(body.component_ids)
+            for p_id_str, qty in counts.items():
+                comp_uuid = _parse_uuid(p_id_str)
+                if comp_uuid:
+                    link = KitComponentLink(
+                        kit_id=k_uuid,
+                        product_id=comp_uuid,
+                        quantity=qty
+                    )
+                    db.add(link)
+            db.commit()
 
     return {
         "id": kit_id,
@@ -837,13 +851,14 @@ def crear_kit(
 
     counts = Counter(body.component_ids)
     for p_id_str, qty in counts.items():
-        comp_uuid = UUID(p_id_str) if isinstance(p_id_str, str) and len(p_id_str) == 36 else p_id_str
-        link = KitComponentLink(
-            kit_id=kit_uuid,
-            product_id=comp_uuid,
-            quantity=qty
-        )
-        db.add(link)
+        comp_uuid = _parse_uuid(p_id_str)
+        if comp_uuid:
+            link = KitComponentLink(
+                kit_id=kit_uuid,
+                product_id=comp_uuid,
+                quantity=qty
+            )
+            db.add(link)
     db.commit()
 
     return {
@@ -874,11 +889,12 @@ def update_kit_image_json(
     if kit_id in _kits_store:
         _kits_store[kit_id]["image_url"] = body.image_url
 
-    k_uuid = UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
-    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
-    if db_kit:
-        db_kit.image_url = body.image_url
-        db.commit()
+    k_uuid = _parse_uuid(kit_id)
+    if k_uuid:
+        db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+        if db_kit:
+            db_kit.image_url = body.image_url
+            db.commit()
 
     return KitImageResponse(kit_id=kit_id, image_url=body.image_url)
 
@@ -901,10 +917,8 @@ def upload_kit_image_file(
     current_user: tuple = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> KitImageResponse:
-
     from app.models.kit import KitModel
-    from app.services.storage_service import StorageService
-    from app.services.product_image_service import LocalStorageBackend
+    from app.services.storage_service import get_storage_service
 
     try:
         content: bytes = file.file.read()
@@ -912,20 +926,18 @@ def upload_kit_image_file(
         content = b""
 
     filename = file.filename or f"kit_{kit_id}.webp"
-    ext = filename.split(".")[-1] if "." in filename else "webp"
-    target_filename = f"kits/{kit_id}_{uuid.uuid4().hex[:8]}.{ext}"
-
-    storage_svc = StorageService(backend=LocalStorageBackend())
-    image_url = storage_svc.upload_file(content, target_filename, file.content_type or "image/webp")
+    storage_svc = get_storage_service()
+    image_url = storage_svc.upload(content, filename, file.content_type or "image/webp")
 
     if kit_id in _kits_store:
         _kits_store[kit_id]["image_url"] = image_url
 
-    k_uuid = UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
-    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
-    if db_kit:
-        db_kit.image_url = image_url
-        db.commit()
+    k_uuid = _parse_uuid(kit_id)
+    if k_uuid:
+        db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+        if db_kit:
+            db_kit.image_url = image_url
+            db.commit()
 
     return KitImageResponse(kit_id=kit_id, image_url=image_url)
 
@@ -946,17 +958,20 @@ def delete_kit_image(
     if kit_id in _kits_store:
         _kits_store[kit_id]["image_url"] = None
 
-    k_uuid = UUID(kit_id) if isinstance(kit_id, str) and len(kit_id) == 36 else kit_id
-    db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
-    if db_kit:
-        db_kit.image_url = None
-        db.commit()
+    k_uuid = _parse_uuid(kit_id)
+    if k_uuid:
+        db_kit = db.query(KitModel).filter(KitModel.id == k_uuid).first()
+        if db_kit:
+            db_kit.image_url = None
+            db.commit()
 
     return {
         "kit_id": kit_id,
         "image_url": None,
         "message": "Imagen de kit eliminada correctamente.",
     }
+
+
 
 
 

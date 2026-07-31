@@ -117,21 +117,28 @@ export function CategoryImageUploader({
       }
 
       let res;
-      if (previewUrl) {
+      if (selectedFile) {
+        // Prioridad 1: Archivo local subido por el usuario
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        res = await apiClient.patch(
+          `/admin/categorias/${category.id}/imagen`,
+          formData,
+          { headers: { ...headers, "Content-Type": "multipart/form-data" } }
+        );
+      } else if (previewUrl && !previewUrl.startsWith("blob:")) {
+        // Prioridad 2: Imagen remota generada con IA
         res = await apiClient.patch(
           `/admin/categorias/${category.id}/imagen`,
           { image_url: previewUrl },
           { headers: { ...headers, "Content-Type": "application/json" } }
         );
       } else {
-        const formData = new FormData();
-        formData.append("file", selectedFile!);
-        res = await apiClient.patch(
-          `/admin/categorias/${category.id}/imagen`,
-          formData,
-          { headers: { ...headers, "Content-Type": "multipart/form-data" } }
-        );
+        setErrorMsg("Selecciona un archivo de imagen válido para subir.");
+        setStatus("error");
+        return;
       }
+
 
       const newUrl: string = res.data.image_url;
 

@@ -233,7 +233,14 @@ class CategoryImageService:
         self._assert_admin(actor_role)
         category = self._get_category_or_404(db, category_id)
 
+        if image_data.startswith("blob:"):
+            raise DomainException(
+                message="No se pueden guardar URLs de tipo 'blob:' locales temporales. Sube el archivo físicamente.",
+                status_code=400,
+            )
+
         if image_data.startswith("data:"):
+
             import base64
             header, b64 = image_data.split(",", 1)
             raw_bytes = base64.b64decode(b64)

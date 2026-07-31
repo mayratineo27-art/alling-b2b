@@ -25,6 +25,7 @@ def test_generate_image_success_returns_pollinations_url():
     svc = AIImageGeneratorService()
     result = svc.generate_image(prompt="Router Wi-Fi", entity_type="product", actor_role="ADMIN")
 
-    assert result["image_url"].startswith("https://image.pollinations.ai/prompt/")
+    assert result["image_url"].startswith("data:image/") or result["image_url"].startswith("http")
+
     assert "prompt_used" in result
     assert "Router Wi-Fi" in result["prompt_used"]

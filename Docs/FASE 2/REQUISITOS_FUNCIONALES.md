@@ -1597,7 +1597,50 @@ Si el usuario es CUSTOMER (logueado), los datos de facturación (DNI/RUC, nombre
 
 ---
 
+**RF-ADM-013: Personalización del Banner/Hero de Portada Principal**
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Permitir la actualización dinámica de la imagen de portada/hero de la página principal del portal. |
+| **Descripción** | El sistema debe permitir al ADMIN modificar la imagen de fondo del Hero Banner en la portada principal mediante la subida de un archivo local (≤ 5 MB) o una URL persistida en la entidad `SystemConfigModel` (`key="hero_banner_url"`). |
+| **Actores** | ADMIN |
+| **Prioridad** | MVP+ |
+| **Módulo de origen** | MOD-ADM-01 |
+| **OPS de origen** | OPS-ADM-013 |
+| **RN** | RN-ADM-013 |
+| **RNF** | RNF-UX-001 |
+| **HU** | HU-ADM-013 |
+| **UC** | CU-ADM-013 |
+| **CA** | CA-ADM-013 |
+| **TEST** | CP-ADM-013 |
+- **Actores afectados:** ADMIN
+- **Módulo:** MOD-ADM-01
+
+---
+
+**RF-AI-002: Generación de Banners de Portada Asistida por IA**
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Permitir la creación automatizada de imágenes panorámicas publicitaria con IA para la portada principal. |
+| **Descripción** | El sistema debe permitir al ADMIN generar un banner panorámico 16:9 mediante motor de IA (`POST /admin/generar-imagen-ia` con `entity_type: "hero_banner"`). La imagen resultante se comprime a WebP Base64 y posee fallback automático SVG B2B si la red externa falla. |
+| **Actores** | ADMIN |
+| **Prioridad** | MVP+ |
+| **Módulo de origen** | MOD-AI-01 / MOD-ADM-01 |
+| **OPS de origen** | OPS-AI-002 |
+| **RN** | RN-AI-002 |
+| **RNF** | RNF-PERF-001, RNF-REL-001 |
+| **HU** | HU-AI-002 |
+| **UC** | CU-AI-002 |
+| **CA** | CA-AI-002 |
+| **TEST** | CP-AI-002 |
+- **Actores afectados:** ADMIN
+- **Módulo:** MOD-ADM-01 / MOD-AI-01
+
+---
+
 ### 🏪 MOD-SEL-01 (Panel SELLER) — 1 RF Nuevo
+
 
 **RF-SEL-007: Alertas de Productos sin Stock vía Telegram**
 En la vista de Consultas, el SELLER debe tener un botón "Abrir chat en Telegram" si el cliente dejó su usuario. Además, el stock visible debe considerar reservas temporales (stock_real = stock_total - reserved_stock).

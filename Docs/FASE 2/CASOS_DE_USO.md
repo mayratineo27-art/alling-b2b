@@ -618,3 +618,14 @@
   2. Sistema renderiza la barra lateral verde-petróleo con degradado, logo de 48px e iconografía vector SVG 1.5px.
 - **Postcondición:** Experiencia visual ejecutiva B2B sin afectación de funcionalidades.
 
+### CU-ADM-013 / CU-AI-002: Personalización y Generación IA del Banner de Portada
+- **Actores:** ADMIN
+- **Precondición:** ADMIN autenticado en `/admin/configuracion`.
+- **Flujo Principal:**
+  1. ADMIN selecciona cargar un archivo de PC (≤ 5 MB) o ingresar un prompt para IA.
+  2. Al generar con IA (`POST /admin/generar-imagen-ia` con `entity_type: "hero_banner"`), el backend compila un render panorámico 16:9 WebP Base64.
+  3. ADMIN previsualiza la imagen de portada y hace clic en "Guardar Banner de Portada".
+  4. El sistema actualiza `SystemConfigModel` (`hero_banner_url`).
+- **Postcondición:** La página principal (`/`) refleja inmediatamente la nueva portada.
+
+

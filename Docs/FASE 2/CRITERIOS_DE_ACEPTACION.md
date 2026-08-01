@@ -803,5 +803,27 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 - **And** el logotipo se muestra a 48px (`w-12 h-12`) con el texto "Alling B2B / PANEL ADMIN"
 - **And** todos los enlaces utilizan iconos vectoriales SVG de trazo 1.5px sin alterar ninguna función ni botón.
 
+---
+
+#### **CA-ADM-013 (Personalización del Banner de Portada PC e IA)**
+- **Objetivo:** Verificar la actualización y persistencia de la imagen Hero del portal principal.
+- **RF relacionado:** RF-ADM-013, RF-AI-002
+- **HU relacionada:** HU-ADM-013, HU-AI-002
+- **UC relacionado:** CU-ADM-013
+
+**Escenarios:**
+
+**Escenario 1: Subida de banner desde la PC**
+- **Given** un ADMIN en la sección `/admin/configuracion`
+- **When** arrastra un archivo `hero_banner.png` (≤ 5 MB) y presiona "Guardar Banner"
+- **Then** el sistema almacena el banner en `SystemConfigModel` (`key="hero_banner_url"`)
+- **And** la página principal (`/`) renderiza la nueva imagen de portada.
+
+**Escenario 2: Generación asistida por IA**
+- **Given** un ADMIN en `/admin/configuracion`
+- **When** ingresa un prompt panorámico y presiona "Generar Banner con IA"
+- **Then** el backend retorna una imagen en formato panorámico 16:9 optimizada a WebP Base64.
+
+
 
 

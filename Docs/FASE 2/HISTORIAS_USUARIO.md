@@ -2155,6 +2155,17 @@ Las siguientes HUs incorporan decisiones de reconciliación documentadas en `DOC
 - **Quiero** contar con una barra lateral en degradado verde-petróleo, iconos vectoriales minimalistas y un logo de 48px con la jerarquía "Alling B2B / PANEL ADMIN"
 - **Para** trabajar en una plataforma ejecutiva seria y moderna sin alterar sus funciones.
 
+**HU-ADM-013: Personalización del Banner/Hero de Portada Principal**
+- **Como** Administrador B2B
+- **Quiero** actualizar la imagen de fondo del Hero Banner en la portada principal desde el panel de administración
+- **Para** adaptar la imagen corporativa a campañas comerciales, eventos o promociones especiales.
+
+**HU-AI-002: Generación con IA de Banners de Portada**
+- **Como** Administrador B2B
+- **Quiero** generar banners panorámicos 16:9 con Inteligencia Artificial
+- **Para** renovar la portada principal con diseños fotorrealistas de fibra óptica y telecomunicaciones sin requerir diseñador gráfico externado.
+
+
 ### 🔐 HU Autenticación (AUT)
 **HU-AUT-002: Migración de carrito de Invitado a Cliente**
 - **Como** invitado con Formato Único activo

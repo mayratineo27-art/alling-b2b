@@ -290,6 +290,18 @@ Fuente: `walkthrough.md`, `implementation_plan.md`.
 
 ---
 
+## 🚀 6.6 SPRINT 9 (Planificado) — Personalización y Generación IA del Banner de Portada Principal
+
+Fuente: `implementation_plan.md`.
+
+| ID RF / RN | Caso de Uso / Historia de Usuario | Criterios de Aceptación (CA) | Componente / Módulo | Caso de Prueba | Estado en Sprint |
+|---|---|---|---|---|---|
+| **RF-ADM-013** 🆕 | CU-ADM-013: Personalización del Banner/Hero de Portada Principal (HU-ADM-013) | CA-ADM-013 | `HeroBannerUploader.tsx`, `admin.py` (`SystemConfigModel.key="hero_banner_url"`), `page.tsx` | `test_obtener_configuracion`, `test_actualizar_configuracion` | ⏳ Planificado |
+| **RF-AI-002** 🆕 | CU-AI-002: Generación Panorámica 16:9 con IA para Banner de Portada (HU-AI-002) | CA-AI-002 | `AIImageGeneratorService` (`ai_image_service.py`), `HeroBannerUploader.tsx` | `test_generate_ai_image_hero_banner` | ⏳ Planificado |
+
+---
+
+
 
 ## 📈 5. RESUMEN GERENCIAL DE COBERTURA
 

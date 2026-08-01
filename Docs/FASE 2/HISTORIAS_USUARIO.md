@@ -2133,8 +2133,31 @@ Las siguientes HUs incorporan decisiones de reconciliación documentadas en `DOC
 - **Quiero** reintentar el pago desde la pantalla de error
 - **Para** no perder mi carrito ni tener que empezar de nuevo.
 
+### 👑 HU Panel Administrador (ADM) & IA (AI)
+
+**HU-ADM-009: Gestión y Estructuración de Kits B2B**
+- **Como** Administrador del sistema
+- **Quiero** crear, editar y eliminar Kits de productos con cálculo dinámico de precio acumulado
+- **Para** ofrecer paquetes cerrados de instalación y equipamiento de fibra óptica a clientes B2B.
+
+**HU-AI-001: Carga Local e IA de Imágenes de Kits**
+- **Como** Administrador del sistema
+- **Quiero** subir fotos de mi equipo (PC) o generar imágenes referenciales con Inteligencia Artificial
+- **Para** que cada Kit cuente con una presentación visual representativa y libre de errores de carga.
+
+**HU-ADM-011: Edición y Eliminación de Productos vía Menú Contextual**
+- **Como** Administrador del sistema
+- **Quiero** desplegar un menú contextual de 3 puntos (`⋮`) en las tablas del catálogo
+- **Para** actualizar o eliminar productos de forma limpia sin recargar la pantalla.
+
+**HU-ADM-012: Rediseño Visual Senior UI del Sidebar y Cabecera**
+- **Como** usuario Administrador
+- **Quiero** contar con una barra lateral en degradado verde-petróleo, iconos vectoriales minimalistas y un logo de 48px con la jerarquía "Alling B2B / PANEL ADMIN"
+- **Para** trabajar en una plataforma ejecutiva seria y moderna sin alterar sus funciones.
+
 ### 🔐 HU Autenticación (AUT)
 **HU-AUT-002: Migración de carrito de Invitado a Cliente**
 - **Como** invitado con Formato Único activo
 - **Quiero** registrarme durante el checkout sin perder mi carrito
 - **Para** vincular mi pedido a una cuenta permanente.
+

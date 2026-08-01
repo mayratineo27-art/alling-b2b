@@ -275,10 +275,21 @@ Fuente: `admin_panel_proposal.md`.
 | **RF-ADM-009** 🆕 | UC-ADM-006: Asignar consultas preventa | CA-ADM-009 | `POST /admin/consultas/{id}/asignar`, `consultas/[id]/page.tsx` | `test_assign_query_to_seller` | ✅ Listo |
 | **RF-ADM-010** 🆕 | UC-ADM-007: Aplicar descuento comercial B2B | CA-ADM-010 | `POST /admin/cotizaciones/{id}/descuento`, `cotizaciones/[id]/page.tsx` | `test_apply_discount_percent` | ✅ Listo |
 | **RN-ADM-03** 🆕 | Bloqueo de eliminación de Categoría con Productos activos | RN-ADM-03 | `DELETE /admin/categorias/{id}` | `test_delete_category_with_active_products` | ✅ Listo |
-| **RN-ADM-04** 🆕 | Límite máximo de descuento comercial B2B a 30% | RN-ADM-04 | `POST /admin/cotizaciones/{id}/descuento` | `test_apply_discount_percent_exceeds_limit` | ✅ Listo |
-| — (carga masiva) | Carga masiva de catálogo en lote (Admin) sin conflicto con sync del distribuidor | — | `POST /admin/productos/excel-import` | `test_excel_import_products` | ✅ Listo |
+---
+
+## 🚀 6.5 SPRINT 8 — Gestión Avanzada de Kits B2B (IA + PC), Rediseño Senior UI y CRUD de Catálogo
+
+Fuente: `walkthrough.md`, `implementation_plan.md`.
+
+| ID RF / RN | Caso de Uso / Historia de Usuario | Criterios de Aceptación (CA) | Componente / Módulo | Caso de Prueba | Estado en Sprint |
+|---|---|---|---|---|---|
+| **RF-ADM-009** 🆕 | CU-ADM-009: CRUD Completo de Kits de Productos (HU-ADM-009) | CA-ADM-009 | `backend/app/api/endpoints/admin.py`, `frontend/src/app/admin/kits/page.tsx` | `test_lista_kits`, `test_crear_kit`, `test_actualizar_kit`, `test_eliminar_kit` | ✅ Listo |
+| **RF-AI-001** 🆕 | CU-AI-001: Generación e Integración de Imágenes de Kits vía IA y Carga Local PC (HU-AI-001) | CA-AI-001 | `AIImageGeneratorService` (`ai_image_service.py`), `KitImageUploader.tsx`, `admin.py` | `test_generate_ai_image`, `test_upload_kit_image_file`, `test_update_kit_image_json`, `test_delete_kit_image` | ✅ Listo |
+| **RF-ADM-011** 🆕 | CU-ADM-011: Edición `PUT` y Eliminación `DELETE` de Productos con Menú Contextual `⋮` (HU-ADM-011) | CA-ADM-011 | `admin.py`, `frontend/src/app/admin/productos/page.tsx` | `test_actualizar_producto`, `test_eliminar_producto` | ✅ Listo |
+| **RF-ADM-012** 🆕 | CU-ADM-012: Rediseño Estético Senior UI de Barra Lateral (Sidebar) y Cabecera (HU-ADM-012) | CA-ADM-012 | `AdminLayout.tsx` (`from-[#061D17] via-[#041511] to-[#020A08]`, SVG 1.5px, Logo 48px Alling B2B / PANEL ADMIN) | Verificación visual + TypeScript check `npx tsc --noEmit --skipLibCheck` | ✅ Listo |
 
 ---
+
 
 ## 📈 5. RESUMEN GERENCIAL DE COBERTURA
 

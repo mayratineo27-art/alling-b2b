@@ -1511,10 +1511,87 @@ Si el usuario es CUSTOMER (logueado), los datos de facturación (DNI/RUC, nombre
 
 ---
 
-### 👑 MOD-ADM-01 (Panel ADMIN) — 1 RF Nuevo
+### 👑 MOD-ADM-01 (Panel ADMIN) & MOD-AI-01 — Nuevos Requisitos Funcionales
 
-**RF-ADM-009: CRUD Completo de Kits**
-El sistema debe permitir al ADMIN crear, editar, activar/desactivar Kits. Un Kit contiene múltiples productos componentes y su precio se calcula dinámicamente.
+**RF-ADM-009: CRUD Completo de Kits de Productos B2B**
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Permitir la estructuración, actualización y eliminación de paquetes promocionales (Kits) con precio acumulado en el catálogo. |
+| **Descripción** | El sistema debe permitir al ADMIN listar, crear, editar (`PUT /admin/kits/{id}`) y eliminar (`DELETE /admin/kits/{id}`) Kits B2B. Cada Kit contiene 2 o más productos componentes (`BTN-ADM-009`) y su precio total se calcula automáticamente sumando el valor de sus partes. |
+| **Actores** | ADMIN |
+| **Prioridad** | MVP+ |
+| **Módulo de origen** | MOD-ADM-01 |
+| **OPS de origen** | OPS-ADM-009 |
+| **RN** | RN-ADM-009 |
+| **RNF** | RNF-SEC-001 |
+| **HU** | HU-ADM-009 |
+| **UC** | CU-ADM-009 |
+| **CA** | CA-ADM-009 |
+| **TEST** | CP-ADM-009 |
+- **Actores afectados:** ADMIN
+- **Módulo:** MOD-ADM-01
+
+---
+
+**RF-AI-001: Generación e Integración de Imágenes de Kits por IA y Carga Local desde PC**
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Dotar a los Kits B2B de imágenes referenciales de alta calidad generadas por IA o cargadas desde el equipo del administrador, garantizando persistencia en base de datos sin depender de latencias o caídas de redes externas. |
+| **Descripción** | El sistema debe permitir al ADMIN cargar imágenes locales (PNG, JPEG, WebP ≤ 2 MB) o generarlas asistidas por IA (`POST /admin/generar-imagen-ia`). La respuesta de IA se descarga y comprime server-side a Data URI Base64 WebP. En caso de indisponibilidad de la red externa de IA, el sistema genera automáticamente un fallback vectorial SVG B2B con acentos esmeralda. Los endpoints `POST/PATCH /admin/kits/{id}/imagen/upload` y `PATCH /admin/kits/{id}/imagen` persisten el resultado en `KitModel.image_url` y `_kits_store`. |
+| **Actores** | ADMIN |
+| **Prioridad** | MVP+ |
+| **Módulo de origen** | MOD-AI-01 / MOD-ADM-01 |
+| **OPS de origen** | OPS-CAT-006 / OPS-AI-001 |
+| **RN** | RN-AI-001 |
+| **RNF** | RNF-PERF-001, RNF-REL-001 |
+| **HU** | HU-AI-001 |
+| **UC** | CU-AI-001 |
+| **CA** | CA-AI-001 |
+| **TEST** | CP-AI-001 |
+- **Actores afectados:** ADMIN
+- **Módulo:** MOD-ADM-01 / MOD-AI-01
+
+---
+
+**RF-ADM-011: Edición y Eliminación de Productos vía Menú Contextual Desplegable**
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Permitir la actualización y eliminación transparente de productos directamente desde la tabla del catálogo sin recargar la página. |
+| **Descripción** | El sistema debe integrar un menú contextual desplegable de 3 puntos (`⋮`) popover en cada fila de la tabla de productos. La acción "Editar" invoca `PUT /admin/productos/{id}` con validación de SKU y categoría. La acción "Eliminar" invoca `DELETE /admin/productos/{id}` realizando borrado físico o soft-delete (`is_active=False`) si existen cotizaciones/pedidos vinculados. |
+| **Actores** | ADMIN |
+| **Prioridad** | MVP+ |
+| **Módulo de origen** | MOD-ADM-01 |
+| **OPS de origen** | OPS-ADM-011 |
+| **RN** | RN-ADM-011 |
+| **RNF** | RNF-SEC-001 |
+| **HU** | HU-ADM-011 |
+| **UC** | CU-ADM-011 |
+| **CA** | CA-ADM-011 |
+| **TEST** | CP-ADM-011 |
+- **Actores afectados:** ADMIN
+- **Módulo:** MOD-ADM-01
+
+---
+
+**RF-ADM-012: Rediseño Estético Senior UI de la Barra Lateral y Cabecera B2B**
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Elevar la interfaz del panel de administración (`/admin/*`) hacia una estética corporativa B2B seria, moderna y pulida. |
+| **Descripción** | La barra lateral izquierda (Sidebar) debe presentar un degradado vertical verde-petróleo oscuro (`from-[#061D17] via-[#041511] to-[#020A08]`), iconografía SVG vectorial de trazo 1.5px (reemplazando emojis), destaque de ítem activo esmeralda y cabecera con logotipo agrandado a 48px (`w-12 h-12`) con la jerarquía "Alling B2B / PANEL ADMIN", conservando intacta toda la arquitectura funcional y lógica de botones. |
+| **Actores** | ADMIN |
+| **Prioridad** | MVP+ |
+| **Módulo de origen** | MOD-ADM-01 |
+| **OPS de origen** | OPS-ADM-012 |
+| **RN** | RN-ADM-012 |
+| **RNF** | RNF-UX-001 |
+| **HU** | HU-ADM-012 |
+| **UC** | CU-ADM-012 |
+| **CA** | CA-ADM-012 |
+| **TEST** | CP-ADM-012 |
 - **Actores afectados:** ADMIN
 - **Módulo:** MOD-ADM-01
 
@@ -1526,4 +1603,5 @@ El sistema debe permitir al ADMIN crear, editar, activar/desactivar Kits. Un Kit
 En la vista de Consultas, el SELLER debe tener un botón "Abrir chat en Telegram" si el cliente dejó su usuario. Además, el stock visible debe considerar reservas temporales (stock_real = stock_total - reserved_stock).
 - **Actores afectados:** SELLER
 - **Módulo:** MOD-SEL-01
+
 

@@ -751,4 +751,57 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 - **Then** el sistema genera una representación visual fotorrealista de la categoría
 - **And** retorna HTTP `200 OK` con el payload de imagen optimizado
 
+---
+
+#### **CA-ADM-009 (Estructuración y Gestión de Kits B2B)**
+- **Objetivo:** Verificar la creación, actualización y eliminación de paquetes de productos (Kits B2B) con cálculo automático de precios.
+- **RF relacionado:** RF-ADM-009
+- **HU relacionada:** HU-ADM-009
+- **UC relacionado:** CU-ADM-009
+
+**Escenarios:**
+
+**Escenario 1: Creación exitosa de Kit con componentes**
+- **Given** un ADMIN autenticado
+- **When** ejecuta `POST /admin/kits` enviando un nombre, descripción y al menos 2 `component_ids` válidos
+- **Then** el sistema calcula el precio sumando los componentes
+- **And** almacena el Kit retornando HTTP `201 Created`
+
+**Escenario 2: Edición de Kit existente**
+- **Given** un ADMIN autenticado
+- **When** ejecuta `PUT /admin/kits/{id}` con nuevos componentes o metadatos
+- **Then** el sistema recalcula el precio y actualiza la entidad en BD retornando HTTP `200 OK`
+
+---
+
+#### **CA-ADM-011 (Menú Contextual Popover de 3 Puntos en Tabla de Catálogo)**
+- **Objetivo:** Verificar la actualización y borrado directo de productos desde la interfaz del catálogo.
+- **RF relacionado:** RF-ADM-011
+- **HU relacionada:** HU-ADM-011
+- **UC relacionado:** CU-ADM-011
+
+**Escenarios:**
+
+**Escenario 1: Despliegue de opciones contextuales**
+- **Given** un ADMIN en la tabla `/admin/productos`
+- **When** hace clic en el botón de 3 puntos (`⋮`)
+- **Then** se despliega un popover contextual con las acciones "Editar" y "Eliminar"
+
+---
+
+#### **CA-ADM-012 (Refinamiento Estético Senior UI de Sidebar y Cabecera)**
+- **Objetivo:** Verificar el cumplimiento de la guía de estilo ejecuto-corporativa B2B.
+- **RF relacionado:** RF-ADM-012
+- **HU relacionada:** HU-ADM-012
+- **UC relacionado:** CU-ADM-012
+
+**Escenarios:**
+
+**Escenario 1: Renderizado de degradado, logo 48px e iconografía vector SVG**
+- **Given** un usuario ADMIN navegando en `/admin/*`
+- **Then** el Sidebar renderiza el degradado verde-petróleo `from-[#061D17] via-[#041511] to-[#020A08]`
+- **And** el logotipo se muestra a 48px (`w-12 h-12`) con el texto "Alling B2B / PANEL ADMIN"
+- **And** todos los enlaces utilizan iconos vectoriales SVG de trazo 1.5px sin alterar ninguna función ni botón.
+
+
 

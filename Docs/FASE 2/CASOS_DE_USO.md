@@ -581,12 +581,40 @@
   6. Sistema valida webhook y actualiza estado a CONFIRMADO.
 - **Postcondición:** Order confirmada, stock descontado definitivamente.
 
-### UC-KIT-001: Gestión de Kits (ADMIN)
+### UC-KIT-001 / CU-ADM-009: Gestión y Estructuración de Kits B2B
 - **Actores:** ADMIN
 - **Precondición:** ADMIN autenticado.
 - **Flujo Principal:**
-  1. ADMIN ingresa a "Gestión de Kits".
-  2. ADMIN crea nuevo Kit seleccionando productos componentes.
-  3. Sistema calcula precio dinámico y stock mínimo.
-  4. ADMIN guarda el Kit.
-- **Postcondición:** Kit disponible en el catálogo para GUEST/CUSTOMER.
+  1. ADMIN ingresa a `/admin/kits`.
+  2. ADMIN crea o edita un Kit seleccionando productos componentes.
+  3. Sistema calcula precio dinámico y valida cantidad de componentes (≥ 2).
+  4. ADMIN guarda el Kit (`POST` o `PUT`).
+- **Postcondición:** Kit disponible y actualizado en el catálogo.
+
+### CU-AI-001: Carga e IA de Imágenes para Kits B2B
+- **Actores:** ADMIN
+- **Precondición:** ADMIN autenticado en modal de creación/edición de Kits.
+- **Flujo Principal:**
+  1. ADMIN selecciona una foto local (PC) o escribe una descripción para la IA.
+  2. Al generar con IA (`POST /admin/generar-imagen-ia`), el sistema comprime el resultado a Data URI Base64 WebP (o fallback B2B SVG).
+  3. Al subir desde la PC, `FileReader` lee el archivo a Data URI de forma permanente.
+  4. ADMIN guarda la imagen (`POST/PATCH /admin/kits/{id}/imagen`).
+- **Postcondición:** `KitModel.image_url` actualizado y visualizado en la cuadrícula de Kits.
+
+### CU-ADM-011: Edición y Eliminación Contextual de Productos (Pop-over)
+- **Actores:** ADMIN
+- **Precondición:** ADMIN navegando en `/admin/productos`.
+- **Flujo Principal:**
+  1. ADMIN hace clic en el menú desplegable `⋮` de una fila.
+  2. Selecciona "Editar" para abrir el modal y guardar cambios vía `PUT /admin/productos/{id}`.
+  3. Selecciona "Eliminar" para confirmar y ejecutar `DELETE /admin/productos/{id}`.
+- **Postcondición:** Catálogo actualizado dinámicamente sin recargar la pantalla.
+
+### CU-ADM-012: Visualización de Entorno Senior UI (Sidebar y Cabecera)
+- **Actores:** ADMIN
+- **Precondición:** Usuario con sesión ADMIN iniciada.
+- **Flujo Principal:**
+  1. ADMIN navega en el panel `/admin/*`.
+  2. Sistema renderiza la barra lateral verde-petróleo con degradado, logo de 48px e iconografía vector SVG 1.5px.
+- **Postcondición:** Experiencia visual ejecutiva B2B sin afectación de funcionalidades.
+

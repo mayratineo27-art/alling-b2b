@@ -145,9 +145,10 @@ class CreateUserSchema(BaseModel):
 
 
 class SystemConfigSchema(BaseModel):
-    quote_validity_days: int = Field(..., ge=1)
+    quote_validity_days: Optional[int] = Field(None, ge=1)
     default_stock_min_threshold: Optional[int] = Field(None, ge=0)
     hero_banner_url: Optional[str] = None
+
 
 
 
@@ -587,24 +588,26 @@ def actualizar_configuracion(
     @sdd-endpoint PUT /admin/configuracion
     @sdd-rf RF-ADM-007
     """
-    days = db.query(SystemConfigModel).filter(SystemConfigModel.key == "quote_validity_days").first()
-    if not days:
-        days = SystemConfigModel(key="quote_validity_days", value=str(body.quote_validity_days))
-        db.add(days)
-    else:
-        days.value = str(body.quote_validity_days)
-        days.updated_at = datetime.utcnow()
-        days.updated_by = "admin"
+    if body.quote_validity_days is not None:
+        days = db.query(SystemConfigModel).filter(SystemConfigModel.key == "quote_validity_days").first()
+        if not days:
+            days = SystemConfigModel(key="quote_validity_days", value=str(body.quote_validity_days))
+            db.add(days)
+        else:
+            days.value = str(body.quote_validity_days)
+            days.updated_at = datetime.utcnow()
+            days.updated_by = "admin"
 
-    threshold = db.query(SystemConfigModel).filter(SystemConfigModel.key == "default_stock_min_threshold").first()
-    val = str(body.default_stock_min_threshold if body.default_stock_min_threshold is not None else 5)
-    if not threshold:
-        threshold = SystemConfigModel(key="default_stock_min_threshold", value=val)
-        db.add(threshold)
-    else:
-        threshold.value = val
-        threshold.updated_at = datetime.utcnow()
-        threshold.updated_by = "admin"
+    if body.default_stock_min_threshold is not None:
+        threshold = db.query(SystemConfigModel).filter(SystemConfigModel.key == "default_stock_min_threshold").first()
+        val = str(body.default_stock_min_threshold)
+        if not threshold:
+            threshold = SystemConfigModel(key="default_stock_min_threshold", value=val)
+            db.add(threshold)
+        else:
+            threshold.value = val
+            threshold.updated_at = datetime.utcnow()
+            threshold.updated_by = "admin"
 
     if body.hero_banner_url is not None:
         hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
@@ -617,12 +620,17 @@ def actualizar_configuracion(
             hero.updated_by = "admin"
 
     db.commit()
+
+    current_days = db.query(SystemConfigModel).filter(SystemConfigModel.key == "quote_validity_days").first()
+    current_thresh = db.query(SystemConfigModel).filter(SystemConfigModel.key == "default_stock_min_threshold").first()
+    current_hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
+
     return {
         "message": "Configuración actualizada",
         "config": {
-            "quote_validity_days": body.quote_validity_days,
-            "default_stock_min_threshold": body.default_stock_min_threshold,
-            "hero_banner_url": body.hero_banner_url
+            "quote_validity_days": int(current_days.value) if current_days else 7,
+            "default_stock_min_threshold": int(current_thresh.value) if current_thresh else 5,
+            "hero_banner_url": current_hero.value if current_hero else None
         }
     }
 
@@ -633,7 +641,8 @@ def upload_hero_banner_file(
     admin_info: tuple = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
-    if not file.content_type.startswith("image/"):
+    raw_content_type = getattr(file, "content_type", None) or "image/png"
+    if raw_content_type and not raw_content_type.startswith("image/") and not raw_content_type.startswith("application/octet-stream"):
         raise HTTPException(status_code=422, detail="Solo se permiten archivos de imagen (PNG, JPEG, WebP)")
     
     content = file.file.read()
@@ -642,7 +651,8 @@ def upload_hero_banner_file(
     
     import base64
     b64_str = base64.b64encode(content).decode("utf-8")
-    data_uri = f"data:{file.content_type};base64,{b64_str}"
+    mime = raw_content_type if raw_content_type.startswith("image/") else "image/png"
+    data_uri = f"data:{mime};base64,{b64_str}"
 
     hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
     if not hero:
@@ -655,6 +665,7 @@ def upload_hero_banner_file(
     
     db.commit()
     return {"message": "Banner de portada guardado exitosamente", "hero_banner_url": data_uri}
+
 
 
 

@@ -125,21 +125,16 @@ export function HeroBannerUploader({
 
     try {
       let finalUrl = urlToSave;
-      if (selectedFile) {
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        const uploadRes = await apiClient.post('/admin/configuracion/hero-banner/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        finalUrl = uploadRes.data.hero_banner_url;
-      } else if (urlToSave) {
-        // Fetch current config to avoid overwriting validity days
-        const configRes = await apiClient.get('/admin/configuracion');
-        await apiClient.put('/admin/configuracion', {
-          quote_validity_days: configRes.data.quote_validity_days || 7,
-          default_stock_min_threshold: configRes.data.default_stock_min_threshold || 5,
+      if (urlToSave) {
+        const putRes = await apiClient.put('/admin/configuracion', {
           hero_banner_url: urlToSave,
         });
+        finalUrl = putRes.data?.config?.hero_banner_url || urlToSave;
+      } else if (selectedFile) {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        const uploadRes = await apiClient.post('/admin/configuracion/hero-banner/upload', formData);
+        finalUrl = uploadRes.data.hero_banner_url;
       }
 
       setCurrentUrl(finalUrl || null);
@@ -165,10 +160,7 @@ export function HeroBannerUploader({
     setSuccess(null);
 
     try {
-      const configRes = await apiClient.get('/admin/configuracion');
       await apiClient.put('/admin/configuracion', {
-        quote_validity_days: configRes.data.quote_validity_days || 7,
-        default_stock_min_threshold: configRes.data.default_stock_min_threshold || 5,
         hero_banner_url: '',
       });
 
@@ -187,6 +179,7 @@ export function HeroBannerUploader({
       setDeleting(false);
     }
   };
+
 
   const displayUrl = previewUrl || currentUrl;
 

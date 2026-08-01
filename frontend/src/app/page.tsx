@@ -98,36 +98,38 @@ export default function Home() {
 
     return (
         <main className="min-h-screen bg-gray-50 pb-12">
-            {/* HERO SECTION CON EFECTO BOKEH MEJORADO */}
+            {/* HERO SECTION CON OVERLAY DE CONTRASTE Y LEGIBILIDAD EXCELENTE */}
             <section 
-                className="relative overflow-hidden bg-slate-900 text-white py-24 sm:py-32"
+                className="relative overflow-hidden bg-slate-950 text-white py-20 sm:py-28"
                 style={heroImage ? { backgroundImage: `url(${heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
             >
-                {/* Fondo simulando fibra óptica / Bokeh */}
-                <div className="absolute inset-0 z-0">
+                {/* Capa de degradado oscuro para legibilidad garantizada sobre cualquier imagen */}
+                <div className="absolute inset-0 z-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/45">
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px]"></div>
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px]"></div>
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-900/40 rounded-full blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8 text-center">
-                    <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl mb-6">
-                        Portal B2B <span className="text-[#10B981]">Alling</span>
-                    </h1>
-                    <p className="mx-auto mt-4 max-w-2xl text-xl text-gray-300 leading-relaxed">
-                        Abastece tu negocio con los mejores equipos de telecomunicaciones.
-                        Conéctate con nuestra red de distribución especializada.
-                    </p>
-                    <div className="mt-10 flex items-center justify-center gap-x-6">
-                        <Link href="/productos" className="rounded-md bg-[#10B981] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-600 transition-all">
-                            Explorar Catálogo
-                        </Link>
-                        <Link href="/nosotros" className="text-sm font-semibold leading-6 text-white hover:text-[#10B981] transition-colors">
-                            Conoce Alling <span aria-hidden="true">→</span>
-                        </Link>
+                    <div className="mx-auto max-w-3xl bg-slate-950/55 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl space-y-6">
+                        <h1 className="text-4xl font-black tracking-tight sm:text-6xl text-white">
+                            Portal B2B <span className="text-[#10B981]">Alling</span>
+                        </h1>
+                        <p className="mx-auto text-lg sm:text-xl font-medium text-slate-200 leading-relaxed max-w-2xl">
+                            Abastece tu negocio con los mejores equipos de telecomunicaciones.
+                            Conéctate con nuestra red de distribución especializada.
+                        </p>
+                        <div className="pt-2 flex items-center justify-center gap-4 flex-wrap">
+                            <Link href="/productos" className="rounded-xl bg-[#10B981] hover:bg-emerald-600 px-8 py-3.5 text-base font-extrabold text-white shadow-lg shadow-emerald-500/25 transition-all hover:scale-105">
+                                Explorar Catálogo
+                            </Link>
+                            <Link href="/nosotros" className="rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-3.5 text-base font-bold text-white hover:text-emerald-300 transition-all">
+                                Conoce Alling <span aria-hidden="true">→</span>
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </section>
+
 
             <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 space-y-20">
 

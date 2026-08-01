@@ -54,15 +54,15 @@ export default function Home() {
 
         const fetchHeroImage = async () => {
             try {
-                // Hacer fetch al endpoint para generar la imagen con Gemini
-                const response = await apiClient.get('/api/v1/system/generate-hero');
-                if (response.data && response.data.image_url) {
-                    setHeroImage(response.data.image_url);
+                const response = await apiClient.get('/admin/configuracion/public-hero');
+                if (response.data && response.data.hero_banner_url) {
+                    setHeroImage(response.data.hero_banner_url);
                 }
             } catch (err: any) {
-                console.error("Error cargando imagen hero:", err);
+                console.error("Error cargando imagen hero de portada:", err);
             }
         };
+
 
         fetchLandingData();
         fetchHeroImage();

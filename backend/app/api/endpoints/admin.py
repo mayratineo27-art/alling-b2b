@@ -147,6 +147,8 @@ class CreateUserSchema(BaseModel):
 class SystemConfigSchema(BaseModel):
     quote_validity_days: int = Field(..., ge=1)
     default_stock_min_threshold: Optional[int] = Field(None, ge=0)
+    hero_banner_url: Optional[str] = None
+
 
 
 class ProductCreateSchema(BaseModel):
@@ -547,6 +549,7 @@ def obtener_configuracion(
     """
     days = db.query(SystemConfigModel).filter(SystemConfigModel.key == "quote_validity_days").first()
     threshold = db.query(SystemConfigModel).filter(SystemConfigModel.key == "default_stock_min_threshold").first()
+    hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
 
     if not days:
         days = SystemConfigModel(key="quote_validity_days", value="7")
@@ -559,8 +562,16 @@ def obtener_configuracion(
 
     return {
         "quote_validity_days": int(days.value),
-        "default_stock_min_threshold": int(threshold.value)
+        "default_stock_min_threshold": int(threshold.value),
+        "hero_banner_url": hero.value if (hero and hero.value) else None,
     }
+
+
+@router.get("/configuracion/public-hero", summary="Obtener imagen de portada pública")
+def obtener_hero_banner_publico(db: Session = Depends(get_db)):
+    hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
+    url = hero.value if (hero and hero.value) else None
+    return {"hero_banner_url": url}
 
 
 @router.put("/configuracion")
@@ -595,14 +606,56 @@ def actualizar_configuracion(
         threshold.updated_at = datetime.utcnow()
         threshold.updated_by = "admin"
 
+    if body.hero_banner_url is not None:
+        hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
+        if not hero:
+            hero = SystemConfigModel(key="hero_banner_url", value=body.hero_banner_url)
+            db.add(hero)
+        else:
+            hero.value = body.hero_banner_url
+            hero.updated_at = datetime.utcnow()
+            hero.updated_by = "admin"
+
     db.commit()
     return {
         "message": "Configuración actualizada",
         "config": {
             "quote_validity_days": body.quote_validity_days,
-            "default_stock_min_threshold": body.default_stock_min_threshold
+            "default_stock_min_threshold": body.default_stock_min_threshold,
+            "hero_banner_url": body.hero_banner_url
         }
     }
+
+
+@router.post("/configuracion/hero-banner/upload", summary="Subir imagen local para el banner de portada (RF-ADM-013)")
+def upload_hero_banner_file(
+    file: UploadFile = File(...),
+    admin_info: tuple = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=422, detail="Solo se permiten archivos de imagen (PNG, JPEG, WebP)")
+    
+    content = file.file.read()
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=422, detail="El archivo excede el tamaño máximo permitido de 5 MB")
+    
+    import base64
+    b64_str = base64.b64encode(content).decode("utf-8")
+    data_uri = f"data:{file.content_type};base64,{b64_str}"
+
+    hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
+    if not hero:
+        hero = SystemConfigModel(key="hero_banner_url", value=data_uri)
+        db.add(hero)
+    else:
+        hero.value = data_uri
+        hero.updated_at = datetime.utcnow()
+        hero.updated_by = "admin"
+    
+    db.commit()
+    return {"message": "Banner de portada guardado exitosamente", "hero_banner_url": data_uri}
+
 
 
 # ─── RF-ADM-008: Exportar datos (requiere MFA step-up) ──────────────────────

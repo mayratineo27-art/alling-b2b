@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { HeroBannerUploader } from "@/components/admin/HeroBannerUploader";
 import apiClient from "@/lib/api";
 
 interface Config {
   quote_validity_days: number;
   default_stock_min_threshold: number;
+  hero_banner_url?: string | null;
 }
 
 export default function AdminConfiguracionPage() {
@@ -35,6 +37,7 @@ export default function AdminConfiguracionPage() {
       .catch(() => showToast("Error al cargar configuración"))
       .finally(() => setLoading(false));
   }, []);
+
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,8 +82,15 @@ export default function AdminConfiguracionPage() {
           {loading && <p className="text-[var(--alling-metadata)]">Cargando configuración...</p>}
 
           {!loading && (
-            <form onSubmit={handleSave} className="bg-white rounded-md border border-[var(--alling-border)] p-6 shadow-sm space-y-5">
-              <h2 className="text-base font-semibold text-[var(--alling-text)]">Parámetros de negocio</h2>
+            <>
+              <HeroBannerUploader
+                initialUrl={config?.hero_banner_url}
+                onBannerUpdated={(newUrl) => setConfig((prev) => (prev ? { ...prev, hero_banner_url: newUrl } : null))}
+              />
+
+              <form onSubmit={handleSave} className="bg-white rounded-md border border-[var(--alling-border)] p-6 shadow-sm space-y-5">
+                <h2 className="text-base font-semibold text-[var(--alling-text)]">Parámetros de negocio</h2>
+
 
               <div>
                 <label className="block text-sm font-medium text-[var(--alling-text)] mb-1">
@@ -118,7 +128,9 @@ export default function AdminConfiguracionPage() {
                 </button>
               </div>
             </form>
+            </>
           )}
+
 
           {/* Exportación de datos (RF-ADM-008) */}
           <div className="bg-white rounded-md border border-[var(--alling-border)] p-6 shadow-sm space-y-3">

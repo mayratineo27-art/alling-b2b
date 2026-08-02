@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Header from "./Header";
 import Footer from "./Footer";
+import FloatingSocialButtons from "./FloatingSocialButtons";
 import { ReactNode } from "react";
 
 // Routes where the public Header/Footer should NOT appear.
@@ -23,6 +24,8 @@ export default function ConditionalShell({ children }: { children: ReactNode }) 
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <FloatingSocialButtons />
     </>
   );
 }
+

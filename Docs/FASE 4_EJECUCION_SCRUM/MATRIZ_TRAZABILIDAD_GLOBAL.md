@@ -427,7 +427,19 @@ Sprints (Daily/Review/Retro)
 | 1.6.0 | 12/07/2026 | §6.4 / RNF-REL-006: persistencia real del Formato Único (`USE_MOCK_DB=False`), fix `get_active_by_customer_id` (ordenar por `updated_at`), inyección de sesión en `SupabaseFormatoRepository`, migración `discount_percent`, fix idempotencia de checkout, fix vistas SELLER de consultas/cotizaciones | Agente autónomo |
 | 1.6.1 | 13/07/2026 | §6.4 (extensión): fix webhook de Mercado Pago (`get_payment_service` ahora respeta `USE_MOCK_DB`, `TEST-CHK-015`); corregido username de Telegram (`tiendred_ventas` → `allingtechnology`) en `TelegramButton.tsx`/`config.py`/`CA-CAT-008` | Agente autónomo |
 | 1.7.0 | 19/07/2026 | Adición de RF-ORD-001 e integración de 24 RFs implementados (MOD-SEL-01, MOD-CON-01, MOD-COT-01, MOD-DIS-01, MOD-ADM-01) para 100% trazabilidad SDD | Agente autónomo |
+| 1.8.0 | 01/08/2026 | Sprint 9: Gestión de Kits con Carga desde PC e IA (RF-ADM-009, RF-AI-001), Rediseño Senior UI de Sidebar (RF-ADM-012) y Banner Hero de Portada (RF-ADM-013, RF-AI-002) | Agente autónomo |
+| 1.9.0 | 01/08/2026 | Sprint 10: Botones Circulares Flotantes de Contacto Rápido WhatsApp y Facebook (RF-CLI-014), Configuración de Canales Directos y Servicios WhatsApp Cloud API (RF-ADM-014) | Agente autónomo |
+
+---
+
+## 🚀 SPRINT 10: CANALES DE ATENCIÓN DIRECTA (WHATSAPP & FACEBOOK)
+
+| Código | Nombre del Requisito | Módulo | Historias de Usuario | Criterios de Aceptación | Caso de Uso | Estado |
+|---|---|---|---|---|---|:---:|
+| **RF-CLI-014** | Botones Circulares Flotantes de Contacto Rápido (WhatsApp & Facebook) | MOD-SOC-01 | HU-CLI-014 | CA-CLI-014 | CU-CLI-014 | ✅ Completado |
+| **RF-ADM-014** | Configuración de Canales Directos y Conexión API WhatsApp | MOD-SOC-01 / MOD-ADM-01 | HU-ADM-014 | CA-ADM-014 | CU-ADM-014 | ✅ Completado |
 
 ---
 
 **Fin del documento.**
+

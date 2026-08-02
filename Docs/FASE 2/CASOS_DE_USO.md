@@ -628,4 +628,24 @@
   4. El sistema actualiza `SystemConfigModel` (`hero_banner_url`).
 - **Postcondición:** La página principal (`/`) refleja inmediatamente la nueva portada.
 
+### CU-CLI-014: Contacto Rápido vía Botones Flotantes de WhatsApp y Facebook
+- **Actores:** GUEST, CUSTOMER
+- **Precondición:** Visitante o cliente navegando en cualquier vista pública del portal.
+- **Flujo Principal:**
+  1. Usuario identifica los dos botones flotantes circulares en la esquina inferior derecha.
+  2. Al hacer clic en WhatsApp (`#25D366`), el sistema abre `https://wa.me/{numero}` con mensaje predeterminado.
+  3. Al hacer clic en Facebook (`#1877F2`), el sistema abre la página corporativa en Facebook.
+- **Postcondición:** Canal de comunicación abierto directamente en la aplicación externa elegida.
+
+### CU-ADM-014: Configuración de Canales Directos e Integración WhatsApp API
+- **Actores:** ADMIN
+- **Precondición:** ADMIN autenticado en `/admin/configuracion`.
+- **Flujo Principal:**
+  1. ADMIN ingresa el número de WhatsApp corporativo, el mensaje de saludo y la URL de Facebook.
+  2. Presiona "Guardar Configuración".
+  3. El sistema actualiza las claves `whatsapp_number`, `whatsapp_default_message` y `facebook_page_url` en la base de datos.
+  4. El servicio `WhatsAppService` queda disponible con la estructura para envío de mensajes plantilla vía Meta API.
+- **Postcondición:** Los canales flotantes públicos reflejan inmediatamente la nueva configuración.
+
+
 

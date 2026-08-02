@@ -824,6 +824,42 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 - **When** ingresa un prompt panorámico y presiona "Generar Banner con IA"
 - **Then** el backend retorna una imagen en formato panorámico 16:9 optimizada a WebP Base64.
 
+---
+
+#### **CA-CLI-014 (Botones Circulares Flotantes de WhatsApp y Facebook)**
+- **Objetivo:** Garantizar la disponibilidad y redirección inmediata a canales de atención directa.
+- **RF relacionado:** RF-CLI-014
+- **HU relacionada:** HU-CLI-014
+- **UC relacionado:** CU-CLI-014
+
+**Escenarios:**
+
+**Escenario 1: Redirección inmediata a WhatsApp con mensaje predeterminado**
+- **Given** un visitante o cliente en cualquier página pública del portal
+- **When** hace clic en el botón circular flotante verde de WhatsApp (`#25D366`)
+- **Then** abre una nueva pestaña hacia `https://wa.me/{numero}` con el mensaje codificado predeterminado.
+
+**Escenario 2: Redirección a la página de Facebook**
+- **Given** un visitante en el portal
+- **When** hace clic en el botón circular flotante azul de Facebook (`#1877F2`)
+- **Then** abre una nueva pestaña redirigiendo a la URL corporativa de Facebook.
+
+---
+
+#### **CA-ADM-014 (Configuración de Canales Directos y Servicios WhatsApp Cloud API)**
+- **Objetivo:** Validar la administración de números/mensajes y la preparación del servicio Meta API.
+- **RF relacionado:** RF-ADM-014
+- **HU relacionada:** HU-ADM-014
+- **UC relacionado:** CU-ADM-014
+
+**Escenarios:**
+
+**Escenario 1: Actualización de número y mensaje de WhatsApp**
+- **Given** un ADMIN en `/admin/configuracion`
+- **When** modifica el número de WhatsApp y el mensaje predeterminado y presiona "Guardar"
+- **Then** `GET /admin/configuracion/public-social` retorna los nuevos valores y los botones flotantes se actualizan automáticamente en todo el portal.
+
+
 
 
 

@@ -1648,3 +1648,43 @@ En la vista de Consultas, el SELLER debe tener un botón "Abrir chat en Telegram
 - **Módulo:** MOD-SEL-01
 
 
+---
+
+### 💬 MOD-SOC-01 (Canales de Atención Directa & Redes Sociales) — 2 RF Nuevos
+
+**RF-CLI-014: Botones Flotantes de Contacto Rápido (WhatsApp & Facebook)**
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Permitir acceso inmediato de clientes a los canales oficiales de WhatsApp y Facebook Messenger desde cualquier vista pública. |
+| **Descripción** | El portal despliega dos botones circulares flotantes en la esquina inferior derecha (`WhatsApp` color `#25D366` con efecto pulso y `Facebook` color `#1877F2`). Al hacer clic en WhatsApp, redirige a `wa.me` con el número y mensaje predeterminado configurado. |
+| **Actores** | GUEST, CUSTOMER |
+| **Prioridad** | MVP+ |
+| **Módulo de origen** | MOD-CLI-01 / MOD-SOC-01 |
+| **OPS de origen** | OPS-SOC-001 |
+| **RN** | — |
+| **RNF** | RNF-UI-001 |
+| **HU** | HU-CLI-014 |
+| **UC** | CU-CLI-014 |
+| **CA** | CA-CLI-014 |
+| **TEST** | CP-CLI-014 |
+
+**RF-ADM-014: Configuración de Canales Directos e Integración WhatsApp API**
+
+| Campo | Valor |
+|---|---|
+| **Objetivo** | Administrar número de atención de WhatsApp, mensaje predeterminado y enlace de Facebook, dejando abierta la arquitectura para Meta WhatsApp Cloud API. |
+| **Descripción** | El ADMIN puede actualizar `whatsapp_number`, `whatsapp_default_message` y `facebook_page_url` desde `/admin/configuracion`. El backend provee `GET /admin/configuracion/public-social` y la clase de servicio `WhatsAppService` para envío de mensajes plantilla vía Meta API. |
+| **Actores** | ADMIN |
+| **Prioridad** | MVP+ |
+| **Módulo de origen** | MOD-ADM-01 / MOD-SOC-01 |
+| **OPS de origen** | OPS-ADM-014 |
+| **RN** | — |
+| **RNF** | RNF-SEC-001 |
+| **HU** | HU-ADM-014 |
+| **UC** | CU-ADM-014 |
+| **CA** | CA-ADM-014 |
+| **TEST** | CP-ADM-014 |
+
+
+

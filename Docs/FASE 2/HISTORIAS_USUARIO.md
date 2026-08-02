@@ -2165,10 +2165,21 @@ Las siguientes HUs incorporan decisiones de reconciliación documentadas en `DOC
 - **Quiero** generar banners panorámicos 16:9 con Inteligencia Artificial
 - **Para** renovar la portada principal con diseños fotorrealistas de fibra óptica y telecomunicaciones sin requerir diseñador gráfico externado.
 
+**HU-CLI-014: Acceso Rápido vía Botones Flotantes de WhatsApp y Facebook**
+- **Como** Cliente o visitante del portal B2B
+- **Quiero** ver botones flotantes permanentes de WhatsApp y Facebook en la pantalla
+- **Para** comunicarme de forma inmediata con el equipo de ventas y atención sin buscar enlaces en el pie de página.
+
+**HU-ADM-014: Gestión de Canales Directos y Conexión API WhatsApp**
+- **Como** Administrador del sistema
+- **Quiero** configurar el número de WhatsApp, el mensaje predeterminado y el enlace de Facebook
+- **Para** mantener actualizados los canales directos y disponer de la arquitectura extensible para Meta WhatsApp Cloud API.
+
 
 ### 🔐 HU Autenticación (AUT)
 **HU-AUT-002: Migración de carrito de Invitado a Cliente**
 - **Como** invitado con Formato Único activo
 - **Quiero** registrarme durante el checkout sin perder mi carrito
 - **Para** vincular mi pedido a una cuenta permanente.
+
 

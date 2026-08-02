@@ -10,6 +10,9 @@ interface Config {
   quote_validity_days: number;
   default_stock_min_threshold: number;
   hero_banner_url?: string | null;
+  whatsapp_number?: string;
+  whatsapp_default_message?: string;
+  facebook_page_url?: string;
 }
 
 export default function AdminConfiguracionPage() {
@@ -18,7 +21,13 @@ export default function AdminConfiguracionPage() {
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-  const [form, setForm] = useState({ quote_validity_days: 7, default_stock_min_threshold: 5 });
+  const [form, setForm] = useState({
+    quote_validity_days: 7,
+    default_stock_min_threshold: 5,
+    whatsapp_number: "51999999999",
+    whatsapp_default_message: "Hola Alling B2B, solicito información sobre sus productos y cotizaciones.",
+    facebook_page_url: "https://facebook.com/allingb2b",
+  });
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -32,11 +41,15 @@ export default function AdminConfiguracionPage() {
         setForm({
           quote_validity_days: res.data.quote_validity_days ?? 7,
           default_stock_min_threshold: res.data.default_stock_min_threshold ?? 5,
+          whatsapp_number: res.data.whatsapp_number ?? "51999999999",
+          whatsapp_default_message: res.data.whatsapp_default_message ?? "Hola Alling B2B, solicito información sobre sus productos y cotizaciones.",
+          facebook_page_url: res.data.facebook_page_url ?? "https://facebook.com/allingb2b",
         });
       })
       .catch(() => showToast("Error al cargar configuración"))
       .finally(() => setLoading(false));
   }, []);
+
 
 
   const handleSave = async (e: React.FormEvent) => {
@@ -119,7 +132,52 @@ export default function AdminConfiguracionPage() {
                 />
               </div>
 
-              <div className="flex justify-end">
+              <hr className="border-slate-100 my-4" />
+
+              <h2 className="text-base font-semibold text-[var(--alling-text)] flex items-center gap-2">
+                <span>💬</span> Canales de Atención Directa (WhatsApp & Facebook)
+              </h2>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--alling-text)] mb-1">
+                  Número de WhatsApp (con código de país, ej: 51999999999)
+                </label>
+                <input
+                  type="text"
+                  value={form.whatsapp_number}
+                  onChange={(e) => setForm({ ...form, whatsapp_number: e.target.value })}
+                  placeholder="51999999999"
+                  className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--alling-text)] mb-1">
+                  Mensaje predeterminado de WhatsApp
+                </label>
+                <textarea
+                  rows={2}
+                  value={form.whatsapp_default_message}
+                  onChange={(e) => setForm({ ...form, whatsapp_default_message: e.target.value })}
+                  placeholder="Hola Alling B2B, solicito información sobre sus productos..."
+                  className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--alling-text)] mb-1">
+                  URL de la página de Facebook / Messenger
+                </label>
+                <input
+                  type="url"
+                  value={form.facebook_page_url}
+                  onChange={(e) => setForm({ ...form, facebook_page_url: e.target.value })}
+                  placeholder="https://facebook.com/allingb2b"
+                  className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                />
+              </div>
+
+              <div className="flex justify-end pt-2">
                 <button
                   type="submit" disabled={saving}
                   className="bg-[var(--alling-primary)] text-white px-6 py-2 rounded-md text-sm font-medium hover:bg-[var(--alling-primary-hover)] disabled:opacity-50 transition-colors"
@@ -127,6 +185,7 @@ export default function AdminConfiguracionPage() {
                   {saving ? "Guardando..." : "Guardar configuración"}
                 </button>
               </div>
+
             </form>
             </>
           )}

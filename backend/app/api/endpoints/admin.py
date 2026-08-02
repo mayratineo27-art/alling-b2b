@@ -148,6 +148,10 @@ class SystemConfigSchema(BaseModel):
     quote_validity_days: Optional[int] = Field(None, ge=1)
     default_stock_min_threshold: Optional[int] = Field(None, ge=0)
     hero_banner_url: Optional[str] = None
+    whatsapp_number: Optional[str] = None
+    whatsapp_default_message: Optional[str] = None
+    facebook_page_url: Optional[str] = None
+
 
 
 
@@ -551,6 +555,9 @@ def obtener_configuracion(
     days = db.query(SystemConfigModel).filter(SystemConfigModel.key == "quote_validity_days").first()
     threshold = db.query(SystemConfigModel).filter(SystemConfigModel.key == "default_stock_min_threshold").first()
     hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
+    wa_num = db.query(SystemConfigModel).filter(SystemConfigModel.key == "whatsapp_number").first()
+    wa_msg = db.query(SystemConfigModel).filter(SystemConfigModel.key == "whatsapp_default_message").first()
+    fb_url = db.query(SystemConfigModel).filter(SystemConfigModel.key == "facebook_page_url").first()
 
     if not days:
         days = SystemConfigModel(key="quote_validity_days", value="7")
@@ -565,6 +572,9 @@ def obtener_configuracion(
         "quote_validity_days": int(days.value),
         "default_stock_min_threshold": int(threshold.value),
         "hero_banner_url": hero.value if (hero and hero.value) else None,
+        "whatsapp_number": wa_num.value if (wa_num and wa_num.value) else "51999999999",
+        "whatsapp_default_message": wa_msg.value if (wa_msg and wa_msg.value) else "Hola Alling B2B, solicito información sobre sus productos y cotizaciones.",
+        "facebook_page_url": fb_url.value if (fb_url and fb_url.value) else "https://facebook.com/allingb2b",
     }
 
 
@@ -573,6 +583,19 @@ def obtener_hero_banner_publico(db: Session = Depends(get_db)):
     hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
     url = hero.value if (hero and hero.value) else None
     return {"hero_banner_url": url}
+
+
+@router.get("/configuracion/public-social", summary="Obtener configuración pública de redes sociales (WhatsApp & Facebook)")
+def obtener_social_publico(db: Session = Depends(get_db)):
+    wa_num = db.query(SystemConfigModel).filter(SystemConfigModel.key == "whatsapp_number").first()
+    wa_msg = db.query(SystemConfigModel).filter(SystemConfigModel.key == "whatsapp_default_message").first()
+    fb_url = db.query(SystemConfigModel).filter(SystemConfigModel.key == "facebook_page_url").first()
+
+    return {
+        "whatsapp_number": wa_num.value if (wa_num and wa_num.value) else "51999999999",
+        "whatsapp_default_message": wa_msg.value if (wa_msg and wa_msg.value) else "Hola Alling B2B, solicito información sobre sus productos y cotizaciones.",
+        "facebook_page_url": fb_url.value if (fb_url and fb_url.value) else "https://facebook.com/allingb2b",
+    }
 
 
 @router.put("/configuracion")
@@ -619,20 +642,57 @@ def actualizar_configuracion(
             hero.updated_at = datetime.utcnow()
             hero.updated_by = "admin"
 
+    if body.whatsapp_number is not None:
+        wa_num = db.query(SystemConfigModel).filter(SystemConfigModel.key == "whatsapp_number").first()
+        if not wa_num:
+            wa_num = SystemConfigModel(key="whatsapp_number", value=body.whatsapp_number)
+            db.add(wa_num)
+        else:
+            wa_num.value = body.whatsapp_number
+            wa_num.updated_at = datetime.utcnow()
+            wa_num.updated_by = "admin"
+
+    if body.whatsapp_default_message is not None:
+        wa_msg = db.query(SystemConfigModel).filter(SystemConfigModel.key == "whatsapp_default_message").first()
+        if not wa_msg:
+            wa_msg = SystemConfigModel(key="whatsapp_default_message", value=body.whatsapp_default_message)
+            db.add(wa_msg)
+        else:
+            wa_msg.value = body.whatsapp_default_message
+            wa_msg.updated_at = datetime.utcnow()
+            wa_msg.updated_by = "admin"
+
+    if body.facebook_page_url is not None:
+        fb_url = db.query(SystemConfigModel).filter(SystemConfigModel.key == "facebook_page_url").first()
+        if not fb_url:
+            fb_url = SystemConfigModel(key="facebook_page_url", value=body.facebook_page_url)
+            db.add(fb_url)
+        else:
+            fb_url.value = body.facebook_page_url
+            fb_url.updated_at = datetime.utcnow()
+            fb_url.updated_by = "admin"
+
     db.commit()
 
     current_days = db.query(SystemConfigModel).filter(SystemConfigModel.key == "quote_validity_days").first()
     current_thresh = db.query(SystemConfigModel).filter(SystemConfigModel.key == "default_stock_min_threshold").first()
     current_hero = db.query(SystemConfigModel).filter(SystemConfigModel.key == "hero_banner_url").first()
+    current_wa_num = db.query(SystemConfigModel).filter(SystemConfigModel.key == "whatsapp_number").first()
+    current_wa_msg = db.query(SystemConfigModel).filter(SystemConfigModel.key == "whatsapp_default_message").first()
+    current_fb = db.query(SystemConfigModel).filter(SystemConfigModel.key == "facebook_page_url").first()
 
     return {
         "message": "Configuración actualizada",
         "config": {
             "quote_validity_days": int(current_days.value) if current_days else 7,
             "default_stock_min_threshold": int(current_thresh.value) if current_thresh else 5,
-            "hero_banner_url": current_hero.value if current_hero else None
+            "hero_banner_url": current_hero.value if current_hero else None,
+            "whatsapp_number": current_wa_num.value if current_wa_num else "51999999999",
+            "whatsapp_default_message": current_wa_msg.value if current_wa_msg else "Hola Alling B2B, solicito información sobre sus productos y cotizaciones.",
+            "facebook_page_url": current_fb.value if current_fb else "https://facebook.com/allingb2b",
         }
     }
+
 
 
 @router.post("/configuracion/hero-banner/upload", summary="Subir imagen local para el banner de portada (RF-ADM-013)")

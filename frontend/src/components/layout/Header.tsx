@@ -58,7 +58,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-[var(--alling-border)] shadow-md">
       {/* Block 1: Logo / Search / Icons */}
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-6">
+      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between gap-6">
         {/* Logo Agrandado */}
         <Link href="/" className="flex-shrink-0 flex items-center gap-3 group">
           <Image
@@ -76,7 +76,7 @@ export default function Header() {
         </Link>
 
         {/* Search with Category Select */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-auto">
+        <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-auto">
           <div className="relative flex items-center border-2 border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F97316] focus-within:border-transparent bg-white shadow-xs transition-all">
             {/* Category Dropdown */}
             <select
@@ -168,7 +168,8 @@ export default function Header() {
 
       {/* Block 2: Nav menu */}
       <nav className="border-t border-slate-100 bg-white" aria-label="Menú principal">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between">
+
           <ul className="flex items-center gap-1 text-sm font-extrabold" role="list">
             {[
               { label: "HOME", href: "/" },

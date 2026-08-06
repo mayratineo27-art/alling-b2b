@@ -107,8 +107,9 @@ export default function Home() {
                 {/* Patrón de cuadrícula / red de fondo */}
                 <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
 
-                <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="relative z-10 mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-10">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+
                         {/* Columna Izquierda: Títulos y Pilares */}
                         <div className="lg:col-span-7 space-y-6 text-left">
                             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
@@ -213,7 +214,7 @@ export default function Home() {
             </section>
 
             {/* BARRA FLOTANTE DE 4 GARANTÍAS (Abajo del Hero) */}
-            <div className="relative z-20 max-w-7xl mx-auto px-6 -mt-6">
+            <div className="relative z-20 max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-10 -mt-6">
                 <div className="bg-white rounded-2xl p-6 shadow-xl border border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 text-slate-800">
                     {/* Item 1: Productos 100% Originales (Escudo Azul) */}
                     <div className="flex items-center gap-4 pt-2 sm:pt-0 sm:pl-2">
@@ -275,7 +276,8 @@ export default function Home() {
 
 
 
-            <div className="mx-auto max-w-7xl px-6 lg:px-8 py-6 space-y-8">
+            <div className="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-10 py-6 space-y-8">
+
 
                 {/* CATEGORÍAS (Ajustado horizontalmente en 1 sola fila de 6 columnas) */}
                 <section>

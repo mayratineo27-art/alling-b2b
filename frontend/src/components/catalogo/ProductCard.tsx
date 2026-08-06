@@ -109,7 +109,8 @@ export function ProductCard({ product, badge, badgeColor = "blue", showPrice = f
                     {showPrice && (
                         <div>
                             <p className="text-xs text-gray-500 mb-0.5">Precio unitario</p>
-                            <p className="text-lg font-extrabold text-[#10B981]">S/ {Number(product.price_public).toFixed(2)}</p>
+                            <p className="text-lg font-extrabold text-[#F97316]">S/ {Number(product.price_public).toFixed(2)}</p>
+
                         </div>
                     )}
                     <div className="text-right">
@@ -131,8 +132,8 @@ export function ProductCard({ product, badge, badgeColor = "blue", showPrice = f
                         isOutOfStock 
                             ? 'bg-gray-300 cursor-not-allowed'
                             : success 
-                                ? 'bg-emerald-600 focus:ring-emerald-600' 
-                                : 'bg-[#10B981] hover:bg-emerald-600 focus:ring-[#10B981]'
+                                ? 'bg-orange-600 focus:ring-orange-600' 
+                                : 'bg-[#F97316] hover:bg-orange-600 focus:ring-[#F97316]'
                     }`}
                 >
                     {isAdding 

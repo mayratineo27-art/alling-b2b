@@ -126,7 +126,7 @@ export function KitCard({ kit }: { kit: KitType }) {
                 <div className="mt-auto border-t border-gray-100 pt-4 flex flex-col gap-3">
                     <div className="flex justify-between items-end">
                         <span className="text-sm font-medium text-gray-500">Precio Total</span>
-                        <span className="text-xl font-bold text-[#10B981]">S/ {Number(kit.precio_total).toFixed(2)}</span>
+                        <span className="text-xl font-bold text-[#F97316]">S/ {Number(kit.precio_total).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
                         <span className="text-gray-500">Stock Efectivo:</span>
@@ -145,11 +145,12 @@ export function KitCard({ kit }: { kit: KitType }) {
                             isOutOfStock
                             ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             : success
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-[#10B981] text-white hover:bg-emerald-600'
+                                ? 'bg-orange-600 text-white'
+                                : 'bg-[#F97316] text-white hover:bg-orange-600'
                         }`}
                         onClick={handleAddKit}
                     >
+
                         {isAdding ? 'Agregando componentes...' : isOutOfStock ? 'Kit Agotado' : success ? '¡Agregado ✓!' : 'Agregar al FU'}
                     </button>
                 </div>

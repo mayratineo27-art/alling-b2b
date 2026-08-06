@@ -122,8 +122,9 @@ export function CartDrawer() {
             </div>
             <button
               onClick={handleComprarAhora}
-              className="w-full rounded-lg bg-[#10B981] py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-600"
+              className="w-full rounded-lg bg-[#F97316] py-3 text-sm font-bold text-white transition-colors hover:bg-orange-600"
             >
+
               Comprar ahora
             </button>
             <button

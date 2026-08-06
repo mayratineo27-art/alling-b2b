@@ -71,13 +71,13 @@ export default function Header() {
           />
           <div className="hidden sm:flex flex-col">
             <span className="font-extrabold text-[var(--alling-text)] text-2xl tracking-tight leading-none">Alling</span>
-            <span className="text-[0.65rem] font-bold text-emerald-600 tracking-[0.18em] uppercase mt-0.5">B2B Portal</span>
+            <span className="text-[0.65rem] font-bold text-orange-500 tracking-[0.18em] uppercase mt-0.5">B2B Portal</span>
           </div>
         </Link>
 
         {/* Search with Category Select */}
         <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-auto">
-          <div className="relative flex items-center border-2 border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#10B981] focus-within:border-transparent bg-white shadow-xs transition-all">
+          <div className="relative flex items-center border-2 border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#F97316] focus-within:border-transparent bg-white shadow-xs transition-all">
             {/* Category Dropdown */}
             <select
               value={selectedCategory}
@@ -106,7 +106,7 @@ export default function Header() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="px-6 py-2.5 bg-[#10B981] hover:bg-emerald-600 text-white text-sm font-bold transition-colors flex items-center gap-2 shrink-0 shadow-xs"
+              className="px-6 py-2.5 bg-[#F97316] hover:bg-orange-600 text-white text-sm font-bold transition-colors flex items-center gap-2 shrink-0 shadow-xs"
               aria-label="Buscar"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -126,7 +126,7 @@ export default function Header() {
           {isCustomer && (
             <Link
               href="/favoritos"
-              className="p-2.5 text-slate-600 hover:text-[#10B981] transition-colors rounded-lg hover:bg-slate-50"
+              className="p-2.5 text-slate-600 hover:text-[#F97316] transition-colors rounded-lg hover:bg-slate-50"
               aria-label="Mis favoritos"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -141,7 +141,7 @@ export default function Header() {
           {/* Account */}
           {isAuthenticated ? (
             <div className="flex items-center gap-2.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
-              <span className="w-8 h-8 rounded-full bg-[#10B981]/15 text-[#10B981] flex items-center justify-center text-xs font-bold ring-2 ring-[#10B981]/30">
+              <span className="w-8 h-8 rounded-full bg-[#F97316]/15 text-[#F97316] flex items-center justify-center text-xs font-bold ring-2 ring-[#F97316]/30">
                 {getInitials(user?.name)}
               </span>
               <span className="hidden md:block text-sm text-slate-800 font-bold truncate max-w-[130px]">
@@ -180,7 +180,7 @@ export default function Header() {
               <li key={href}>
                 <Link
                   href={href}
-                  className="block px-5 py-3.5 text-slate-700 hover:text-[#10B981] hover:border-b-2 hover:border-[#10B981] transition-all tracking-wider text-xs sm:text-sm"
+                  className="block px-5 py-3.5 text-slate-700 hover:text-[#F97316] hover:border-b-2 hover:border-[#F97316] transition-all tracking-wider text-xs sm:text-sm"
                 >
                   {label}
                 </Link>
@@ -189,6 +189,7 @@ export default function Header() {
           </ul>
         </div>
       </nav>
+
     </header>
   );
 }

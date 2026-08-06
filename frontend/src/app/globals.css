@@ -27,8 +27,8 @@ body {
 
 /* ── Alling Design System ── */
 :root {
-  --alling-primary:    #10B981;
-  --alling-primary-hover: #059669;
+  --alling-primary:    #F97316;
+  --alling-primary-hover: #EA580C;
   --alling-text:       #111827;
   --alling-metadata:   #9CA3AF;
   --alling-border:     #E5E7EB;
@@ -38,3 +38,4 @@ body {
   --alling-dark-bg:    #111111;
   --alling-white:      #FFFFFF;
 }
+

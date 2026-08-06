@@ -85,8 +85,9 @@ export default function ProductDetailPage({ params }: Props) {
                     <p className="text-gray-500 mb-6">{error || 'El producto solicitado no existe o no se encuentra activo.'}</p>
                     <Link 
                         href="/productos"
-                        className="inline-flex items-center justify-center bg-[#10B981] text-white px-6 py-2.5 rounded-lg shadow font-medium hover:bg-emerald-600 transition"
+                        className="inline-flex items-center justify-center bg-[#F97316] text-white px-6 py-2.5 rounded-lg shadow font-medium hover:bg-orange-600 transition"
                     >
+
                         Volver al Catálogo
                     </Link>
                 </div>
@@ -223,12 +224,12 @@ export default function ProductDetailPage({ params }: Props) {
                                 <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 mb-6 border border-gray-100 flex items-baseline justify-between">
                                     <div>
                                         <span className="text-xs text-gray-500 block mb-1 font-medium">Precio Público (Unitario)</span>
-                                        <span className="text-2xl sm:text-3xl font-black text-[#10B981]">S/ {Number(product.price_public).toFixed(2)}</span>
+                                        <span className="text-2xl sm:text-3xl font-black text-[#F97316]">S/ {Number(product.price_public).toFixed(2)}</span>
                                     </div>
                                     <div className="text-right">
                                         <span className="text-xs text-gray-500 block mb-1 font-medium">Disponibilidad</span>
                                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
-                                            isOutOfStock ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'
+                                            isOutOfStock ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'
                                         }`}>
                                             {product.stock_display}
                                         </span>
@@ -240,13 +241,13 @@ export default function ProductDetailPage({ params }: Props) {
                                     <nav className="-mb-px flex space-x-6">
                                         <button
                                             onClick={() => setActiveTab('desc')}
-                                            className={`pb-4 px-1 border-b-2 font-bold text-sm transition-colors ${activeTab === 'desc' ? 'border-[#10B981] text-[#10B981]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                                            className={`pb-4 px-1 border-b-2 font-bold text-sm transition-colors ${activeTab === 'desc' ? 'border-[#F97316] text-[#F97316]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                                         >
                                             Descripción
                                         </button>
                                         <button
                                             onClick={() => setActiveTab('specs')}
-                                            className={`pb-4 px-1 border-b-2 font-bold text-sm transition-colors ${activeTab === 'specs' ? 'border-[#10B981] text-[#10B981]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                                            className={`pb-4 px-1 border-b-2 font-bold text-sm transition-colors ${activeTab === 'specs' ? 'border-[#F97316] text-[#F97316]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                                         >
                                             Especificaciones Técnicas
                                         </button>
@@ -312,8 +313,8 @@ export default function ProductDetailPage({ params }: Props) {
                                             isOutOfStock
                                                 ? 'bg-gray-300 cursor-not-allowed'
                                                 : success
-                                                    ? 'bg-emerald-600 focus:ring-emerald-600'
-                                                    : 'bg-[#10B981] hover:bg-emerald-600 focus:ring-[#10B981]'
+                                                    ? 'bg-orange-600 focus:ring-orange-600'
+                                                    : 'bg-[#F97316] hover:bg-orange-600 focus:ring-[#F97316]'
                                         }`}
                                     >
                                         {isAdding ? (

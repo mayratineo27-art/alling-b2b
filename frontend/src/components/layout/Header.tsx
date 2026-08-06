@@ -158,7 +158,7 @@ export default function Header() {
           ) : (
             <Link
               href="/auth/login"
-              className="text-sm font-bold bg-slate-900 text-white hover:bg-slate-800 px-4 py-2 rounded-xl transition-all shadow-xs"
+              className="text-sm font-bold bg-[#EA580C] hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl transition-all shadow-xs"
             >
               Ingresar
             </Link>
@@ -167,8 +167,8 @@ export default function Header() {
       </div>
 
       {/* Block 2: Nav menu */}
-      <nav className="border-t border-slate-100 bg-slate-50/50" aria-label="Menú principal">
-        <div className="max-w-7xl mx-auto px-6">
+      <nav className="border-t border-slate-100 bg-white" aria-label="Menú principal">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <ul className="flex items-center gap-1 text-sm font-extrabold" role="list">
             {[
               { label: "HOME", href: "/" },
@@ -180,15 +180,26 @@ export default function Header() {
               <li key={href}>
                 <Link
                   href={href}
-                  className="block px-5 py-3.5 text-slate-700 hover:text-[#F97316] hover:border-b-2 hover:border-[#F97316] transition-all tracking-wider text-xs sm:text-sm"
+                  className="block px-5 py-3.5 text-slate-700 hover:text-[#EA580C] hover:border-b-2 hover:border-[#EA580C] transition-all tracking-wider text-xs sm:text-sm"
                 >
                   {label}
                 </Link>
               </li>
             ))}
           </ul>
+
+          {/* Special Nav Items Right */}
+          <div className="hidden md:flex items-center gap-6 text-sm font-bold text-slate-700">
+            <Link href="/productos?q=novedades" className="flex items-center gap-1.5 hover:text-[#EA580C] transition-colors">
+              <span>📅</span> Novedades
+            </Link>
+            <Link href="/productos?q=ofertas" className="flex items-center gap-1.5 hover:text-[#EA580C] transition-colors">
+              <span>🏷️</span> Ofertas
+            </Link>
+          </div>
         </div>
       </nav>
+
 
     </header>
   );

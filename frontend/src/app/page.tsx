@@ -98,49 +98,168 @@ export default function Home() {
 
     return (
         <main className="min-h-screen bg-gray-50 pb-12">
-            {/* HERO SECTION CON OVERLAY DE CONTRASTE Y LEGIBILIDAD EXCELENTE */}
+            {/* HERO SECTION SEGÚN EL PROTOTIPO DE LA CAPTURA */}
             <section 
-                className="relative overflow-hidden bg-slate-950 text-white py-20 sm:py-28"
-                style={heroImage ? { backgroundImage: `url(${heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+                className="relative overflow-hidden bg-gradient-to-r from-[#D94600] via-[#EA580C] to-[#F97316] text-white py-12 lg:py-16"
+                style={heroImage ? { backgroundImage: `linear-gradient(90deg, rgba(217,70,0,0.88) 0%, rgba(234,88,12,0.85) 60%, rgba(249,115,22,0.75) 100%), url(${heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
             >
-                {/* Capa de degradado oscuro para legibilidad garantizada sobre cualquier imagen */}
-                <div className="absolute inset-0 z-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/45">
-                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-[100px]"></div>
-                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px]"></div>
-                </div>
+                {/* Patrón de cuadrícula / red de fondo */}
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
 
-                <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8 text-center">
-                    <div className="mx-auto max-w-3xl bg-slate-950/55 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl space-y-6">
-                        <h1 className="text-4xl font-black tracking-tight sm:text-6xl text-white">
-                            Portal B2B <span className="text-[#F97316]">Alling</span>
-                        </h1>
-                        <p className="mx-auto text-lg sm:text-xl font-medium text-slate-200 leading-relaxed max-w-2xl">
-                            Abastece tu negocio con los mejores equipos de telecomunicaciones.
-                            Conéctate con nuestra red de distribución especializada.
-                        </p>
-                        <div className="pt-2 flex items-center justify-center gap-4 flex-wrap">
-                            <Link href="/productos" className="rounded-xl bg-[#F97316] hover:bg-orange-600 px-8 py-3.5 text-base font-extrabold text-white shadow-lg shadow-orange-500/25 transition-all hover:scale-105">
-                                Explorar Catálogo
-                            </Link>
-                            <Link href="/nosotros" className="rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-3.5 text-base font-bold text-white hover:text-orange-300 transition-all">
-                                Conoce Alling <span aria-hidden="true">→</span>
-                            </Link>
+                <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        {/* Columna Izquierda: Títulos y Pilares */}
+                        <div className="lg:col-span-7 space-y-6 text-left">
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
+                                Soluciones de Infraestructura que impulsan tu negocio
+                            </h1>
+                            <p className="text-white/95 text-base sm:text-lg font-medium max-w-xl leading-relaxed">
+                                Tecnología, conectividad y seguridad para empresas que buscan rendimiento y confiabilidad.
+                            </p>
+
+                            <div className="pt-2">
+                                <Link 
+                                    href="/productos" 
+                                    className="inline-flex items-center gap-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] px-7 py-3.5 text-base font-extrabold text-white shadow-xl transition-all hover:scale-105"
+                                >
+                                    <span>Ver Ofertas Especiales</span>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                                </Link>
+                            </div>
+
+                            {/* Tres Pilares de Confianza en el Hero */}
+                            <div className="pt-6 border-t border-white/20 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                                    </div>
+                                    <div>
+                                        <p className="text-white">Marcas líderes</p>
+                                        <p className="text-white/80 text-[0.7rem] font-normal">Calidad garantizada</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                    </div>
+                                    <div>
+                                        <p className="text-white">Entrega rápida</p>
+                                        <p className="text-white/80 text-[0.7rem] font-normal">A todo el país</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                    </div>
+                                    <div>
+                                        <p className="text-white">Soporte experto</p>
+                                        <p className="text-white/80 text-[0.7rem] font-normal">Asesoría personalizada</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Columna Derecha: Tarjeta destacada Ubiquiti / Soluciones */}
+                        <div className="lg:col-span-5 flex flex-col items-center justify-center">
+                            <div className="w-full bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-2xl space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-3xl font-black text-white tracking-wider">UBIQUITI</span>
+                                </div>
+                                <p className="text-sm text-white/90 font-medium">
+                                    Tecnología Ubiquiti para redes empresariales de alto rendimiento.
+                                </p>
+                                <div className="grid grid-cols-4 gap-2 pt-2 text-center text-[0.7rem] font-bold">
+                                    <div className="bg-white/10 rounded-xl p-2">
+                                        <span className="text-lg block">📶</span>
+                                        <span>Conectividad</span>
+                                    </div>
+                                    <div className="bg-white/10 rounded-xl p-2">
+                                        <span className="text-lg block">🛡️</span>
+                                        <span>Seguridad</span>
+                                    </div>
+                                    <div className="bg-white/10 rounded-xl p-2">
+                                        <span className="text-lg block">📊</span>
+                                        <span>Escalabilidad</span>
+                                    </div>
+                                    <div className="bg-white/10 rounded-xl p-2">
+                                        <span className="text-lg block">⚙️</span>
+                                        <span>Gestión</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
+            {/* BARRA FLOTANTE DE 4 GARANTÍAS (Abajo del Hero) */}
+            <div className="relative z-20 max-w-7xl mx-auto px-6 -mt-6">
+                <div className="bg-white rounded-2xl p-6 shadow-xl border border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 text-slate-800">
+                    <div className="flex items-center gap-4 pt-2 sm:pt-0 sm:pl-2">
+                        <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#EA580C] flex items-center justify-center text-xl font-bold shrink-0">
+                            🛡️
+                        </div>
+                        <div>
+                            <h4 className="font-extrabold text-sm text-slate-900">Productos 100% Originales</h4>
+                            <p className="text-xs text-slate-500 font-medium">Garantía directa con fabricantes</p>
+                        </div>
+                    </div>
 
-            <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 space-y-20">
+                    <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:pl-6">
+                        <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#EA580C] flex items-center justify-center text-xl font-bold shrink-0">
+                            🎖️
+                        </div>
+                        <div>
+                            <h4 className="font-extrabold text-sm text-slate-900">Mayoristas Autorizados</h4>
+                            <p className="text-xs text-slate-500 font-medium">Distribuidores de marcas líderes</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:pl-6">
+                        <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#EA580C] flex items-center justify-center text-xl font-bold shrink-0">
+                            🚚
+                        </div>
+                        <div>
+                            <h4 className="font-extrabold text-sm text-slate-900">Envíos a Nivel Nacional</h4>
+                            <p className="text-xs text-slate-500 font-medium">Rápidos y seguros</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:pl-6">
+                        <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#EA580C] flex items-center justify-center text-xl font-bold shrink-0">
+                            🎧
+                        </div>
+                        <div>
+                            <h4 className="font-extrabold text-sm text-slate-900">Asesoría Personalizada</h4>
+                            <p className="text-xs text-slate-500 font-medium">Te ayudamos a elegir lo mejor</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div className="mx-auto max-w-7xl px-6 lg:px-8 py-12 space-y-16">
 
                 {/* CATEGORÍAS (Siempre visible aunque esté vacío) */}
                 <section>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2">
-                        <span className="w-1 h-8 bg-[#F97316] rounded-full"></span>
-                        Explorar Categorías
-                    </h2>
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-black text-slate-900 flex items-center gap-3">
+                            <span className="w-1.5 h-8 bg-[#EA580C] rounded-full"></span>
+                            Explorar Categorías y Soluciones Empresariales
+                        </h2>
+                        <Link 
+                            href="/categorias" 
+                            className="hidden sm:inline-flex items-center gap-1.5 border border-[#EA580C] text-[#EA580C] hover:bg-orange-50 font-bold px-4 py-2 rounded-xl text-sm transition-all"
+                        >
+                            <span>Ver todas las categorías</span>
+                            <span>&rarr;</span>
+                        </Link>
+                    </div>
                     <CategoryGrid categories={data?.categorias_conteo || []} />
                 </section>
+
 
                 {/* DESTACADOS */}
                 <section>

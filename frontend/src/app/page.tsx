@@ -100,9 +100,10 @@ export default function Home() {
         <main className="min-h-screen bg-gray-50 pb-12">
             {/* HERO SECTION SEGÚN EL PROTOTIPO DE LA CAPTURA */}
             <section 
-                className="relative overflow-hidden bg-gradient-to-r from-[#D94600] via-[#EA580C] to-[#F97316] text-white py-12 lg:py-16"
+                className="relative overflow-hidden bg-gradient-to-r from-[#D94600] via-[#EA580C] to-[#F97316] text-white py-8 lg:py-10"
                 style={heroImage ? { backgroundImage: `linear-gradient(90deg, rgba(217,70,0,0.88) 0%, rgba(234,88,12,0.85) 60%, rgba(249,115,22,0.75) 100%), url(${heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
             >
+
                 {/* Patrón de cuadrícula / red de fondo */}
                 <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
 
@@ -274,15 +275,16 @@ export default function Home() {
 
 
 
-            <div className="mx-auto max-w-7xl px-6 lg:px-8 py-12 space-y-16">
+            <div className="mx-auto max-w-7xl px-6 lg:px-8 py-6 space-y-8">
 
-                {/* CATEGORÍAS (Siempre visible aunque esté vacío) */}
+                {/* CATEGORÍAS (Ajustado horizontalmente en 1 sola fila de 6 columnas) */}
                 <section>
-                    <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-black text-slate-900 flex items-center gap-3">
-                            <span className="w-1.5 h-8 bg-[#EA580C] rounded-full"></span>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-3">
+                            <span className="w-1.5 h-7 bg-[#EA580C] rounded-full"></span>
                             Explorar Categorías y Soluciones Empresariales
                         </h2>
+
                         <Link 
                             href="/categorias" 
                             className="hidden sm:inline-flex items-center gap-1.5 border border-[#EA580C] text-[#EA580C] hover:bg-orange-50 font-bold px-4 py-2 rounded-xl text-sm transition-all"

@@ -44,28 +44,28 @@ export default function FloatingSocialButtons() {
 
   return (
     <aside aria-label="Canales de contacto rápido" className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-      {/* Botón Flotante de Chat en Línea (Naranja según Prototipo) */}
+      {/* Botón Flotante de Facebook (Azul Oficial #1877F2) */}
       <div className="relative group flex items-center">
         {/* Tooltip emergente */}
         <span className="absolute right-16 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap border border-slate-700">
-          Chat en Línea B2B
+          Síguenos en Facebook
         </span>
 
         <a
-          href={waUrl}
+          href={fbUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Chat en línea"
-          className="flex flex-col items-center justify-center w-14 h-14 bg-[#EA580C] hover:bg-orange-600 text-white rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 ring-2 ring-white/30"
+          aria-label="Contactar en Facebook"
+          className="flex flex-col items-center justify-center w-14 h-14 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 ring-2 ring-white/30"
         >
           <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z" />
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
           </svg>
-          <span className="text-[0.55rem] font-bold tracking-tight leading-none mt-0.5">Chat</span>
+          <span className="text-[0.55rem] font-bold tracking-tight leading-none mt-0.5">Facebook</span>
         </a>
       </div>
 
-      {/* Botón Flotante de WhatsApp (Verde según Prototipo) */}
+      {/* Botón Flotante de WhatsApp (Verde Oficial #25D366) */}
       <div className="relative group flex items-center">
         {/* Aura animada de pulso */}
         <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-40 animate-ping pointer-events-none"></span>
@@ -90,5 +90,6 @@ export default function FloatingSocialButtons() {
       </div>
     </aside>
   );
+
 
 }

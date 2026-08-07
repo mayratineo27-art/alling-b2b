@@ -469,10 +469,11 @@ class KitComponent(SQLModel, table=True):
 **RN-KIT-01:** Precio dinámico de Kit = suma de precios de componentes **RN-KIT-02:** Kit requiere mínimo 2 componentes **RN-KIT-03:** Stock de Kit = mínimo stock de componentes **RN-FAV-01:** Solo CUSTOMER puede tener favoritos **RN-TG-01:** Payload Telegram debe incluir SKU + nombre + cantidad
 
 **RN-CAT-IMG-01:** Solo un ADMIN autenticado puede subir, reemplazar o eliminar la imagen de referencia de una categoría.
-**RN-CAT-IMG-02:** El archivo de imagen debe ser de tipo `image/png`, `image/jpeg` o `image/webp` y no superar 2 MB. Cualquier otro tipo o tamaño retorna HTTP 422.
+**RN-CAT-IMG-02:** El archivo de imagen debe ser de tipo `image/png`, `image/jpeg` o `image/webp` y no superar 2 MB. Cualquier otro tipo o tamaño retorna HTTP 422. **Tamaño estándar recomendado: 400 × 400 px en formato cuadrado.** El sistema optimiza y redimensiona automáticamente la imagen subida a un máximo de 450 × 450 px antes de almacenarla, garantizando que las tarjetas de categoría se vean consistentes sin imágenes ni muy pequeñas ni muy grandes.
 **RN-CAT-IMG-03:** La imagen se almacena en almacenamiento de objetos (Supabase Storage / S3-compatible). El campo `category.image_url` guarda únicamente la URL pública resultante.
 **RN-CAT-IMG-04:** Si una categoría no tiene imagen asignada (`image_url = null`), los componentes `CMP-CAT-025`, `CMP-CAT-027` muestran un placeholder SVG neutro; nunca una URL rota.
 **RN-CAT-IMG-05:** La eliminación de la imagen no elimina la categoría; solo resetea `image_url` a `null`.
+**RN-CAT-ORD-01 (Ordenamiento por Criterio del Administrador):** Las categorías en el catálogo, landing page y panel de administración se presentan priorizando el campo de posición numérica `position` asignado por el Administrador en orden ascendente (`position` ASC). En caso de empate en la posición, se aplica orden alfabético secundario por el nombre (`name` ASC). Menor valor numérico indica mayor prioridad visual.
 
 ### 🔄 Impacto en Actores
 

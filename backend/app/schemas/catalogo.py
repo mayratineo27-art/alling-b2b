@@ -58,6 +58,9 @@ class CategoryResponseSchema(BaseModel):
     count: int
     image_url: Optional[str] = None
 
+    position: int = 0
+
+
 
 class LandingResponseSchema(BaseModel):
     destacados: list[LandingProductSchema]

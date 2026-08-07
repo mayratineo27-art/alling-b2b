@@ -12,5 +12,7 @@ class CategoryModel(SQLModel, table=True):
     description: Optional[str] = None
     icon: Optional[str] = None
     image_url: Optional[str] = Field(default=None, description="URL pública de la imagen de referencia. None = mostrar placeholder SVG (RN-CAT-IMG-04).")
+    position: int = Field(default=0, index=True, description="Prioridad numérica de visualización del ADMIN (RN-CAT-ORD-01). Menor número = aparece primero.")
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
 

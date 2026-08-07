@@ -170,6 +170,7 @@ class CategoryCreateSchema(BaseModel):
     name: str = Field(..., min_length=1)
     description: Optional[str] = None
     icon: Optional[str] = None
+    position: int = Field(default=0, ge=0, description="Prioridad de visualización. Menor número = aparece primero (RN-CAT-ORD-01).")
 
 
 class CategoryResponseSchema(BaseModel):
@@ -180,6 +181,7 @@ class CategoryResponseSchema(BaseModel):
     description: Optional[str] = None
     icon: Optional[str] = None
     image_url: Optional[str] = None
+    position: int = 0
     created_at: datetime
 
 
@@ -1112,7 +1114,7 @@ def listar_categorias(
     @sdd-endpoint GET /admin/categorias
     @sdd-rf RF-CAT-005
     """
-    categories = db.query(CategoryModel).order_by(CategoryModel.name).all()
+    categories = db.query(CategoryModel).order_by(CategoryModel.position.asc(), CategoryModel.name.asc()).all()
     return categories
 
 
@@ -1138,7 +1140,8 @@ def crear_categoria(
         name=body.name,
         slug=slug,
         description=body.description,
-        icon=body.icon
+        icon=body.icon,
+        position=body.position
     )
     db.add(new_cat)
     db.commit()
@@ -1170,6 +1173,7 @@ def actualizar_categoria(
     cat.slug = slug
     cat.description = body.description
     cat.icon = body.icon
+    cat.position = body.position
 
     # Sincronizar campo denormalizado category en productos vinculados
     if old_name != body.name:

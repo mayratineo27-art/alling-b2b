@@ -22,7 +22,7 @@ class CategoryQueryService:
             from app.models.category import CategoryModel
             if hasattr(self.product_repo, 'session') and self.product_repo.session:
                 category_models = self.product_repo.session.exec(
-                    select(CategoryModel).order_by(CategoryModel.name)
+                    select(CategoryModel).order_by(CategoryModel.position.asc(), CategoryModel.name.asc())
                 ).all()
 
                 for cat in category_models:
@@ -31,7 +31,8 @@ class CategoryQueryService:
                         CategoryResponseSchema(
                             nombre=cat.name,
                             count=cnt,
-                            image_url=cat.image_url
+                            image_url=cat.image_url,
+                            position=cat.position
                         )
                     )
                 return result
@@ -40,10 +41,8 @@ class CategoryQueryService:
 
         # Fallback si no hay DB de categorías configurada
         result = [
-            CategoryResponseSchema(nombre=cat, count=cnt, image_url=None)
+            CategoryResponseSchema(nombre=cat, count=cnt, image_url=None, position=0)
             for cat, cnt in counts.items()
         ]
-        result.sort(key=lambda x: x.nombre)
+        result.sort(key=lambda x: (x.position, x.nombre))
         return result
-
-

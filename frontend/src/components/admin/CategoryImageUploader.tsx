@@ -287,6 +287,12 @@ export function CategoryImageUploader({
             <p className="text-xs text-gray-400 mt-1">
               PNG, JPEG, WebP · Máx. 2 MB
             </p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Tamaño recomendado: <span className="font-semibold text-gray-500">400 × 400 px</span> (cuadrado)
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              El sistema optimiza y redimensiona automáticamente a 450 × 450 px.
+            </p>
 
             <input
               ref={inputRef}

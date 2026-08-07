@@ -113,28 +113,36 @@ def test_obtener_categorias_con_conteo():
     """
     Verifica que el endpoint de categorías agrupe y cuente productos activos.
     """
+    from app.core.deps import get_category_query_service
+    from app.services.category_query_service import CategoryQueryService
+    app.dependency_overrides[get_category_query_service] = lambda: CategoryQueryService(mock_repo)
+
     # Agregar productos con categorías
     mock_repo.add(Product(id=uuid4(), name="C1", category="Electrónica", stock=1, price_public=Decimal("10"), is_active=True))
     mock_repo.add(Product(id=uuid4(), name="C2", category="Electrónica", stock=1, price_public=Decimal("10"), is_active=True))
     mock_repo.add(Product(id=uuid4(), name="C3", category="Electrónica", stock=1, price_public=Decimal("10"), is_active=False)) # Inactivo
     mock_repo.add(Product(id=uuid4(), name="H1", category="Hogar", stock=1, price_public=Decimal("10"), is_active=True))
-    
-    response = client.get("/categorias/")
-    assert response.status_code == 200
-    data = response.json()
-    
-    # Validar formato
-    assert isinstance(data, list)
-    assert len(data) >= 2
-    
-    # Validar conteo (Electrónica debería tener 2 activos)
-    elect = next((c for c in data if c["nombre"] == "Electrónica"), None)
-    assert elect is not None
-    assert elect["count"] == 2
-    
-    hogar = next((c for c in data if c["nombre"] == "Hogar"), None)
-    assert hogar is not None
-    assert hogar["count"] == 1
+
+    try:
+        response = client.get("/categorias/")
+        assert response.status_code == 200
+        data = response.json()
+
+        # Validar formato
+        assert isinstance(data, list)
+        assert len(data) >= 2
+
+        # Validar conteo (Electrónica debería tener 2 activos)
+        elect = next((c for c in data if c["nombre"] == "Electrónica"), None)
+        assert elect is not None
+        assert elect["count"] == 2
+
+        hogar = next((c for c in data if c["nombre"] == "Hogar"), None)
+        assert hogar is not None
+        assert hogar["count"] == 1
+    finally:
+        app.dependency_overrides.pop(get_category_query_service, None)
+
 
 def test_listar_productos_filtrados_por_disponibilidad():
     """

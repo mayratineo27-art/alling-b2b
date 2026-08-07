@@ -17,6 +17,7 @@ interface Category {
   description?: string;
   icon?: string;
   image_url?: string | null;
+  position: number;
 }
 
 interface Product {
@@ -84,6 +85,7 @@ export default function AdminProductosPage() {
     name: "",
     description: "",
     icon: "",
+    position: 0,
   });
 
   const handleOpenEditCategory = (cat: Category) => {
@@ -92,6 +94,7 @@ export default function AdminProductosPage() {
       name: cat.name || "",
       description: cat.description || "",
       icon: cat.icon || "",
+      position: cat.position ?? 0,
     });
     setShowEditCategoryModal(true);
   };
@@ -208,6 +211,7 @@ export default function AdminProductosPage() {
     name: "",
     description: "",
     icon: "",
+    position: 0,
   });
 
   const showToast = (message: string, type: "success" | "error" = "success") => {
@@ -305,7 +309,7 @@ export default function AdminProductosPage() {
       await apiClient.post("/admin/categorias", categoryForm);
       showToast("Categoría creada correctamente");
       setShowCategoryModal(false);
-      setCategoryForm({ name: "", description: "", icon: "" });
+      setCategoryForm({ name: "", description: "", icon: "", position: 0 });
       fetchCategories();
     } catch (err: any) {
       showToast(err.response?.data?.detail ?? "Error al crear la categoría", "error");
@@ -977,6 +981,21 @@ export default function AdminProductosPage() {
                     />
                   </div>
 
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                      Posición / Orden de visualización
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      placeholder="0"
+                      value={categoryForm.position}
+                      onChange={(e) => setCategoryForm({ ...categoryForm, position: parseInt(e.target.value) || 0 })}
+                      className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                    />
+                    <p className="text-xs text-[var(--alling-metadata)] mt-1">Número menor = aparece primero en el catálogo (RN-CAT-ORD-01)</p>
+                  </div>
+
                   <div className="flex justify-end gap-3 border-t border-[var(--alling-border)] pt-4 mt-6">
                     <button
                       type="button"
@@ -1062,6 +1081,23 @@ export default function AdminProductosPage() {
                       }
                       className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none resize-none"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--alling-text)] mb-1">
+                      Posición / Orden de visualización
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      placeholder="0"
+                      value={editCategoryForm.position}
+                      onChange={(e) =>
+                        setEditCategoryForm({ ...editCategoryForm, position: parseInt(e.target.value) || 0 })
+                      }
+                      className="w-full border border-[var(--alling-border)] rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--alling-primary)] outline-none"
+                    />
+                    <p className="text-xs text-[var(--alling-metadata)] mt-1">Número menor = aparece primero en el catálogo (RN-CAT-ORD-01)</p>
                   </div>
 
                   <div className="flex justify-end gap-3 border-t border-[var(--alling-border)] pt-4 mt-6">

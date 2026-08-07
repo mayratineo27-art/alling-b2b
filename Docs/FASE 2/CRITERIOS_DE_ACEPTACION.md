@@ -685,6 +685,12 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 - **And** `category.image_url` se actualiza a la nueva URL
 - **And** la imagen anterior es eliminada del almacenamiento de objetos
 
+**Escenario 9: Ordenamiento de categorías según criterio del Administrador (RN-CAT-ORD-01)**
+- **Given** un Administrador que asigna prioridades numéricas `position` a las categorías (ej: "Fibra Óptica" `position=1`, "Cables" `position=2`, "Accesorios" `position=3`)
+- **When** cualquier actor consulta el catálogo mediante `GET /categorias` o la landing page
+- **Then** el sistema responde listando las categorías en el orden de su `position` ascendente (`position=1` primero, luego `position=2`, etc.)
+- **And** si dos categorías poseen la misma `position`, se ordenan secundariamente de forma alfabética (A-Z) por su nombre.
+
 ---
 
 #### **CA-PROD-004 (Asignar imagen de referencia a un producto)**

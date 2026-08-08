@@ -1320,7 +1320,7 @@ El sistema debe mostrar una landing page con: hero image con efecto Bokeh, produ
 - **Módulo:** MOD-CAT-01
 
 **RF-CAT-005: Exploración Intermedia de Categorías cuando se da click en catálogo**
-El sistema debe mostrar una vista intermedia con cuadrícula de categorías y contadores dinámicos antes de ingresar al listado de productos, luego de dar click en la cabecera en "catálogo". Las categorías se presentan priorizando el orden numérico asignado por el Administrador (`position` ASC) y secundariamente por nombre alfabético (`RN-CAT-ORD-01`).
+El sistema debe mostrar una vista intermedia con cuadrícula de categorías antes de ingresar al listado de productos, luego de dar click en la cabecera en "catálogo". Las categorías se presentan priorizando el orden numérico asignado por el Administrador (`position` ASC) y secundariamente por nombre alfabético (`RN-CAT-ORD-01`). Las tarjetas de categoría muestran la imagen de referencia, nombre y flecha de acceso, omitiendo el conteo de productos (`RN-CAT-UI-01`) y ajustando su densidad vertical para visibilidad inmediata al 100% de zoom.
 - **Actores afectados:** GUEST, CUSTOMER
 - **Módulo:** MOD-CAT-01
 

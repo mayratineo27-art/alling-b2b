@@ -691,6 +691,18 @@ A continuación, presento los CA para los **4 módulos críticos del negocio** (
 - **Then** el sistema responde listando las categorías en el orden de su `position` ascendente (`position=1` primero, luego `position=2`, etc.)
 - **And** si dos categorías poseen la misma `position`, se ordenan secundariamente de forma alfabética (A-Z) por su nombre.
 
+**Escenario 10: Visualización minimalista de tarjetas de categorías sin conteo de productos (RN-CAT-UI-01)**
+- **Given** cualquier usuario visualizando la rejilla de categorías en la portada o en `/categorias`
+- **When** el componente `CategoryGrid` renderiza cada tarjeta de categoría
+- **Then** muestra la imagen de referencia optimizada, el nombre completo de la categoría y la flecha de navegación (`>`)
+- **And** no muestra ningún texto ni insignia de conteo de productos (`+N productos`).
+
+**Escenario 11: Adaptación de rejilla y visibilidad en primer encuadre a 100% de zoom**
+- **Given** un usuario que carga la portada al 100% de zoom en una resolución estándar (ej. 1920x1080 o 1536x730)
+- **When** la página carga por primera vez
+- **Then** la sección "Explorar Categorías y Soluciones Empresariales" y sus tarjetas se visualizan inmediatamente dentro del primer encuadre visual (above-the-fold) sin requerir desplazamiento vertical.
+- **And** si el usuario aplica zoom con `Control +`, la rejilla re-fluye dinámicamente de 6 a 4, 3 o 2 columnas sin apretar los títulos ni desbordar la pantalla.
+
 ---
 
 #### **CA-PROD-004 (Asignar imagen de referencia a un producto)**

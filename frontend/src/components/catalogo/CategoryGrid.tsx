@@ -25,35 +25,33 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
     const listToDisplay = (categories && categories.length > 0) ? categories : DEFAULT_B2B_CATEGORIES;
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-5">
             {listToDisplay.map((cat, idx) => {
                 const imgSrc = cat.image_url ?? PLACEHOLDER;
                 return (
                     <Link 
                         key={idx} 
                         href={`/productos?categoria=${encodeURIComponent(cat.nombre)}`} 
-                        className="group flex flex-col justify-between rounded-2xl bg-white overflow-hidden shadow-xs border border-slate-200/80 hover:border-[#EA580C] hover:shadow-lg transition-all duration-300 cursor-pointer"
+                        className="group flex flex-col justify-between rounded-2xl bg-white overflow-hidden shadow-lg shadow-slate-200/80 hover:shadow-2xl hover:shadow-orange-500/20 border-2 border-slate-200/90 hover:border-[#EA580C] transition-all duration-300 hover:-translate-y-1.5 cursor-pointer ring-1 ring-black/5"
                     >
-                        <div className="relative w-full h-32 sm:h-36 bg-slate-50/70 p-3 flex items-center justify-center overflow-hidden">
-                            <img
-                                src={imgSrc}
-                                alt={`Categoría: ${cat.nombre}`}
-                                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                                onError={(e) => {
-                                    (e.target as HTMLImageElement).src = PLACEHOLDER;
-                                }}
-                            />
+                        <div className="p-2.5 bg-slate-100/70 flex items-center justify-center border-b border-slate-200/80">
+                            <div className="relative w-full h-24 sm:h-28 rounded-xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-center overflow-hidden group-hover:border-orange-300 transition-colors">
+                                <img
+                                    src={imgSrc}
+                                    alt={`Categoría: ${cat.nombre}`}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = PLACEHOLDER;
+                                    }}
+                                />
+                            </div>
                         </div>
 
-                        <div className="p-3.5 flex flex-col justify-between flex-1 w-full bg-white border-t border-slate-100">
-                            <span className="text-sm font-extrabold text-slate-900 group-hover:text-[#EA580C] transition-colors leading-snug line-clamp-2">
+                        <div className="p-3 flex items-center justify-between flex-1 w-full bg-slate-900 group-hover:bg-[#EA580C] transition-all duration-300">
+                            <span className="text-xs sm:text-sm font-extrabold text-white leading-snug line-clamp-1 sm:line-clamp-2" title={cat.nombre}>
                                 {cat.nombre}
                             </span>
-                            
-                            <div className="flex items-center justify-between w-full mt-2.5 pt-2 border-t border-slate-50 text-xs font-bold text-[#EA580C]">
-                                <span>+{cat.count} productos</span>
-                                <span className="text-sm font-black transform group-hover:translate-x-1 transition-transform">&gt;</span>
-                            </div>
+                            <span className="text-xs font-black text-orange-400 group-hover:text-white transform group-hover:translate-x-1 transition-all ml-1.5 shrink-0">&gt;</span>
                         </div>
                     </Link>
                 );

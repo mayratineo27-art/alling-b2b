@@ -64,7 +64,7 @@ class ProductQueryService:
             from app.models.category import CategoryModel
             if hasattr(self.repo, 'session') and self.repo.session:
                 category_models = self.repo.session.exec(
-                    select(CategoryModel).order_by(CategoryModel.name)
+                    select(CategoryModel).order_by(CategoryModel.position.asc(), CategoryModel.name.asc())
                 ).all()
 
                 for cat in category_models:
@@ -72,7 +72,8 @@ class ProductQueryService:
                     categorias_list.append({
                         "nombre": cat.name,
                         "count": cnt,
-                        "image_url": cat.image_url
+                        "image_url": cat.image_url,
+                        "position": cat.position
                     })
         except Exception:
             pass
@@ -82,10 +83,12 @@ class ProductQueryService:
                 {
                     "nombre": cat,
                     "count": count,
-                    "image_url": None
+                    "image_url": None,
+                    "position": 0
                 } 
                 for cat, count in categorias_dict.items()
             ]
+            categorias_list.sort(key=lambda x: (x["position"], x["nombre"]))
 
         
         return {
